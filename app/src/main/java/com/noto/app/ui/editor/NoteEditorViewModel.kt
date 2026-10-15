@@ -30,6 +30,7 @@ data class NoteEditorUiState(
     val title: String = "",
     val body: String = "",
     val isFavorite: Boolean = false,
+    val isPinned: Boolean = false,
     val createdAt: Long = 0L,
     val lastUpdated: Long = 0L,
     val saveStatus: SaveStatus = SaveStatus.IDLE,
@@ -74,6 +75,7 @@ class NoteEditorViewModel(
                             title = existing.title,
                             body = existing.body,
                             isFavorite = existing.isFavorite,
+                            isPinned = existing.isPinned,
                             createdAt = existing.createdAt,
                             lastUpdated = existing.updatedAt,
                             saveStatus = SaveStatus.SAVED,
@@ -91,20 +93,20 @@ class NoteEditorViewModel(
     }
 
     /**
-     * Updates title and schedules debounced autosave.
+     * Updates title and schedules debounced autosave without triggering animation jank during typing.
      */
     fun onTitleChange(newTitle: String) {
         if (_uiState.value.title == newTitle) return
-        _uiState.update { it.copy(title = newTitle, saveStatus = SaveStatus.SAVING) }
+        _uiState.update { it.copy(title = newTitle) }
         scheduleAutosave()
     }
 
     /**
-     * Updates body and schedules debounced autosave.
+     * Updates body and schedules debounced autosave without triggering animation jank during typing.
      */
     fun onBodyChange(newBody: String) {
         if (_uiState.value.body == newBody) return
-        _uiState.update { it.copy(body = newBody, saveStatus = SaveStatus.SAVING) }
+        _uiState.update { it.copy(body = newBody) }
         scheduleAutosave()
     }
 
@@ -126,12 +128,30 @@ class NoteEditorViewModel(
     }
 
     /**
-     * Schedules debounced autosave (500ms after user stops typing).
+     * Toggles pinned status and immediately persists.
+     */
+    fun togglePin() {
+        val newPinned = !_uiState.value.isPinned
+        _uiState.update { it.copy(isPinned = newPinned) }
+
+        val currentId = _uiState.value.noteId
+        if (currentId > 0L) {
+            viewModelScope.launch {
+                repository.setPinned(currentId, newPinned)
+            }
+        } else {
+            scheduleAutosave()
+        }
+    }
+
+    /**
+     * Schedules debounced autosave (400ms after user stops typing).
      */
     private fun scheduleAutosave() {
         autosaveJob?.cancel()
         autosaveJob = viewModelScope.launch {
-            delay(500L)
+            delay(400L)
+            _uiState.update { it.copy(saveStatus = SaveStatus.SAVING) }
             saveCurrentNote()
         }
     }
@@ -186,6 +206,7 @@ class NoteEditorViewModel(
                 title = title,
                 body = body,
                 isFavorite = currentState.isFavorite,
+                isPinned = currentState.isPinned,
                 createdAt = if (currentState.createdAt == 0L) now else currentState.createdAt,
                 updatedAt = now
             )

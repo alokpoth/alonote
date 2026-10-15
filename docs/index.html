@@ -17,7 +17,7 @@
     :root {
       --bg: #ffffff;
       --surface: #f7f7f9;
-      --surface-variant: #f0f0f2;
+      --surface-variant: #eeeeef;
       --text: #111111;
       --text-muted: #8e8e93;
       --border: #e5e5ea;
@@ -26,12 +26,14 @@
       --accent-text: #ffffff;
       --header-bg: #f7f7f9;
       --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      --toast-bg: #1c1c1e;
+      --toast-text: #ffffff;
     }
 
     html.dark {
       --bg: #121212;
       --surface: #1c1c1e;
-      --surface-variant: #2c2c2e;
+      --surface-variant: #28282b;
       --text: #f5f5f7;
       --text-muted: #8e8e93;
       --border: #2c2c2e;
@@ -40,6 +42,8 @@
       --accent-text: #121212;
       --header-bg: #1c1c1e;
       --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      --toast-bg: #2c2c2e;
+      --toast-text: #f5f5f7;
     }
 
     * {
@@ -66,7 +70,7 @@
       text-decoration: none;
     }
 
-    /* Header - Lightweight without expensive blur filters */
+    /* Header */
     header {
       position: sticky;
       top: 0;
@@ -111,7 +115,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: background 0.15s ease, transform 0.15s ease;
+      transition: background 0.15s ease, transform 0.1s ease;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--text);
@@ -148,55 +152,49 @@
       max-width: 960px;
       margin: 0 auto;
       width: 100%;
-      padding: 32px 16px 56px;
+      padding: 32px 16px 64px;
     }
 
     /* Hero Section */
     .hero {
       text-align: center;
-      max-width: 640px;
-      margin: 0 auto 36px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin-bottom: 36px;
     }
 
     .app-icon-badge {
-      width: 84px;
-      height: 84px;
+      width: 80px;
+      height: 80px;
       border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      margin-bottom: 18px;
-      border: 1px solid var(--border);
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
 
     .tag {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 999px;
-      background: var(--surface-variant);
-      color: var(--text-muted);
-      font-size: 0.725rem;
-      font-weight: 600;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 14px;
-      border: 1px solid var(--border);
+      color: var(--text-muted);
+      margin-bottom: 12px;
     }
 
     .hero h1 {
-      font-size: clamp(2rem, 6.5vw, 3.1rem);
+      font-size: clamp(2rem, 5vw, 3rem);
       font-weight: 800;
-      letter-spacing: -1.2px;
+      letter-spacing: -1px;
       line-height: 1.15;
       margin-bottom: 14px;
     }
 
     .hero p {
-      font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+      font-size: 1.05rem;
       color: var(--text-muted);
-      line-height: 1.55;
-      margin-bottom: 22px;
+      max-width: 540px;
+      line-height: 1.5;
+      margin-bottom: 24px;
       padding: 0 8px;
     }
 
@@ -218,7 +216,7 @@
     /* Interactive Demo Phone Container */
     .app-preview-wrapper {
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       margin: 0 auto 48px;
     }
 
@@ -242,28 +240,68 @@
     }
 
     .app-screen {
-      height: 520px;
+      height: 560px;
       display: flex;
       flex-direction: column;
       position: relative;
     }
 
     .app-header {
-      padding: 16px 18px 10px;
+      padding: 14px 16px 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
+    .app-title-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .app-title {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
 
+    .badge-count {
+      background: var(--surface-variant);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 8px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ctrl-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--surface-variant);
+      border: none;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .ctrl-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Search Box */
     .search-box {
-      margin: 0 16px 10px;
-      padding: 8px 12px;
+      margin: 0 16px 8px;
+      padding: 7px 12px;
       border-radius: 12px;
       background: var(--surface-variant);
       border: 1px solid var(--border);
@@ -278,9 +316,42 @@
       outline: none;
       width: 100%;
       color: var(--text);
-      font-size: 16px;
+      font-size: 15px;
     }
 
+    /* Filter Chips Row */
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      padding: 0 16px 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .filter-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--surface-variant);
+      color: var(--text-muted);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .chip.active {
+      background: var(--accent);
+      color: var(--accent-text);
+      font-weight: 600;
+    }
+
+    /* Notes List: List vs Grid modes */
     .notes-list {
       flex: 1;
       overflow-y: auto;
@@ -291,18 +362,34 @@
       -webkit-overflow-scrolling: touch;
     }
 
+    .notes-list.grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      align-content: start;
+    }
+
     .note-item {
-      padding: 14px 16px;
+      padding: 12px 14px;
       border-radius: 16px;
       background: var(--surface);
       border: 1px solid var(--border);
       cursor: pointer;
       user-select: none;
       -webkit-user-select: none;
-      transition: background 0.15s ease, border-color 0.15s ease;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
 
     .note-item:active {
+      transform: scale(0.98);
+    }
+
+    .note-item.pinned {
+      border-color: var(--text);
+      border-width: 1.5px;
       background: var(--surface-variant);
     }
 
@@ -311,14 +398,70 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 4px;
+      gap: 6px;
+    }
+
+    .note-item-title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .pinned-badge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: var(--accent);
+      color: var(--accent-text);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      flex-shrink: 0;
     }
 
     .note-item-title {
       font-size: 15px;
       font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Direct Action Buttons on Card */
+    .card-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .card-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .card-btn:hover {
+      background: var(--surface-variant);
+      color: var(--text);
+    }
+
+    .card-btn.active {
+      color: var(--text);
+    }
+
+    .card-btn.delete:hover {
+      color: #ff3b30;
     }
 
     .note-item-preview {
@@ -329,15 +472,26 @@
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
-    .note-item-date {
+    .note-item-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
       font-size: 11px;
       color: var(--text-muted);
     }
 
-    /* Floating bottom bar - Lightweight without expensive blur shaders */
+    .word-badge {
+      background: var(--surface-variant);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 10px;
+    }
+
+    /* Floating bottom bar */
     .app-bottom-bar {
       position: absolute;
       bottom: 14px;
@@ -364,6 +518,11 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .bar-btn:active {
+      transform: scale(0.92);
     }
 
     .bar-btn.active {
@@ -384,7 +543,7 @@
       z-index: 20;
       display: none;
       flex-direction: column;
-      padding: 16px;
+      padding: 14px 16px;
     }
 
     .editor-view.active {
@@ -395,11 +554,35 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
+    }
+
+    .editor-top-actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .editor-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .editor-btn:hover {
+      background: var(--surface-variant);
     }
 
     .editor-title {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 700;
       border: none;
       outline: none;
@@ -424,77 +607,69 @@
       font-size: 16px;
       line-height: 1.55;
       resize: none;
-      min-height: 300px;
+      min-height: 250px;
     }
 
-    /* Long-press Action Sheet Modal */
-    .modal-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      z-index: 30;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .modal-overlay.active {
+    .editor-footer {
       display: flex;
-    }
-
-    .modal-sheet {
-      width: 100%;
-      background: var(--surface);
-      border-top-left-radius: 22px;
-      border-top-right-radius: 22px;
-      padding: 18px 16px 24px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0 4px;
+      font-size: 11px;
+      color: var(--text-muted);
       border-top: 1px solid var(--border);
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.25);
     }
 
-    .modal-sheet-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 14px;
-      padding: 0 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .modal-action-row {
+    /* Toast Snackbar */
+    .toast-snackbar {
+      position: absolute;
+      bottom: 74px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--toast-bg);
+      color: var(--toast-text);
+      padding: 8px 16px;
+      border-radius: 999px;
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 14px 10px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 500;
-      color: var(--text);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    .modal-action-row:active {
-      background: var(--surface-variant);
+    .toast-snackbar.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
     }
 
-    .modal-action-row.delete {
-      color: #ff453a;
+    .toast-undo-btn {
+      background: transparent;
+      border: none;
+      color: #3b82f6;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
     }
 
-    /* Grid Features */
+    /* Core Features Grid */
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 16px;
-      margin-bottom: 48px;
+      margin-top: 48px;
     }
 
     .feature-card {
-      padding: 20px;
-      border-radius: 18px;
       background: var(--surface);
       border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
     }
 
     .feature-card h3 {
@@ -541,7 +716,7 @@
         border-width: 3px;
       }
       .app-screen {
-        height: 480px;
+        height: 520px;
       }
     }
   </style>
@@ -581,23 +756,45 @@
       </div>
     </section>
 
-    <!-- Interactive Interactive Live App Demo -->
+    <!-- Interactive Live App Demo -->
     <div class="app-preview-wrapper">
-      <div class="demo-label">✨ Interactive Mobile App Demo (Tap & hold note for options)</div>
+      <div class="demo-label">✨ Interactive Mobile App Demo (Full UI Actions on Cards)</div>
       <div class="app-preview-container">
         <div class="app-screen">
+          <!-- Top App Bar -->
           <div class="app-header">
-            <div class="app-title" id="preview-tab-title">Noto</div>
-            <button id="preview-search-toggle" style="background: none; border: none; cursor: pointer; color: var(--text); padding: 8px;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </button>
+            <div class="app-title-area">
+              <div class="app-title" id="preview-tab-title">Noto</div>
+              <span class="badge-count" id="preview-count">0</span>
+            </div>
+            <div class="header-controls">
+              <!-- Grid / List View Toggle Button -->
+              <button class="ctrl-btn" id="preview-view-toggle" title="Toggle Grid / List View">
+                <svg id="icon-grid" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              </button>
+              <!-- Search Button -->
+              <button class="ctrl-btn" id="preview-search-toggle" title="Search Notes">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </button>
+            </div>
           </div>
 
+          <!-- Search Input Box -->
           <div class="search-box" id="preview-search-box" style="display: none;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" id="preview-search-input" placeholder="Search notes...">
           </div>
 
+          <!-- Filter Chips -->
+          <div class="filter-chips">
+            <button class="chip active" data-filter="all" id="chip-all">All</button>
+            <button class="chip" data-filter="pinned" id="chip-pinned">📌 Pinned</button>
+            <button class="chip" data-filter="starred" id="chip-starred">⭐ Favorites</button>
+            <button class="chip" data-filter="ideas">💡 Ideas</button>
+            <button class="chip" data-filter="work">💼 Work</button>
+          </div>
+
+          <!-- Notes List / Grid Container -->
           <div class="notes-list" id="preview-notes-list">
             <!-- Populated by JS -->
           </div>
@@ -618,15 +815,29 @@
           <!-- In-app Note Editor Overlay -->
           <div class="editor-view" id="preview-editor">
             <div class="editor-top">
-              <button id="editor-back" style="background: none; border: none; cursor: pointer; color: var(--text); padding: 8px;">
+              <button class="editor-btn" id="editor-back" title="Back">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
               </button>
-              <span id="editor-status" style="font-size: 11px; color: var(--text-muted);">Saved</span>
-              <div style="display: flex; gap: 6px; align-items: center;">
-                <button id="editor-fav" style="background: none; border: none; cursor: pointer; color: var(--text); padding: 8px;">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span id="editor-status" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Saved</span>
+              <div class="editor-top-actions">
+                <!-- Pin Button in Editor -->
+                <button class="editor-btn" id="editor-pin" title="Pin / Unpin">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5"/><path d="M5 17h14l-1-7H6l-1 7z"/><path d="M7 10V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6"/></svg>
                 </button>
-                <button id="editor-done" style="background: none; border: none; cursor: pointer; color: var(--text); padding: 8px;" title="Done">
+                <!-- Favorite Button in Editor -->
+                <button class="editor-btn" id="editor-fav" title="Star / Favorite">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </button>
+                <!-- Copy Button in Editor -->
+                <button class="editor-btn" id="editor-copy" title="Copy Note">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+                <!-- Delete Button in Editor -->
+                <button class="editor-btn" id="editor-delete" title="Delete Note">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+                <!-- Done Button in Editor -->
+                <button class="editor-btn" id="editor-done" title="Done" style="color: var(--accent);">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 </button>
               </div>
@@ -635,28 +846,17 @@
             <div class="editor-body-wrapper" id="editor-body-wrapper">
               <textarea class="editor-body" id="editor-body" placeholder="Note"></textarea>
             </div>
+            <!-- Editor Live Word Count Bar -->
+            <div class="editor-footer">
+              <span id="editor-stats">0 words • 0 characters</span>
+              <span id="editor-readtime">~1 min read</span>
+            </div>
           </div>
 
-          <!-- Long-press Action Sheet Modal -->
-          <div class="modal-overlay" id="action-modal">
-            <div class="modal-sheet">
-              <div class="modal-sheet-title" id="modal-note-title">Note Actions</div>
-              <div class="modal-action-row" id="modal-action-pin">
-                <span>📌</span>
-                <span id="modal-pin-label">Pin to Top</span>
-              </div>
-              <div class="modal-action-row" id="modal-action-star">
-                <span>⭐</span>
-                <span id="modal-star-label">Add to Favorites</span>
-              </div>
-              <div class="modal-action-row delete" id="modal-action-delete">
-                <span>🗑️</span>
-                <span>Delete Note</span>
-              </div>
-              <div class="modal-action-row" id="modal-action-cancel" style="justify-content: center; color: var(--text-muted); margin-top: 6px;">
-                Cancel
-              </div>
-            </div>
+          <!-- Toast Snackbar with Undo -->
+          <div class="toast-snackbar" id="toast-bar">
+            <span id="toast-text">Note deleted</span>
+            <button class="toast-undo-btn" id="toast-undo">Undo</button>
           </div>
         </div>
       </div>
@@ -673,12 +873,12 @@
         <p>Minimalist black, white, and subtle gray palette with clean typography, rounded surfaces, and a translucent floating bottom navigation bar.</p>
       </div>
       <div class="feature-card">
-        <h3>⚡ Debounced Autosave & Pinning</h3>
-        <p>Edits save instantly as you type. Long-press any note to Pin to top, Star as favorite, or Delete. Empty drafts are cleaned up gracefully.</p>
+        <h3>⚡ Direct UI Actions & Pinning</h3>
+        <p>Instant 1-tap UI buttons to Pin to top, Star as favorite, Copy, or Delete right on note cards. Grid and list views with real-time word counting.</p>
       </div>
       <div class="feature-card">
-        <h3>🚀 Modern Native Stack</h3>
-        <p>Engineered using Kotlin, Jetpack Compose, Material 3, Room SQLite, Navigation 3, and Coroutines/Flow with clean MVVM architecture.</p>
+        <h3>🚀 Native & 120 FPS Smooth</h3>
+        <p>Engineered using Kotlin, Jetpack Compose, Material 3, Room SQLite, and Coroutines/Flow with clean MVVM architecture and zero typing lag.</p>
       </div>
     </div>
   </main>
@@ -694,17 +894,51 @@
       document.documentElement.classList.toggle('dark');
     });
 
-    // Mock Live App Logic
+    // Notes Data
     let currentTab = 'notes';
+    let currentFilter = 'all';
+    let isGridView = false;
+    let recentlyDeletedNote = null;
+    let toastTimeout = null;
+
     let notes = JSON.parse(localStorage.getItem('noto_web_notes')) || [
-      { id: 1, title: 'Welcome to Noto', body: 'A minimal, distraction-free note app for Android.\n100% offline, zero trackers, pure writing.', isFav: true, isPinned: true, updated: 'Just now' },
-      { id: 2, title: 'Project Ideas', body: 'Design a clean monochrome UI\nUse Room database for local persistence\nOptimize for entry-level devices', isFav: false, isPinned: false, updated: 'Today, 2:15 PM' },
-      { id: 3, title: 'Groceries', body: 'Oat milk\nCoffee beans\nAvocado\nWhole wheat bread', isFav: false, isPinned: false, updated: 'Yesterday' }
+      { id: 1, title: 'Welcome to Noto', body: 'A minimal, distraction-free note app for Android.\n100% offline, zero trackers, pure writing.', isFav: true, isPinned: true, category: 'all', updated: 'Just now' },
+      { id: 2, title: 'Project Ideas', body: 'Design a clean monochrome UI\nUse Room database for local persistence\nOptimize for entry-level devices', isFav: false, isPinned: false, category: 'ideas', updated: 'Today, 2:15 PM' },
+      { id: 3, title: 'Work Tasks', body: 'Refactor Compose state hoisting\nFix typing latency on entry devices\nDeploy v1.0 native release', isFav: false, isPinned: false, category: 'work', updated: 'Yesterday' }
     ];
 
     let currentEditingId = null;
-    let selectedNoteIdForModal = null;
-    let pressTimer = null;
+
+    function countWords(str) {
+      const trimmed = (str || '').trim();
+      return trimmed ? trimmed.split(/\s+/).length : 0;
+    }
+
+    function showToast(message, showUndo = false) {
+      const toast = document.getElementById('toast-bar');
+      const textEl = document.getElementById('toast-text');
+      const undoBtn = document.getElementById('toast-undo');
+
+      textEl.innerText = message;
+      undoBtn.style.display = showUndo ? 'inline' : 'none';
+
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    // Toast Undo Action
+    document.getElementById('toast-undo').addEventListener('click', () => {
+      if (recentlyDeletedNote) {
+        notes.unshift(recentlyDeletedNote);
+        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+        recentlyDeletedNote = null;
+        document.getElementById('toast-bar').classList.remove('show');
+        renderNotes();
+      }
+    });
 
     function renderNotes() {
       const listEl = document.getElementById('preview-notes-list');
@@ -712,123 +946,170 @@
       
       let filtered = notes.filter(n => {
         if (currentTab === 'favorites' && !n.isFav) return false;
+        if (currentFilter === 'pinned' && !n.isPinned) return false;
+        if (currentFilter === 'starred' && !n.isFav) return false;
+        if (currentFilter === 'ideas' && n.category !== 'ideas') return false;
+        if (currentFilter === 'work' && n.category !== 'work') return false;
+
         if (searchVal) {
           return (n.title && n.title.toLowerCase().includes(searchVal)) || (n.body && n.body.toLowerCase().includes(searchVal));
         }
         return true;
       });
 
-      // Sort pinned to top
+      // Sort pinned to top, then by id descending
       filtered.sort((a, b) => {
         if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
         return b.id - a.id;
       });
+
+      document.getElementById('preview-count').innerText = filtered.length;
+
+      // Update View mode class
+      if (isGridView) {
+        listEl.classList.add('grid');
+      } else {
+        listEl.classList.remove('grid');
+      }
 
       if (filtered.length === 0) {
         listEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin-top: 80px; font-size: 14px;">No notes found</div>`;
         return;
       }
 
-      listEl.innerHTML = filtered.map(n => `
-        <div class="note-item" data-id="${n.id}">
+      listEl.innerHTML = filtered.map(n => {
+        const words = countWords(`${n.title} ${n.body}`);
+        return `
+        <div class="note-item ${n.isPinned ? 'pinned' : ''}" data-id="${n.id}">
           <div class="note-item-header">
-            <span class="note-item-title">
-              ${n.isPinned ? '📌 ' : ''}${n.title || 'Untitled Note'}
-            </span>
-            ${n.isFav ? '<span style="color: var(--text);">★</span>' : ''}
+            <div class="note-item-title-wrapper">
+              ${n.isPinned ? '<span class="pinned-badge">PIN</span>' : ''}
+              <span class="note-item-title">${n.title || 'Untitled Note'}</span>
+            </div>
+            <!-- Direct Action Buttons Row on Card -->
+            <div class="card-actions">
+              <button class="card-btn ${n.isPinned ? 'active' : ''}" data-action="pin" data-id="${n.id}" title="${n.isPinned ? 'Unpin' : 'Pin to top'}">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="${n.isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 17v5"/><path d="M5 17h14l-1-7H6l-1 7z"/><path d="M7 10V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6"/></svg>
+              </button>
+              <button class="card-btn ${n.isFav ? 'active' : ''}" data-action="star" data-id="${n.id}" title="${n.isFav ? 'Unmark Favorite' : 'Mark Favorite'}">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="${n.isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              <button class="card-btn" data-action="copy" data-id="${n.id}" title="Copy Note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+              <button class="card-btn delete" data-action="delete" data-id="${n.id}" title="Delete Note">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
           </div>
           <div class="note-item-preview">${(n.body || '').replace(/\n/g, ' ')}</div>
-          <div class="note-item-date">${n.updated || 'Recent'}</div>
+          <div class="note-item-footer">
+            <span>${n.updated || 'Recent'}</span>
+            <span class="word-badge">${words} words</span>
+          </div>
         </div>
-      `).join('');
+      `}).join('');
 
-      // Attach click and long-press handlers
+      // Attach event listeners to card actions and card click
       listEl.querySelectorAll('.note-item').forEach(el => {
         const id = parseInt(el.getAttribute('data-id'));
-        
-        // Click to open
+
+        // Tap on card body opens editor
         el.addEventListener('click', (e) => {
-          if (!pressTimer) {
+          if (!e.target.closest('.card-btn')) {
             openEditor(id);
           }
         });
+      });
 
-        // Long press handling
-        const startPress = (e) => {
-          pressTimer = setTimeout(() => {
-            openActionModal(id);
-            pressTimer = null;
-          }, 500);
-        };
-
-        const cancelPress = () => {
-          if (pressTimer) {
-            clearTimeout(pressTimer);
-            pressTimer = null;
+      // Pin button on card
+      listEl.querySelectorAll('.card-btn[data-action="pin"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'));
+          const note = notes.find(n => n.id === id);
+          if (note) {
+            note.isPinned = !note.isPinned;
+            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            showToast(note.isPinned ? '📌 Note pinned to top' : 'Note unpinned');
+            renderNotes();
           }
-        };
+        });
+      });
 
-        el.addEventListener('touchstart', startPress, { passive: true });
-        el.addEventListener('touchend', cancelPress);
-        el.addEventListener('touchmove', cancelPress);
-        el.addEventListener('mousedown', startPress);
-        el.addEventListener('mouseup', cancelPress);
-        el.addEventListener('mouseleave', cancelPress);
-        el.addEventListener('contextmenu', (e) => {
-          e.preventDefault();
-          openActionModal(id);
+      // Star button on card
+      listEl.querySelectorAll('.card-btn[data-action="star"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'));
+          const note = notes.find(n => n.id === id);
+          if (note) {
+            note.isFav = !note.isFav;
+            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            showToast(note.isFav ? '⭐ Added to Favorites' : 'Removed from Favorites');
+            renderNotes();
+          }
+        });
+      });
+
+      // Copy button on card
+      listEl.querySelectorAll('.card-btn[data-action="copy"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'));
+          const note = notes.find(n => n.id === id);
+          if (note) {
+            const textToCopy = `${note.title || ''}\n\n${note.body || ''}`.trim();
+            navigator.clipboard.writeText(textToCopy).catch(() => {});
+            showToast('📋 Copied to clipboard');
+          }
+        });
+      });
+
+      // Delete button on card
+      listEl.querySelectorAll('.card-btn[data-action="delete"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'));
+          const index = notes.findIndex(n => n.id === id);
+          if (index !== -1) {
+            recentlyDeletedNote = notes[index];
+            notes.splice(index, 1);
+            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            showToast('Note deleted', true);
+            renderNotes();
+          }
         });
       });
     }
 
-    // Modal Actions (Pin, Star, Delete)
-    function openActionModal(id) {
-      selectedNoteIdForModal = id;
-      const note = notes.find(n => n.id === id);
-      if (!note) return;
-
-      document.getElementById('modal-note-title').innerText = note.title || 'Untitled Note';
-      document.getElementById('modal-pin-label').innerText = note.isPinned ? 'Unpin Note' : 'Pin to Top';
-      document.getElementById('modal-star-label').innerText = note.isFav ? 'Remove from Favorites' : 'Add to Favorites';
-      document.getElementById('action-modal').classList.add('active');
-    }
-
-    function closeActionModal() {
-      document.getElementById('action-modal').classList.remove('active');
-      selectedNoteIdForModal = null;
-    }
-
-    document.getElementById('modal-action-pin').addEventListener('click', () => {
-      const note = notes.find(n => n.id === selectedNoteIdForModal);
-      if (note) {
-        note.isPinned = !note.isPinned;
-        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
-        renderNotes();
-      }
-      closeActionModal();
-    });
-
-    document.getElementById('modal-action-star').addEventListener('click', () => {
-      const note = notes.find(n => n.id === selectedNoteIdForModal);
-      if (note) {
-        note.isFav = !note.isFav;
-        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
-        renderNotes();
-      }
-      closeActionModal();
-    });
-
-    document.getElementById('modal-action-delete').addEventListener('click', () => {
-      notes = notes.filter(n => n.id !== selectedNoteIdForModal);
-      localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+    // Toggle Grid / List view
+    document.getElementById('preview-view-toggle').addEventListener('click', () => {
+      isGridView = !isGridView;
       renderNotes();
-      closeActionModal();
     });
 
-    document.getElementById('modal-action-cancel').addEventListener('click', closeActionModal);
-    document.getElementById('action-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'action-modal') closeActionModal();
+    // Filter Chips Handling
+    document.querySelectorAll('.filter-chips .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chips .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentFilter = chip.getAttribute('data-filter');
+        renderNotes();
+      });
     });
+
+    // Update Live Editor Stats
+    function updateEditorStats() {
+      const title = document.getElementById('editor-title').value;
+      const body = document.getElementById('editor-body').value;
+      const words = countWords(`${title} ${body}`);
+      const chars = (title + body).length;
+      const readMins = Math.max(1, Math.ceil(words / 200));
+
+      document.getElementById('editor-stats').innerText = `${words} words • ${chars} characters`;
+      document.getElementById('editor-readtime').innerText = `~${readMins} min read`;
+    }
 
     // Editor Handlers
     window.openEditor = function(id) {
@@ -836,15 +1117,30 @@
       const note = notes.find(n => n.id === id);
       document.getElementById('editor-title').value = note ? note.title : '';
       document.getElementById('editor-body').value = note ? note.body : '';
-      document.getElementById('editor-fav').innerHTML = note && note.isFav ? '★' : '☆';
+      
+      updatePinButton(note ? note.isPinned : false);
+      updateFavButton(note ? note.isFav : false);
+      
       document.getElementById('editor-status').innerText = 'Saved';
+      updateEditorStats();
+
       document.getElementById('preview-editor').classList.add('active');
       if (!note) {
         document.getElementById('editor-title').focus();
       }
     };
 
-    // Tapping anywhere on the editor body wrapper focuses the textarea
+    function updatePinButton(isPinned) {
+      const btn = document.getElementById('editor-pin');
+      btn.style.color = isPinned ? 'var(--text)' : 'var(--text-muted)';
+    }
+
+    function updateFavButton(isFav) {
+      const btn = document.getElementById('editor-fav');
+      btn.style.color = isFav ? 'var(--text)' : 'var(--text-muted)';
+    }
+
+    // Tapping editor body wrapper focuses textarea
     document.getElementById('editor-body-wrapper').addEventListener('click', () => {
       document.getElementById('editor-body').focus();
     });
@@ -873,27 +1169,79 @@
             body: body,
             isFav: false,
             isPinned: false,
+            category: 'all',
             updated: 'Just now'
           });
         }
       }
       localStorage.setItem('noto_web_notes', JSON.stringify(notes));
       document.getElementById('editor-status').innerText = 'Saved';
+      updateEditorStats();
     }
 
     // Auto-save on input
     let autosaveTimer = null;
     function scheduleWebAutosave() {
       document.getElementById('editor-status').innerText = 'Saving...';
+      updateEditorStats();
       clearTimeout(autosaveTimer);
       autosaveTimer = setTimeout(() => {
         saveEditor();
-      }, 300);
+      }, 350);
     }
 
     document.getElementById('editor-title').addEventListener('input', scheduleWebAutosave);
     document.getElementById('editor-body').addEventListener('input', scheduleWebAutosave);
 
+    // Editor Pin Toggle
+    document.getElementById('editor-pin').addEventListener('click', () => {
+      saveEditor();
+      const note = notes.find(n => n.id === currentEditingId);
+      if (note) {
+        note.isPinned = !note.isPinned;
+        updatePinButton(note.isPinned);
+        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+        showToast(note.isPinned ? '📌 Note pinned to top' : 'Note unpinned');
+      }
+    });
+
+    // Editor Fav Toggle
+    document.getElementById('editor-fav').addEventListener('click', () => {
+      saveEditor();
+      const note = notes.find(n => n.id === currentEditingId);
+      if (note) {
+        note.isFav = !note.isFav;
+        updateFavButton(note.isFav);
+        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+        showToast(note.isFav ? '⭐ Added to Favorites' : 'Removed from Favorites');
+      }
+    });
+
+    // Editor Copy Note
+    document.getElementById('editor-copy').addEventListener('click', () => {
+      const title = document.getElementById('editor-title').value.trim();
+      const body = document.getElementById('editor-body').value.trim();
+      const fullText = `${title}\n\n${body}`.trim();
+      navigator.clipboard.writeText(fullText).catch(() => {});
+      showToast('📋 Copied to clipboard');
+    });
+
+    // Editor Delete
+    document.getElementById('editor-delete').addEventListener('click', () => {
+      if (currentEditingId) {
+        const index = notes.findIndex(n => n.id === currentEditingId);
+        if (index !== -1) {
+          recentlyDeletedNote = notes[index];
+          notes.splice(index, 1);
+          localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+          showToast('Note deleted', true);
+        }
+      }
+      document.getElementById('preview-editor').classList.remove('active');
+      renderNotes();
+    });
+
+    // Editor Back & Done Buttons
     document.getElementById('editor-back').addEventListener('click', () => {
       saveEditor();
       document.getElementById('preview-editor').classList.remove('active');
@@ -906,22 +1254,15 @@
       renderNotes();
     });
 
-    document.getElementById('editor-fav').addEventListener('click', () => {
-      const note = notes.find(n => n.id === currentEditingId);
-      if (note) {
-        note.isFav = !note.isFav;
-        document.getElementById('editor-fav').innerHTML = note.isFav ? '★' : '☆';
-        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
-      }
-    });
-
-    // New Note Button
+    // New Note Button in bottom bar
     document.getElementById('bar-new').addEventListener('click', () => {
       currentEditingId = null;
       document.getElementById('editor-title').value = '';
       document.getElementById('editor-body').value = '';
-      document.getElementById('editor-fav').innerHTML = '☆';
+      updatePinButton(false);
+      updateFavButton(false);
       document.getElementById('editor-status').innerText = 'New Note';
+      updateEditorStats();
       document.getElementById('preview-editor').classList.add('active');
       setTimeout(() => {
         document.getElementById('editor-title').focus();
@@ -956,6 +1297,7 @@
 
     document.getElementById('preview-search-input').addEventListener('input', renderNotes);
 
+    // Initial Render
     renderNotes();
   </script>
 </body>

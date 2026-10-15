@@ -46,6 +46,9 @@ class MainViewModel(
     private val _isSearchBarVisible = MutableStateFlow(false)
     val isSearchBarVisible: StateFlow<Boolean> = _isSearchBarVisible.asStateFlow()
 
+    private val _isGridView = MutableStateFlow(false)
+    val isGridView: StateFlow<Boolean> = _isGridView.asStateFlow()
+
     private val _recentlyDeletedNote = MutableStateFlow<Note?>(null)
     val recentlyDeletedNote: StateFlow<Note?> = _recentlyDeletedNote.asStateFlow()
 
@@ -89,6 +92,23 @@ class MainViewModel(
         _isSearchBarVisible.value = nextVisible
         if (!nextVisible) {
             _searchQuery.value = ""
+        }
+    }
+
+    fun toggleViewMode() {
+        _isGridView.value = !_isGridView.value
+    }
+
+    fun duplicateNote(note: Note) {
+        viewModelScope.launch {
+            val now = System.currentTimeMillis()
+            val copy = note.copy(
+                id = 0L,
+                title = if (note.title.isNotBlank()) "${note.title} (Copy)" else "",
+                createdAt = now,
+                updatedAt = now
+            )
+            repository.saveNote(copy)
         }
     }
 

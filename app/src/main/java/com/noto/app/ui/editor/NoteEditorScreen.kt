@@ -1,11 +1,14 @@
 package com.noto.app.ui.editor
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,11 +18,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,8 +32,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +57,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -60,7 +71,9 @@ import com.noto.app.ui.components.DeleteConfirmationDialog
 import com.noto.app.util.DateFormatter
 
 /**
- * Clean, distraction-free note editor screen with zero infinite measurement loops.
+ * Clean, distraction-free note editor screen with zero typing lag,
+ * visible UI action buttons for Pin, Star, Copy, Delete, Done,
+ * and live word/character count pill.
  */
 @Composable
 fun NoteEditorScreen(
@@ -73,6 +86,8 @@ fun NoteEditorScreen(
 
     val titleFocusRequester = remember { FocusRequester() }
     val bodyFocusRequester = remember { FocusRequester() }
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
 
     // Intercept back navigation to flush pending changes
     BackHandler {
@@ -102,12 +117,24 @@ fun NoteEditorScreen(
         }
     }
 
+    // Calculate word and character count
+    val combinedText = remember(uiState.title, uiState.body) {
+        "${uiState.title} ${uiState.body}".trim()
+    }
+    val wordCount = remember(combinedText) {
+        if (combinedText.isEmpty()) 0 else combinedText.split("\\s+".toRegex()).count { it.isNotBlank() }
+    }
+    val charCount = remember(uiState.title, uiState.body) {
+        uiState.title.length + uiState.body.length
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             EditorTopBar(
                 isFavorite = uiState.isFavorite,
+                isPinned = uiState.isPinned,
                 saveStatus = uiState.saveStatus,
                 onBack = {
                     viewModel.flushSave()
@@ -118,8 +145,53 @@ fun NoteEditorScreen(
                     onNavigateBack()
                 },
                 onToggleFavorite = { viewModel.toggleFavorite() },
+                onTogglePin = { viewModel.togglePin() },
+                onCopy = {
+                    val contentToCopy = buildString {
+                        if (uiState.title.isNotBlank()) appendLine(uiState.title)
+                        if (uiState.body.isNotBlank()) append(uiState.body)
+                    }.trim()
+                    clipboardManager.setText(AnnotatedString(contentToCopy))
+                    Toast.makeText(context, "Note copied to clipboard", Toast.LENGTH_SHORT).show()
+                },
                 onDelete = { showDeleteDialog = true }
             )
+        },
+        bottomBar = {
+            // Minimal Live Word & Character Count Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(horizontal = 24.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(999.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = "$wordCount words • $charCount characters",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontSize = 11.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                if (uiState.lastUpdated > 0L) {
+                    Text(
+                        text = DateFormatter.formatEditor(uiState.lastUpdated),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontSize = 11.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    )
+                }
+            }
         }
     ) { innerPadding ->
         Column(
@@ -136,16 +208,6 @@ fun NoteEditorScreen(
                 }
                 .padding(horizontal = 24.dp, vertical = 8.dp)
         ) {
-            // Last edited timestamp indicator
-            if (uiState.lastUpdated > 0L) {
-                Text(
-                    text = DateFormatter.formatEditor(uiState.lastUpdated),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f),
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-            }
-
             // Editable Title Field
             Box(
                 modifier = Modifier
@@ -248,17 +310,20 @@ fun NoteEditorScreen(
 @Composable
 private fun EditorTopBar(
     isFavorite: Boolean,
+    isPinned: Boolean,
     saveStatus: SaveStatus,
     onBack: () -> Unit,
     onDone: () -> Unit,
     onToggleFavorite: () -> Unit,
+    onTogglePin: () -> Unit,
+    onCopy: () -> Unit,
     onDelete: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .padding(horizontal = 12.dp, vertical = 6.dp),
+            .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Back Button
@@ -288,15 +353,34 @@ private fun EditorTopBar(
                 text = if (saveStatus == SaveStatus.SAVING) "Saving..." else "Saved",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                modifier = Modifier.padding(end = 8.dp)
+                modifier = Modifier.padding(end = 4.dp)
             )
         }
 
-        // Star / Favorite Toggle Button
+        // 1. Visible Pin Button
+        IconButton(
+            onClick = onTogglePin,
+            modifier = Modifier
+                .size(38.dp)
+                .clip(CircleShape)
+        ) {
+            Icon(
+                imageVector = if (isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                contentDescription = if (isPinned) "Unpin note" else "Pin note",
+                tint = if (isPinned) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+                modifier = Modifier.size(20.dp)
+            )
+        }
+
+        // 2. Visible Star / Favorite Toggle Button
         IconButton(
             onClick = onToggleFavorite,
             modifier = Modifier
-                .size(40.dp)
+                .size(38.dp)
                 .clip(CircleShape)
         ) {
             Icon(
@@ -307,30 +391,45 @@ private fun EditorTopBar(
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
 
-        // Delete Button
+        // 3. Visible Copy Note Button
+        IconButton(
+            onClick = onCopy,
+            modifier = Modifier
+                .size(38.dp)
+                .clip(CircleShape)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ContentCopy,
+                contentDescription = "Copy Note",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(19.dp)
+            )
+        }
+
+        // 4. Visible Delete Button
         IconButton(
             onClick = onDelete,
             modifier = Modifier
-                .size(40.dp)
+                .size(38.dp)
                 .clip(CircleShape)
         ) {
             Icon(
                 imageVector = Icons.Filled.DeleteOutline,
                 contentDescription = "Delete Note",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
 
-        // Done / Save Checkmark Button
+        // 5. Visible Done / Save Checkmark Button
         IconButton(
             onClick = onDone,
             modifier = Modifier
-                .size(40.dp)
+                .size(38.dp)
                 .clip(CircleShape)
         ) {
             Icon(

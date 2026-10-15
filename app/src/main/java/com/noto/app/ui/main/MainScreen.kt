@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +19,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,8 +64,17 @@ import com.noto.app.ui.navigation.BottomTab
 import kotlinx.coroutines.launch
 
 /**
+ * Filter mode for quick filter chips in the main screen.
+ */
+enum class QuickFilter {
+    ALL,
+    PINNED,
+    FAVORITES
+}
+
+/**
  * Main screen displaying user's notes with search, tabs, floating bottom navigation bar,
- * and long-press action options (Pin, Favorite, Delete).
+ * grid/list view mode toggle, filter chips, and direct visible UI actions.
  */
 @Composable
 fun MainScreen(
@@ -70,10 +87,21 @@ fun MainScreen(
     val currentTab by viewModel.currentTab.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearchBarVisible by viewModel.isSearchBarVisible.collectAsState()
+    val isGridView by viewModel.isGridView.collectAsState()
 
+    var quickFilter by remember { mutableStateOf(QuickFilter.ALL) }
     var selectedNoteForOptions by remember { mutableStateOf<Note?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    // Apply quick chip filter in addition to active tab
+    val displayedNotes = remember(notes, quickFilter) {
+        when (quickFilter) {
+            QuickFilter.ALL -> notes
+            QuickFilter.PINNED -> notes.filter { it.isPinned }
+            QuickFilter.FAVORITES -> notes.filter { it.isFavorite }
+        }
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -87,7 +115,10 @@ fun MainScreen(
         bottomBar = {
             NotoBottomBar(
                 currentTab = currentTab,
-                onTabSelected = { tab -> viewModel.selectTab(tab) },
+                onTabSelected = { tab ->
+                    quickFilter = QuickFilter.ALL
+                    viewModel.selectTab(tab)
+                },
                 onNewNoteClick = onNewNoteClick
             )
         }
@@ -98,10 +129,13 @@ fun MainScreen(
                 .padding(top = innerPadding.calculateTopPadding())
                 .statusBarsPadding()
         ) {
-            // App Header
+            // App Header with Title, Count, Grid/List view toggle, and Search button
             HeaderSection(
                 tab = currentTab,
+                noteCount = displayedNotes.size,
+                isGridView = isGridView,
                 isSearchBarVisible = isSearchBarVisible,
+                onToggleViewMode = { viewModel.toggleViewMode() },
                 onSearchToggle = { viewModel.toggleSearchBar() }
             )
 
@@ -120,38 +154,129 @@ fun MainScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
+            // Quick Filter Chips Row (All, Pinned, Favorites)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val pinnedCount = notes.count { it.isPinned }
+                val favCount = notes.count { it.isFavorite }
+
+                FilterChipItem(
+                    label = "All (${notes.size})",
+                    isSelected = quickFilter == QuickFilter.ALL,
+                    onClick = { quickFilter = QuickFilter.ALL }
+                )
+
+                FilterChipItem(
+                    label = "📌 Pinned ($pinnedCount)",
+                    isSelected = quickFilter == QuickFilter.PINNED,
+                    onClick = { quickFilter = QuickFilter.PINNED }
+                )
+
+                FilterChipItem(
+                    label = "⭐ Favorites ($favCount)",
+                    isSelected = quickFilter == QuickFilter.FAVORITES,
+                    onClick = { quickFilter = QuickFilter.FAVORITES }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Content List or Empty State
-            if (notes.isEmpty()) {
+            if (displayedNotes.isEmpty()) {
                 EmptyStateView(
                     tab = currentTab,
                     isSearching = searchQuery.isNotBlank(),
                     modifier = Modifier.weight(1f)
                 )
             } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    contentPadding = PaddingValues(
-                        start = 20.dp,
-                        end = 20.dp,
-                        top = 10.dp,
-                        bottom = innerPadding.calculateBottomPadding() + 24.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(
-                        items = notes,
-                        key = { it.id }
-                    ) { note ->
-                        NoteCard(
-                            note = note,
-                            onClick = { onNoteClick(note.id) },
-                            onLongClick = { selectedNoteForOptions = note },
-                            onFavoriteToggle = { viewModel.toggleFavorite(note) }
-                        )
+                if (isGridView) {
+                    // 2-Column Staggered Grid View
+                    LazyVerticalStaggeredGrid(
+                        columns = StaggeredGridCells.Fixed(2),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 8.dp,
+                            bottom = innerPadding.calculateBottomPadding() + 24.dp
+                        ),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalItemSpacing = 10.dp
+                    ) {
+                        items(
+                            items = displayedNotes,
+                            key = { it.id }
+                        ) { note ->
+                            NoteCard(
+                                note = note,
+                                onClick = { onNoteClick(note.id) },
+                                onLongClick = { selectedNoteForOptions = note },
+                                onTogglePin = { viewModel.togglePin(note) },
+                                onFavoriteToggle = { viewModel.toggleFavorite(note) },
+                                onDelete = {
+                                    viewModel.deleteNoteWithUndo(note) {
+                                        scope.launch {
+                                            val result = snackbarHostState.showSnackbar(
+                                                message = "Note deleted",
+                                                actionLabel = "Undo",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                            if (result == SnackbarResult.ActionPerformed) {
+                                                viewModel.undoDelete()
+                                            }
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                } else {
+                    // 1-Column Clean List View
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f),
+                        contentPadding = PaddingValues(
+                            start = 20.dp,
+                            end = 20.dp,
+                            top = 8.dp,
+                            bottom = innerPadding.calculateBottomPadding() + 24.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = displayedNotes,
+                            key = { it.id }
+                        ) { note ->
+                            NoteCard(
+                                note = note,
+                                onClick = { onNoteClick(note.id) },
+                                onLongClick = { selectedNoteForOptions = note },
+                                onTogglePin = { viewModel.togglePin(note) },
+                                onFavoriteToggle = { viewModel.toggleFavorite(note) },
+                                onDelete = {
+                                    viewModel.deleteNoteWithUndo(note) {
+                                        scope.launch {
+                                            val result = snackbarHostState.showSnackbar(
+                                                message = "Note deleted",
+                                                actionLabel = "Undo",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                            if (result == SnackbarResult.ActionPerformed) {
+                                                viewModel.undoDelete()
+                                            }
+                                        }
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -186,13 +311,16 @@ fun MainScreen(
 @Composable
 private fun HeaderSection(
     tab: BottomTab,
+    noteCount: Int,
+    isGridView: Boolean,
     isSearchBarVisible: Boolean,
+    onToggleViewMode: () -> Unit,
     onSearchToggle: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 12.dp),
+            .padding(horizontal = 24.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -201,28 +329,105 @@ private fun HeaderSection(
             else -> "Noto"
         }
 
-        Text(
-            text = title,
-            style = MaterialTheme.typography.displayLarge.copy(
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        IconButton(
-            onClick = onSearchToggle,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-        ) {
-            Icon(
-                imageVector = if (isSearchBarVisible) Icons.Filled.Close else Icons.Filled.Search,
-                contentDescription = if (isSearchBarVisible) "Close search" else "Search notes",
-                tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(20.dp)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.displayLarge.copy(
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                color = MaterialTheme.colorScheme.onBackground
             )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Subtitle / Note Count Pill
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(horizontal = 7.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    text = "$noteCount",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // View Mode Toggle Button (Grid / List)
+            IconButton(
+                onClick = onToggleViewMode,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Icon(
+                    imageVector = if (isGridView) Icons.Filled.ViewAgenda else Icons.Filled.GridView,
+                    contentDescription = if (isGridView) "Switch to list view" else "Switch to grid view",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            // Search Toggle Button
+            IconButton(
+                onClick = onSearchToggle,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Icon(
+                    imageVector = if (isSearchBarVisible) Icons.Filled.Close else Icons.Filled.Search,
+                    contentDescription = if (isSearchBarVisible) "Close search" else "Search notes",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FilterChipItem(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(999.dp))
+            .background(
+                if (isSelected) {
+                    MaterialTheme.colorScheme.onBackground
+                } else {
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                }
+            )
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontSize = 12.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+            ),
+            color = if (isSelected) {
+                MaterialTheme.colorScheme.background
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            }
+        )
     }
 }

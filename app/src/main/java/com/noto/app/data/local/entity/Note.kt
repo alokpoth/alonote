@@ -1,5 +1,6 @@
 package com.noto.app.data.local.entity
 
+import androidx.compose.runtime.Immutable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -10,9 +11,11 @@ import androidx.room.PrimaryKey
  * @property title The title of the note.
  * @property body The multiline body text of the note.
  * @property isFavorite Whether the note has been starred as a favorite.
+ * @property isPinned Whether the note has been pinned to the top of the list.
  * @property createdAt Timestamp in milliseconds when the note was first created.
  * @property updatedAt Timestamp in milliseconds when the note was last modified.
  */
+@Immutable
 @Entity(tableName = "notes")
 data class Note(
     @PrimaryKey(autoGenerate = true)
@@ -29,6 +32,21 @@ data class Note(
      */
     val isEmpty: Boolean
         get() = title.isBlank() && body.isBlank()
+
+    /**
+     * Calculates the word count of the combined title and body.
+     */
+    val wordCount: Int
+        get() {
+            val content = "$title $body".trim()
+            return if (content.isEmpty()) 0 else content.split("\\s+".toRegex()).count { it.isNotBlank() }
+        }
+
+    /**
+     * Calculates the character count of the combined title and body.
+     */
+    val charCount: Int
+        get() = (title.length + body.length)
 
     /**
      * Resolves the primary title to display in note lists.

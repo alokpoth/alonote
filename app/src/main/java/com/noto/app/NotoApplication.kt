@@ -17,9 +17,13 @@ class NotoApplication : Application() {
     lateinit var noteRepository: NoteRepository
         private set
 
+    lateinit var themeRepository: com.noto.app.data.repository.ThemeRepository
+        private set
+
     override fun onCreate() {
         super.onCreate()
         database = NotoDatabase.getInstance(this)
         noteRepository = NoteRepositoryImpl(database.noteDao())
+        themeRepository = com.noto.app.data.repository.ThemeRepository(this)
     }
 }

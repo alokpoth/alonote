@@ -30,7 +30,7 @@ fun NotoNavigation(
         entryProvider = entryProvider {
             entry<MainNavKey> {
                 val mainViewModel: MainViewModel = viewModel(
-                    factory = MainViewModel.Factory(repository)
+                    factory = MainViewModel.Factory(repository, application.themeRepository)
                 )
                 MainScreen(
                     viewModel = mainViewModel,

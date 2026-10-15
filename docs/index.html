@@ -240,7 +240,7 @@
     }
 
     .app-screen {
-      height: 560px;
+      height: 570px;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -377,7 +377,7 @@
       cursor: pointer;
       user-select: none;
       -webkit-user-select: none;
-      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease, opacity 0.15s ease;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -385,6 +385,18 @@
 
     .note-item:active {
       transform: scale(0.98);
+    }
+
+    .note-item.dragging {
+      opacity: 0.35;
+      transform: scale(0.96);
+      border-style: dashed;
+    }
+
+    .note-item.drag-over {
+      border-color: var(--accent);
+      background: var(--surface-variant);
+      transform: translateY(2px);
     }
 
     .note-item.pinned {
@@ -407,6 +419,14 @@
       gap: 6px;
       overflow: hidden;
       flex: 1;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      color: var(--text-muted);
+      font-size: 15px;
+      user-select: none;
+      line-height: 1;
     }
 
     .pinned-badge {
@@ -554,7 +574,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .editor-top-actions {
@@ -589,7 +609,7 @@
       background: transparent;
       color: var(--text);
       width: 100%;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .editor-body-wrapper {
@@ -607,17 +627,50 @@
       font-size: 16px;
       line-height: 1.55;
       resize: none;
-      min-height: 250px;
+      min-height: 200px;
+    }
+
+    /* Markdown Formatting Toolbar */
+    .markdown-toolbar {
+      display: flex;
+      gap: 6px;
+      padding: 6px 2px;
+      border-top: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .markdown-toolbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .md-tool-btn {
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: var(--surface-variant);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .md-tool-btn:active {
+      transform: scale(0.92);
     }
 
     .editor-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 0 4px;
+      padding: 8px 0 2px;
       font-size: 11px;
       color: var(--text-muted);
-      border-top: 1px solid var(--border);
     }
 
     /* Toast Snackbar */
@@ -716,7 +769,7 @@
         border-width: 3px;
       }
       .app-screen {
-        height: 520px;
+        height: 540px;
       }
     }
   </style>
@@ -758,7 +811,7 @@
 
     <!-- Interactive Live App Demo -->
     <div class="app-preview-wrapper">
-      <div class="demo-label">✨ Interactive Mobile App Demo (Full UI Actions on Cards)</div>
+      <div class="demo-label">✨ Interactive Mobile App Demo (Drag to Reorder • Markdown Tools)</div>
       <div class="app-preview-container">
         <div class="app-screen">
           <!-- Top App Bar -->
@@ -768,13 +821,17 @@
               <span class="badge-count" id="preview-count">0</span>
             </div>
             <div class="header-controls">
+              <!-- In-Demo Theme Toggle (Light / Dark) -->
+              <button class="ctrl-btn" id="demo-theme-btn" title="Toggle Light / Dark Mode">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              </button>
               <!-- Grid / List View Toggle Button -->
               <button class="ctrl-btn" id="preview-view-toggle" title="Toggle Grid / List View">
-                <svg id="icon-grid" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <svg id="icon-grid" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
               </button>
               <!-- Search Button -->
               <button class="ctrl-btn" id="preview-search-toggle" title="Search Notes">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </button>
             </div>
           </div>
@@ -844,8 +901,19 @@
             </div>
             <input type="text" class="editor-title" id="editor-title" placeholder="Title">
             <div class="editor-body-wrapper" id="editor-body-wrapper">
-              <textarea class="editor-body" id="editor-body" placeholder="Note"></textarea>
+              <textarea class="editor-body" id="editor-body" placeholder="Note (Try Markdown: bold, italic, todo, list)"></textarea>
             </div>
+
+            <!-- Markdown Formatting Toolbar -->
+            <div class="markdown-toolbar">
+              <button class="md-tool-btn" data-tool="h" title="Heading"><b>H</b></button>
+              <button class="md-tool-btn" data-tool="b" title="Bold"><b>B</b></button>
+              <button class="md-tool-btn" data-tool="i" title="Italic"><i>I</i></button>
+              <button class="md-tool-btn" data-tool="list" title="Bullet List">• List</button>
+              <button class="md-tool-btn" data-tool="todo" title="To-do Checklist">☑ Task</button>
+              <button class="md-tool-btn" data-tool="strike" title="Strikethrough"><s>S</s></button>
+            </div>
+
             <!-- Editor Live Word Count Bar -->
             <div class="editor-footer">
               <span id="editor-stats">0 words • 0 characters</span>
@@ -865,20 +933,20 @@
     <!-- Core Features Grid -->
     <div class="features-grid">
       <div class="feature-card">
+        <h3>🌓 Light & Dark Theme</h3>
+        <p>Seamless toggle between monochrome pure black Dark Mode and paper-white Light Mode, respecting your system preferences automatically.</p>
+      </div>
+      <div class="feature-card">
+        <h3>↕️ Drag-and-Drop Reorder</h3>
+        <p>Press and hold any note card to drag up or down to reorder your thoughts with buttery smooth 120 FPS animations and instant persistence.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📝 Markdown & Checklist</h3>
+        <p>Docked Apple-style formatting toolbar for Bold, Italic, Headings, Bullet Lists, and To-Do Checklists with auto-continuation on Enter.</p>
+      </div>
+      <div class="feature-card">
         <h3>🔒 100% Offline & Private</h3>
         <p>No internet permission, zero tracking SDKs, no accounts, and no cloud synchronization. Your private notes stay exclusively in your device's local Room database.</p>
-      </div>
-      <div class="feature-card">
-        <h3>✨ Apple-Inspired Monochrome</h3>
-        <p>Minimalist black, white, and subtle gray palette with clean typography, rounded surfaces, and a translucent floating bottom navigation bar.</p>
-      </div>
-      <div class="feature-card">
-        <h3>⚡ Direct UI Actions & Pinning</h3>
-        <p>Instant 1-tap UI buttons to Pin to top, Star as favorite, Copy, or Delete right on note cards. Grid and list views with real-time word counting.</p>
-      </div>
-      <div class="feature-card">
-        <h3>🚀 Native & 120 FPS Smooth</h3>
-        <p>Engineered using Kotlin, Jetpack Compose, Material 3, Room SQLite, and Coroutines/Flow with clean MVVM architecture and zero typing lag.</p>
       </div>
     </div>
   </main>
@@ -890,9 +958,14 @@
   <script>
     // Theme toggle
     const themeBtn = document.getElementById('theme-btn');
-    themeBtn.addEventListener('click', () => {
+    const demoThemeBtn = document.getElementById('demo-theme-btn');
+
+    function toggleAppTheme() {
       document.documentElement.classList.toggle('dark');
-    });
+    }
+
+    themeBtn.addEventListener('click', toggleAppTheme);
+    demoThemeBtn.addEventListener('click', toggleAppTheme);
 
     // Notes Data
     let currentTab = 'notes';
@@ -902,9 +975,9 @@
     let toastTimeout = null;
 
     let notes = JSON.parse(localStorage.getItem('noto_web_notes')) || [
-      { id: 1, title: 'Welcome to Noto', body: 'A minimal, distraction-free note app for Android.\n100% offline, zero trackers, pure writing.', isFav: true, isPinned: true, category: 'all', updated: 'Just now' },
-      { id: 2, title: 'Project Ideas', body: 'Design a clean monochrome UI\nUse Room database for local persistence\nOptimize for entry-level devices', isFav: false, isPinned: false, category: 'ideas', updated: 'Today, 2:15 PM' },
-      { id: 3, title: 'Work Tasks', body: 'Refactor Compose state hoisting\nFix typing latency on entry devices\nDeploy v1.0 native release', isFav: false, isPinned: false, category: 'work', updated: 'Yesterday' }
+      { id: 1, title: 'Welcome to Noto', body: 'A minimal, distraction-free note app.\n• 100% offline, zero trackers\n[ ] Try drag-and-drop reordering\n[x] Enjoy pure writing', isFav: true, isPinned: true, category: 'all', updated: 'Just now' },
+      { id: 2, title: 'Weekly Groceries', body: '[x] Almond milk\n[ ] Fresh avocados\n[ ] Whole bean coffee\n[ ] Sourdough bread', isFav: false, isPinned: false, category: 'ideas', updated: 'Today, 2:15 PM' },
+      { id: 3, title: 'Work Tasks', body: '• Clean architecture MVVM\n• Jetpack Compose Material 3\n[ ] Release native APK v1.0', isFav: false, isPinned: false, category: 'work', updated: 'Yesterday' }
     ];
 
     let currentEditingId = null;
@@ -912,6 +985,14 @@
     function countWords(str) {
       const trimmed = (str || '').trim();
       return trimmed ? trimmed.split(/\s+/).length : 0;
+    }
+
+    function formatChecklists(text) {
+      return (text || '')
+        .replace(/\[ \]/g, '☐')
+        .replace(/\[x\]/g, '☑')
+        .replace(/- \[ \]/g, '☐')
+        .replace(/- \[x\]/g, '☑');
     }
 
     function showToast(message, showUndo = false) {
@@ -940,6 +1021,9 @@
       }
     });
 
+    // Drag-and-drop reordering state
+    let draggedId = null;
+
     function renderNotes() {
       const listEl = document.getElementById('preview-notes-list');
       const searchVal = document.getElementById('preview-search-input').value.toLowerCase();
@@ -955,12 +1039,6 @@
           return (n.title && n.title.toLowerCase().includes(searchVal)) || (n.body && n.body.toLowerCase().includes(searchVal));
         }
         return true;
-      });
-
-      // Sort pinned to top, then by id descending
-      filtered.sort((a, b) => {
-        if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
-        return b.id - a.id;
       });
 
       document.getElementById('preview-count').innerText = filtered.length;
@@ -979,10 +1057,12 @@
 
       listEl.innerHTML = filtered.map(n => {
         const words = countWords(`${n.title} ${n.body}`);
+        const preview = formatChecklists(n.body).replace(/\n/g, ' ');
         return `
-        <div class="note-item ${n.isPinned ? 'pinned' : ''}" data-id="${n.id}">
+        <div class="note-item ${n.isPinned ? 'pinned' : ''}" data-id="${n.id}" draggable="true">
           <div class="note-item-header">
             <div class="note-item-title-wrapper">
+              <span class="drag-handle" title="Drag to reorder">≡</span>
               ${n.isPinned ? '<span class="pinned-badge">PIN</span>' : ''}
               <span class="note-item-title">${n.title || 'Untitled Note'}</span>
             </div>
@@ -1002,7 +1082,7 @@
               </button>
             </div>
           </div>
-          <div class="note-item-preview">${(n.body || '').replace(/\n/g, ' ')}</div>
+          <div class="note-item-preview">${preview}</div>
           <div class="note-item-footer">
             <span>${n.updated || 'Recent'}</span>
             <span class="word-badge">${words} words</span>
@@ -1010,15 +1090,54 @@
         </div>
       `}).join('');
 
-      // Attach event listeners to card actions and card click
+      // Attach event listeners for Card Clicks & Drag Reordering
       listEl.querySelectorAll('.note-item').forEach(el => {
         const id = parseInt(el.getAttribute('data-id'));
 
         // Tap on card body opens editor
         el.addEventListener('click', (e) => {
-          if (!e.target.closest('.card-btn')) {
+          if (!e.target.closest('.card-btn') && !e.target.closest('.drag-handle')) {
             openEditor(id);
           }
+        });
+
+        // HTML5 Drag and Drop Handlers
+        el.addEventListener('dragstart', (e) => {
+          draggedId = id;
+          el.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        el.addEventListener('dragend', () => {
+          el.classList.remove('dragging');
+          listEl.querySelectorAll('.note-item').forEach(item => item.classList.remove('drag-over'));
+        });
+
+        el.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          el.classList.add('drag-over');
+        });
+
+        el.addEventListener('dragleave', () => {
+          el.classList.remove('drag-over');
+        });
+
+        el.addEventListener('drop', (e) => {
+          e.preventDefault();
+          el.classList.remove('drag-over');
+          if (draggedId !== null && draggedId !== id) {
+            const fromIndex = notes.findIndex(n => n.id === draggedId);
+            const toIndex = notes.findIndex(n => n.id === id);
+            if (fromIndex !== -1 && toIndex !== -1) {
+              const moved = notes.splice(fromIndex, 1)[0];
+              notes.splice(toIndex, 0, moved);
+              localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+              showToast('↕️ Notes reordered');
+              renderNotes();
+            }
+          }
+          draggedId = null;
         });
       });
 
@@ -1110,6 +1229,81 @@
       document.getElementById('editor-stats').innerText = `${words} words • ${chars} characters`;
       document.getElementById('editor-readtime').innerText = `~${readMins} min read`;
     }
+
+    // Markdown Formatting Toolbar Actions
+    document.querySelectorAll('.md-tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tool = btn.getAttribute('data-tool');
+        const textarea = document.getElementById('editor-body');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const selText = text.substring(start, end);
+
+        if (tool === 'b') {
+          textarea.value = text.substring(0, start) + `**${selText || 'bold'}**` + text.substring(end);
+          textarea.selectionStart = start + 2;
+          textarea.selectionEnd = start + 2 + (selText.length || 4);
+        } else if (tool === 'i') {
+          textarea.value = text.substring(0, start) + `*${selText || 'italic'}*` + text.substring(end);
+          textarea.selectionStart = start + 1;
+          textarea.selectionEnd = start + 1 + (selText.length || 6);
+        } else if (tool === 'strike') {
+          textarea.value = text.substring(0, start) + `~~${selText || 'strike'}~~` + text.substring(end);
+          textarea.selectionStart = start + 2;
+          textarea.selectionEnd = start + 2 + (selText.length || 6);
+        } else if (tool === 'h') {
+          const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+          textarea.value = text.substring(0, lineStart) + '# ' + text.substring(lineStart);
+        } else if (tool === 'list') {
+          const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+          textarea.value = text.substring(0, lineStart) + '• ' + text.substring(lineStart);
+        } else if (tool === 'todo') {
+          const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+          textarea.value = text.substring(0, lineStart) + '[ ] ' + text.substring(lineStart);
+        }
+
+        textarea.focus();
+        scheduleWebAutosave();
+      });
+    });
+
+    // Auto-continuation for Checklist and Bullet Lists on Enter key
+    document.getElementById('editor-body').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const textarea = e.target;
+        const cursor = textarea.selectionStart;
+        const text = textarea.value;
+        const lineStart = text.lastIndexOf('\n', cursor - 1) + 1;
+        const currentLine = text.substring(lineStart, cursor);
+
+        if (currentLine === '[ ] ' || currentLine === '• ') {
+          e.preventDefault();
+          textarea.value = text.substring(0, lineStart) + text.substring(cursor);
+          textarea.selectionStart = textarea.selectionEnd = lineStart;
+          scheduleWebAutosave();
+          return;
+        }
+
+        if (currentLine.startsWith('[ ] ') || currentLine.startsWith('[x] ')) {
+          e.preventDefault();
+          const prefix = '\n[ ] ';
+          textarea.value = text.substring(0, cursor) + prefix + text.substring(cursor);
+          textarea.selectionStart = textarea.selectionEnd = cursor + prefix.length;
+          scheduleWebAutosave();
+          return;
+        }
+
+        if (currentLine.startsWith('• ')) {
+          e.preventDefault();
+          const prefix = '\n• ';
+          textarea.value = text.substring(0, cursor) + prefix + text.substring(cursor);
+          textarea.selectionStart = textarea.selectionEnd = cursor + prefix.length;
+          scheduleWebAutosave();
+          return;
+        }
+      }
+    });
 
     // Editor Handlers
     window.openEditor = function(id) {

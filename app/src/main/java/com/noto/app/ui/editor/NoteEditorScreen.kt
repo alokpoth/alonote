@@ -60,20 +60,25 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.noto.app.ui.components.DeleteConfirmationDialog
+import com.noto.app.ui.components.MarkdownToolbar
 import com.noto.app.util.DateFormatter
+import com.noto.app.util.MarkdownFormatter
 
 /**
  * Clean, distraction-free note editor screen with zero typing lag,
  * visible UI action buttons for Pin, Star, Copy, Delete, Done,
- * and live word/character count pill.
+ * live word/character count pill, and an Apple-inspired Markdown formatting toolbar
+ * (Bold, Italic, Heading, Bullet List, To-do Checklist, Strikethrough).
  */
 @Composable
 fun NoteEditorScreen(
@@ -88,6 +93,11 @@ fun NoteEditorScreen(
     val bodyFocusRequester = remember { FocusRequester() }
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
+
+    // Maintain local TextFieldValue state for smooth selection and formatting
+    var bodyTextFieldValue by remember(uiState.isLoaded) {
+        mutableStateOf(TextFieldValue(uiState.body, selection = TextRange(uiState.body.length)))
+    }
 
     // Intercept back navigation to flush pending changes
     BackHandler {
@@ -118,14 +128,14 @@ fun NoteEditorScreen(
     }
 
     // Calculate word and character count
-    val combinedText = remember(uiState.title, uiState.body) {
-        "${uiState.title} ${uiState.body}".trim()
+    val combinedText = remember(uiState.title, bodyTextFieldValue.text) {
+        "${uiState.title} ${bodyTextFieldValue.text}".trim()
     }
     val wordCount = remember(combinedText) {
         if (combinedText.isEmpty()) 0 else combinedText.split("\\s+".toRegex()).count { it.isNotBlank() }
     }
-    val charCount = remember(uiState.title, uiState.body) {
-        uiState.title.length + uiState.body.length
+    val charCount = remember(uiState.title, bodyTextFieldValue.text) {
+        uiState.title.length + bodyTextFieldValue.text.length
     }
 
     Scaffold(
@@ -149,7 +159,7 @@ fun NoteEditorScreen(
                 onCopy = {
                     val contentToCopy = buildString {
                         if (uiState.title.isNotBlank()) appendLine(uiState.title)
-                        if (uiState.body.isNotBlank()) append(uiState.body)
+                        if (bodyTextFieldValue.text.isNotBlank()) append(bodyTextFieldValue.text)
                     }.trim()
                     clipboardManager.setText(AnnotatedString(contentToCopy))
                     Toast.makeText(context, "Note copied to clipboard", Toast.LENGTH_SHORT).show()
@@ -158,38 +168,53 @@ fun NoteEditorScreen(
             )
         },
         bottomBar = {
-            // Minimal Live Word & Character Count Bar
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .imePadding()
                     .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(999.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = "$wordCount words • $charCount characters",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 11.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                // Docked Formatting Toolbar (Bold, Italic, Heading, Bullet, Checklist, Strike)
+                MarkdownToolbar(
+                    value = bodyTextFieldValue,
+                    onValueChange = {
+                        bodyTextFieldValue = it
+                        viewModel.onBodyChange(it.text)
+                    }
+                )
 
-                if (uiState.lastUpdated > 0L) {
-                    Text(
-                        text = DateFormatter.formatEditor(uiState.lastUpdated),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 11.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                    )
+                // Minimal Live Word & Character Count Bar
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(999.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "$wordCount words • $charCount characters",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontSize = 11.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    if (uiState.lastUpdated > 0L) {
+                        Text(
+                            text = DateFormatter.formatEditor(uiState.lastUpdated),
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontSize = 11.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    }
                 }
             }
         }
@@ -198,7 +223,6 @@ fun NoteEditorScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .imePadding()
                 .verticalScroll(rememberScrollState())
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
@@ -263,7 +287,7 @@ fun NoteEditorScreen(
                     },
                 contentAlignment = Alignment.TopStart
             ) {
-                if (uiState.body.isEmpty()) {
+                if (bodyTextFieldValue.text.isEmpty()) {
                     Text(
                         text = "Note",
                         style = MaterialTheme.typography.bodyLarge.copy(
@@ -275,8 +299,22 @@ fun NoteEditorScreen(
                 }
 
                 BasicTextField(
-                    value = uiState.body,
-                    onValueChange = { viewModel.onBodyChange(it) },
+                    value = bodyTextFieldValue,
+                    onValueChange = { newValue ->
+                        // Automatically continue checklist [ ] or bullet • on Enter key press
+                        if (newValue.text.length == bodyTextFieldValue.text.length + 1 &&
+                            newValue.selection.start > 0 &&
+                            newValue.text.getOrNull(newValue.selection.start - 1) == '\n') {
+                            val handled = MarkdownFormatter.handleEnterKey(bodyTextFieldValue)
+                            if (handled != null) {
+                                bodyTextFieldValue = handled
+                                viewModel.onBodyChange(handled.text)
+                                return@BasicTextField
+                            }
+                        }
+                        bodyTextFieldValue = newValue
+                        viewModel.onBodyChange(newValue.text)
+                    },
                     textStyle = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = 17.sp,
                         lineHeight = 26.sp,

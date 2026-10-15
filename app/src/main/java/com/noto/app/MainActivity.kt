@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.noto.app.ui.navigation.NotoNavigation
 import com.noto.app.ui.theme.NotoTheme
@@ -24,7 +26,9 @@ class MainActivity : ComponentActivity() {
         val notoApplication = application as NotoApplication
 
         setContent {
-            NotoTheme {
+            val themeMode by notoApplication.themeRepository.themeMode.collectAsState()
+
+            NotoTheme(themeMode = themeMode) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

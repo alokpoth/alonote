@@ -34,8 +34,12 @@ data class MainUiState(
  */
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class MainViewModel(
-    private val repository: NoteRepository
+    private val repository: NoteRepository,
+    private val themeRepository: com.noto.app.data.repository.ThemeRepository? = null
 ) : ViewModel() {
+
+    val themeMode: StateFlow<com.noto.app.data.repository.ThemeMode> =
+        themeRepository?.themeMode ?: MutableStateFlow(com.noto.app.data.repository.ThemeMode.SYSTEM)
 
     private val _currentTab = MutableStateFlow(BottomTab.NOTES)
     val currentTab: StateFlow<BottomTab> = _currentTab.asStateFlow()
@@ -140,14 +144,38 @@ class MainViewModel(
         }
     }
 
+    fun toggleTheme() {
+        themeRepository?.toggleTheme()
+    }
+
+    fun reorderNotes(fromIndex: Int, toIndex: Int) {
+        val currentList = notes.value.toMutableList()
+        if (fromIndex !in currentList.indices || toIndex !in currentList.indices || fromIndex == toIndex) return
+        val moved = currentList.removeAt(fromIndex)
+        currentList.add(toIndex, moved)
+
+        val baseTime = System.currentTimeMillis()
+        viewModelScope.launch {
+            currentList.forEachIndexed { index, note ->
+                val newTime = baseTime - (index * 1000L)
+                if (note.updatedAt != newTime) {
+                    repository.saveNote(note.copy(updatedAt = newTime))
+                }
+            }
+        }
+    }
+
     fun clearRecentlyDeleted() {
         _recentlyDeletedNote.value = null
     }
 
-    class Factory(private val repository: NoteRepository) : ViewModelProvider.Factory {
+    class Factory(
+        private val repository: NoteRepository,
+        private val themeRepository: com.noto.app.data.repository.ThemeRepository? = null
+    ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return MainViewModel(repository) as T
+            return MainViewModel(repository, themeRepository) as T
         }
     }
 }

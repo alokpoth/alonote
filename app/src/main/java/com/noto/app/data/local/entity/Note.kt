@@ -71,7 +71,7 @@ data class Note(
     val previewText: String
         get() {
             val nonBlankLines = body.lines().filter { it.isNotBlank() }
-            return if (title.isNotBlank()) {
+            val raw = if (title.isNotBlank()) {
                 nonBlankLines.firstOrNull()?.trim() ?: "No additional text"
             } else {
                 if (nonBlankLines.size > 1) {
@@ -80,5 +80,10 @@ data class Note(
                     "No additional text"
                 }
             }
+            return raw
+                .replace("[ ] ", "☐ ")
+                .replace("[x] ", "☑ ")
+                .replace("- [ ] ", "☐ ")
+                .replace("- [x] ", "☑ ")
         }
 }

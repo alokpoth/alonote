@@ -21,7 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -29,7 +30,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.Icon
@@ -55,11 +58,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noto.app.data.local.entity.Note
+import com.noto.app.data.repository.ThemeMode
 import com.noto.app.ui.components.EmptyStateView
 import com.noto.app.ui.components.NoteActionDialog
 import com.noto.app.ui.components.NoteCard
 import com.noto.app.ui.components.NotoBottomBar
 import com.noto.app.ui.components.NotoSearchBar
+import com.noto.app.ui.components.rememberReorderableState
+import com.noto.app.ui.components.reorderableItem
 import com.noto.app.ui.navigation.BottomTab
 import kotlinx.coroutines.launch
 
@@ -74,7 +80,8 @@ enum class QuickFilter {
 
 /**
  * Main screen displaying user's notes with search, tabs, floating bottom navigation bar,
- * grid/list view mode toggle, filter chips, and direct visible UI actions.
+ * grid/list view mode toggle, filter chips, theme switcher (Light/Dark),
+ * and drag-to-reorder (press and hold up/down).
  */
 @Composable
 fun MainScreen(
@@ -88,11 +95,20 @@ fun MainScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearchBarVisible by viewModel.isSearchBarVisible.collectAsState()
     val isGridView by viewModel.isGridView.collectAsState()
+    val themeMode by viewModel.themeMode.collectAsState()
 
     var quickFilter by remember { mutableStateOf(QuickFilter.ALL) }
     var selectedNoteForOptions by remember { mutableStateOf<Note?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    val lazyListState = rememberLazyListState()
+    val reorderState = rememberReorderableState(
+        lazyListState = lazyListState,
+        onMove = { fromIndex, toIndex ->
+            viewModel.reorderNotes(fromIndex, toIndex)
+        }
+    )
 
     // Apply quick chip filter in addition to active tab
     val displayedNotes = remember(notes, quickFilter) {
@@ -129,12 +145,14 @@ fun MainScreen(
                 .padding(top = innerPadding.calculateTopPadding())
                 .statusBarsPadding()
         ) {
-            // App Header with Title, Count, Grid/List view toggle, and Search button
+            // App Header with Title, Count, Theme Toggle, Grid/List view toggle, and Search button
             HeaderSection(
                 tab = currentTab,
                 noteCount = displayedNotes.size,
                 isGridView = isGridView,
                 isSearchBarVisible = isSearchBarVisible,
+                themeMode = themeMode,
+                onToggleTheme = { viewModel.toggleTheme() },
                 onToggleViewMode = { viewModel.toggleViewMode() },
                 onSearchToggle = { viewModel.toggleSearchBar() }
             )
@@ -238,8 +256,9 @@ fun MainScreen(
                         }
                     }
                 } else {
-                    // 1-Column Clean List View
+                    // 1-Column List View with Press-and-Hold Drag Reordering
                     LazyColumn(
+                        state = lazyListState,
                         modifier = Modifier
                             .fillMaxSize()
                             .weight(1f),
@@ -251,10 +270,10 @@ fun MainScreen(
                         ),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(
+                        itemsIndexed(
                             items = displayedNotes,
-                            key = { it.id }
-                        ) { note ->
+                            key = { _, note -> note.id }
+                        ) { index, note ->
                             NoteCard(
                                 note = note,
                                 onClick = { onNoteClick(note.id) },
@@ -274,7 +293,10 @@ fun MainScreen(
                                             }
                                         }
                                     }
-                                }
+                                },
+                                modifier = Modifier
+                                    .animateItem()
+                                    .reorderableItem(state = reorderState, index = index)
                             )
                         }
                     }
@@ -283,7 +305,7 @@ fun MainScreen(
         }
     }
 
-    // Long press action dialog (Pin, Star/Favorite, Delete)
+    // Action sheet dialog (Pin, Star/Favorite, Delete)
     selectedNoteForOptions?.let { note ->
         NoteActionDialog(
             note = note,
@@ -314,6 +336,8 @@ private fun HeaderSection(
     noteCount: Int,
     isGridView: Boolean,
     isSearchBarVisible: Boolean,
+    themeMode: ThemeMode,
+    onToggleTheme: () -> Unit,
     onToggleViewMode: () -> Unit,
     onSearchToggle: () -> Unit
 ) {
@@ -363,6 +387,22 @@ private fun HeaderSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // Theme Mode Toggle Button (Light / Dark)
+            IconButton(
+                onClick = onToggleTheme,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Icon(
+                    imageVector = if (themeMode == ThemeMode.DARK) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                    contentDescription = if (themeMode == ThemeMode.DARK) "Switch to Light mode" else "Switch to Dark mode",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
             // View Mode Toggle Button (Grid / List)
             IconButton(
                 onClick = onToggleViewMode,

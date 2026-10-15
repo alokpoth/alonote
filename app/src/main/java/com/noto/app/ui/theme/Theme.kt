@@ -41,9 +41,14 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun NotoTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: com.noto.app.data.repository.ThemeMode = com.noto.app.data.repository.ThemeMode.SYSTEM,
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (themeMode) {
+        com.noto.app.data.repository.ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        com.noto.app.data.repository.ThemeMode.LIGHT -> false
+        com.noto.app.data.repository.ThemeMode.DARK -> true
+    }
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     val view = LocalView.current

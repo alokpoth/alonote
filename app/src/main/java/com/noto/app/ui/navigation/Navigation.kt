@@ -38,13 +38,14 @@ fun NotoNavigation(
                         backStack.add(NoteEditorNavKey(noteId = noteId))
                     },
                     onNewNoteClick = {
-                        backStack.add(NoteEditorNavKey(noteId = 0L))
+                        backStack.add(NoteEditorNavKey(noteId = 0L, draftKey = System.currentTimeMillis()))
                     }
                 )
             }
             entry<NoteEditorNavKey> { key ->
+                val vmKey = if (key.noteId > 0L) "note_editor_${key.noteId}" else "note_editor_new_${key.draftKey}"
                 val editorViewModel: NoteEditorViewModel = viewModel(
-                    key = "note_editor_${key.noteId}",
+                    key = vmKey,
                     factory = NoteEditorViewModel.Factory(key.noteId, repository)
                 )
                 NoteEditorScreen(

@@ -4,11 +4,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,9 +21,12 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
@@ -45,6 +50,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -54,7 +60,7 @@ import com.noto.app.ui.components.DeleteConfirmationDialog
 import com.noto.app.util.DateFormatter
 
 /**
- * Clean, distraction-free note editor screen.
+ * Clean, distraction-free note editor screen with zero infinite measurement loops.
  */
 @Composable
 fun NoteEditorScreen(
@@ -89,7 +95,7 @@ fun NoteEditorScreen(
         }
     }
 
-    // Naturally focus and open keyboard for new notes
+    // Automatically focus when opening a new draft
     LaunchedEffect(uiState.isLoaded) {
         if (uiState.isLoaded && uiState.isNewNote) {
             titleFocusRequester.requestFocus()
@@ -107,6 +113,10 @@ fun NoteEditorScreen(
                     viewModel.flushSave()
                     onNavigateBack()
                 },
+                onDone = {
+                    viewModel.flushSave()
+                    onNavigateBack()
+                },
                 onToggleFavorite = { viewModel.toggleFavorite() },
                 onDelete = { showDeleteDialog = true }
             )
@@ -118,7 +128,13 @@ fun NoteEditorScreen(
                 .padding(innerPadding)
                 .imePadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    bodyFocusRequester.requestFocus()
+                }
+                .padding(horizontal = 24.dp, vertical = 8.dp)
         ) {
             // Last edited timestamp indicator
             if (uiState.lastUpdated > 0L) {
@@ -132,7 +148,14 @@ fun NoteEditorScreen(
 
             // Editable Title Field
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        titleFocusRequester.requestFocus()
+                    },
                 contentAlignment = Alignment.CenterStart
             ) {
                 if (uiState.title.isEmpty()) {
@@ -155,6 +178,8 @@ fun NoteEditorScreen(
                         color = MaterialTheme.colorScheme.onBackground
                     ),
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { bodyFocusRequester.requestFocus() }),
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(titleFocusRequester)
@@ -163,11 +188,17 @@ fun NoteEditorScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Multiline Note Body Field
+            // Multiline Note Body Field - tap anywhere on this surface to write
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f, fill = false),
+                    .defaultMinSize(minHeight = 450.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        bodyFocusRequester.requestFocus()
+                    },
                 contentAlignment = Alignment.TopStart
             ) {
                 if (uiState.body.isEmpty()) {
@@ -192,11 +223,12 @@ fun NoteEditorScreen(
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
                     modifier = Modifier
                         .fillMaxWidth()
+                        .defaultMinSize(minHeight = 450.dp)
                         .focusRequester(bodyFocusRequester)
                 )
             }
 
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(60.dp))
         }
     }
 
@@ -218,6 +250,7 @@ private fun EditorTopBar(
     isFavorite: Boolean,
     saveStatus: SaveStatus,
     onBack: () -> Unit,
+    onDone: () -> Unit,
     onToggleFavorite: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -225,7 +258,7 @@ private fun EditorTopBar(
         modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Back Button
@@ -255,7 +288,7 @@ private fun EditorTopBar(
                 text = if (saveStatus == SaveStatus.SAVING) "Saving..." else "Saved",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                modifier = Modifier.padding(end = 12.dp)
+                modifier = Modifier.padding(end = 8.dp)
             )
         }
 
@@ -289,6 +322,21 @@ private fun EditorTopBar(
                 imageVector = Icons.Filled.DeleteOutline,
                 contentDescription = "Delete Note",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+
+        // Done / Save Checkmark Button
+        IconButton(
+            onClick = onDone,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = "Done",
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(22.dp)
             )
         }

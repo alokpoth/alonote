@@ -36,15 +36,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.noto.app.data.local.entity.Note
 import com.noto.app.ui.components.EmptyStateView
+import com.noto.app.ui.components.NoteActionDialog
 import com.noto.app.ui.components.NoteCard
 import com.noto.app.ui.components.NotoBottomBar
 import com.noto.app.ui.components.NotoSearchBar
@@ -52,7 +56,8 @@ import com.noto.app.ui.navigation.BottomTab
 import kotlinx.coroutines.launch
 
 /**
- * Main screen displaying user's notes with search, tabs, and the floating bottom navigation bar.
+ * Main screen displaying user's notes with search, tabs, floating bottom navigation bar,
+ * and long-press action options (Pin, Favorite, Delete).
  */
 @Composable
 fun MainScreen(
@@ -66,6 +71,7 @@ fun MainScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearchBarVisible by viewModel.isSearchBarVisible.collectAsState()
 
+    var selectedNoteForOptions by remember { mutableStateOf<Note?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -143,12 +149,37 @@ fun MainScreen(
                         NoteCard(
                             note = note,
                             onClick = { onNoteClick(note.id) },
+                            onLongClick = { selectedNoteForOptions = note },
                             onFavoriteToggle = { viewModel.toggleFavorite(note) }
                         )
                     }
                 }
             }
         }
+    }
+
+    // Long press action dialog (Pin, Star/Favorite, Delete)
+    selectedNoteForOptions?.let { note ->
+        NoteActionDialog(
+            note = note,
+            onTogglePin = { viewModel.togglePin(note) },
+            onToggleFavorite = { viewModel.toggleFavorite(note) },
+            onDelete = {
+                viewModel.deleteNoteWithUndo(note) {
+                    scope.launch {
+                        val result = snackbarHostState.showSnackbar(
+                            message = "Note deleted",
+                            actionLabel = "Undo",
+                            duration = SnackbarDuration.Short
+                        )
+                        if (result == SnackbarResult.ActionPerformed) {
+                            viewModel.undoDelete()
+                        }
+                    }
+                }
+            },
+            onDismiss = { selectedNoteForOptions = null }
+        )
     }
 }
 

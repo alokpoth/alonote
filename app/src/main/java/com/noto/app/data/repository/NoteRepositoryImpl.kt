@@ -68,4 +68,8 @@ class NoteRepositoryImpl(
     override suspend fun setFavorite(id: Long, isFavorite: Boolean): Unit = withContext(ioDispatcher) {
         noteDao.updateFavorite(id = id, isFavorite = isFavorite, updatedAt = System.currentTimeMillis())
     }
+
+    override suspend fun setPinned(id: Long, isPinned: Boolean): Unit = withContext(ioDispatcher) {
+        noteDao.updatePinned(id = id, isPinned = isPinned, updatedAt = System.currentTimeMillis())
+    }
 }

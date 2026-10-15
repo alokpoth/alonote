@@ -20,6 +20,7 @@ data class Note(
     val title: String = "",
     val body: String = "",
     val isFavorite: Boolean = false,
+    val isPinned: Boolean = false,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {

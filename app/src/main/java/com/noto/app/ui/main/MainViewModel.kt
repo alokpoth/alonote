@@ -98,6 +98,12 @@ class MainViewModel(
         }
     }
 
+    fun togglePin(note: Note) {
+        viewModelScope.launch {
+            repository.setPinned(note.id, !note.isPinned)
+        }
+    }
+
     fun deleteNoteWithUndo(note: Note, onDeleted: () -> Unit) {
         viewModelScope.launch {
             _recentlyDeletedNote.value = note

@@ -14,15 +14,20 @@ class FakeNoteDao : NoteDao {
     val notesFlow = MutableStateFlow<Map<Long, Note>>(emptyMap())
     private var nextId = 1L
 
+    private fun compareNotes(a: Note, b: Note): Int {
+        val pinComp = b.isPinned.compareTo(a.isPinned)
+        return if (pinComp != 0) pinComp else b.updatedAt.compareTo(a.updatedAt)
+    }
+
     override fun getAllNotes(): Flow<List<Note>> {
         return notesFlow.map { map ->
-            map.values.sortedByDescending { it.updatedAt }
+            map.values.sortedWith(::compareNotes)
         }
     }
 
     override fun getFavoriteNotes(): Flow<List<Note>> {
         return notesFlow.map { map ->
-            map.values.filter { it.isFavorite }.sortedByDescending { it.updatedAt }
+            map.values.filter { it.isFavorite }.sortedWith(::compareNotes)
         }
     }
 
@@ -30,7 +35,7 @@ class FakeNoteDao : NoteDao {
         return notesFlow.map { map ->
             map.values.filter {
                 it.title.contains(query, ignoreCase = true) || it.body.contains(query, ignoreCase = true)
-            }.sortedByDescending { it.updatedAt }
+            }.sortedWith(::compareNotes)
         }
     }
 
@@ -38,7 +43,7 @@ class FakeNoteDao : NoteDao {
         return notesFlow.map { map ->
             map.values.filter {
                 it.isFavorite && (it.title.contains(query, ignoreCase = true) || it.body.contains(query, ignoreCase = true))
-            }.sortedByDescending { it.updatedAt }
+            }.sortedWith(::compareNotes)
         }
     }
 
@@ -72,5 +77,10 @@ class FakeNoteDao : NoteDao {
     override suspend fun updateFavorite(id: Long, isFavorite: Boolean, updatedAt: Long) {
         val existing = notesFlow.value[id] ?: return
         notesFlow.value = notesFlow.value + (id to existing.copy(isFavorite = isFavorite, updatedAt = updatedAt))
+    }
+
+    override suspend fun updatePinned(id: Long, isPinned: Boolean, updatedAt: Long) {
+        val existing = notesFlow.value[id] ?: return
+        notesFlow.value = notesFlow.value + (id to existing.copy(isPinned = isPinned, updatedAt = updatedAt))
     }
 }

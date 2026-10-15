@@ -24,4 +24,7 @@ data class MainNavKey(val initialTab: BottomTab = BottomTab.NOTES) : NavKey
  * @param noteId The ID of an existing note to edit, or 0L to create a new draft.
  */
 @Serializable
-data class NoteEditorNavKey(val noteId: Long = 0L) : NavKey
+data class NoteEditorNavKey(
+    val noteId: Long = 0L,
+    val draftKey: Long = 0L
+) : NavKey

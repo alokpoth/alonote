@@ -59,4 +59,9 @@ interface NoteRepository {
      * Toggles or sets the favorite status of a note.
      */
     suspend fun setFavorite(id: Long, isFavorite: Boolean)
+
+    /**
+     * Toggles or sets the pinned status of a note.
+     */
+    suspend fun setPinned(id: Long, isPinned: Boolean)
 }

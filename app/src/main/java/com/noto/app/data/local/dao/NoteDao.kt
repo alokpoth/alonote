@@ -15,17 +15,17 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NoteDao {
 
-    @Query("SELECT * FROM notes ORDER BY updatedAt DESC")
+    @Query("SELECT * FROM notes ORDER BY isPinned DESC, updatedAt DESC")
     fun getAllNotes(): Flow<List<Note>>
 
-    @Query("SELECT * FROM notes WHERE isFavorite = 1 ORDER BY updatedAt DESC")
+    @Query("SELECT * FROM notes WHERE isFavorite = 1 ORDER BY isPinned DESC, updatedAt DESC")
     fun getFavoriteNotes(): Flow<List<Note>>
 
     @Query(
         """
         SELECT * FROM notes 
         WHERE title LIKE '%' || :query || '%' OR body LIKE '%' || :query || '%' 
-        ORDER BY updatedAt DESC
+        ORDER BY isPinned DESC, updatedAt DESC
         """
     )
     fun searchNotes(query: String): Flow<List<Note>>
@@ -34,7 +34,7 @@ interface NoteDao {
         """
         SELECT * FROM notes 
         WHERE isFavorite = 1 AND (title LIKE '%' || :query || '%' OR body LIKE '%' || :query || '%') 
-        ORDER BY updatedAt DESC
+        ORDER BY isPinned DESC, updatedAt DESC
         """
     )
     fun searchFavoriteNotes(query: String): Flow<List<Note>>
@@ -59,4 +59,7 @@ interface NoteDao {
 
     @Query("UPDATE notes SET isFavorite = :isFavorite, updatedAt = :updatedAt WHERE id = :id")
     suspend fun updateFavorite(id: Long, isFavorite: Boolean, updatedAt: Long = System.currentTimeMillis())
+
+    @Query("UPDATE notes SET isPinned = :isPinned, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updatePinned(id: Long, isPinned: Boolean, updatedAt: Long = System.currentTimeMillis())
 }

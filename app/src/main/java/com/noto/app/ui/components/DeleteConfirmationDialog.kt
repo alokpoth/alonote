@@ -10,18 +10,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 /**
- * Minimalist Apple-inspired confirmation dialog for deleting a note.
+ * Minimalist Apple-inspired confirmation dialog for deleting notes or emptying the Recycle Bin.
  */
 @Composable
 fun DeleteConfirmationDialog(
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    title: String = "Move to Recycle Bin?",
+    message: String = "You can restore this note anytime from the Recycle Bin.",
+    confirmText: String = "Move to Bin",
+    isDestructive: Boolean = false
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Delete Note",
+                text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -29,7 +33,7 @@ fun DeleteConfirmationDialog(
         },
         text = {
             Text(
-                text = "This note will be permanently removed.",
+                text = message,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -37,10 +41,10 @@ fun DeleteConfirmationDialog(
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 Text(
-                    text = "Delete",
+                    text = confirmText,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = if (isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                 )
             }
         },

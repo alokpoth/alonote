@@ -61,7 +61,7 @@ class NoteEditorViewModelTest {
         viewModel.onTitleChange("Quick Note")
         viewModel.onBodyChange("Remember to call mom")
 
-        // Before debounce delay (500ms), nothing is saved yet
+        // Before debounce delay (400ms), nothing is saved yet
         advanceTimeBy(300L)
         assertTrue(fakeDao.notesFlow.value.isEmpty())
 
@@ -97,6 +97,25 @@ class NoteEditorViewModelTest {
         // The empty note should be deleted from DB
         val noteInDb = fakeDao.getNoteByIdOnce(1L)
         assertNull(noteInDb)
+    }
+
+    @Test
+    fun deleteNote_movesToRecycleBin() = runTest(testDispatcher) {
+        val note = Note(id = 2L, title = "To Trash", body = "Going to bin")
+        fakeDao.insertNote(note)
+
+        val viewModel = NoteEditorViewModel(initialNoteId = 2L, repository = repository)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        var deletedCalled = false
+        viewModel.deleteNote { deletedCalled = true }
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue(deletedCalled)
+        val noteInDb = fakeDao.getNoteByIdOnce(2L)
+        assertNotNull(noteInDb)
+        assertTrue(noteInDb?.isDeleted == true)
+        assertNotNull(noteInDb?.deletedAt)
     }
 
     @Test

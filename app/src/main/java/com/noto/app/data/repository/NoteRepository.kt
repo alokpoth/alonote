@@ -4,27 +4,35 @@ import com.noto.app.data.local.entity.Note
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Interface defining note data management operations.
+ * Interface defining note data management operations,
+ * including active notes and Recycle Bin lifecycle.
  */
 interface NoteRepository {
 
     /**
-     * Observes all notes ordered by last updated timestamp descending.
+     * Observes all active (non-deleted) notes ordered by pinned and last updated timestamp descending.
      */
     fun getAllNotes(): Flow<List<Note>>
 
     /**
-     * Observes all notes marked as favorites ordered by last updated timestamp descending.
+     * Observes all active notes marked as favorites.
      */
     fun getFavoriteNotes(): Flow<List<Note>>
 
     /**
-     * Searches notes by matching text against title or body.
-     *
-     * @param query Search query text.
-     * @param favoritesOnly If true, filters only within starred notes.
+     * Observes all soft-deleted notes in the Recycle Bin.
      */
-    fun searchNotes(query: String, favoritesOnly: Boolean = false): Flow<List<Note>>
+    fun getTrashNotes(): Flow<List<Note>>
+
+    /**
+     * Observes the count of notes currently in the Recycle Bin.
+     */
+    fun getTrashCount(): Flow<Int>
+
+    /**
+     * Searches notes by matching text against title or body.
+     */
+    fun searchNotes(query: String, favoritesOnly: Boolean = false, trashOnly: Boolean = false): Flow<List<Note>>
 
     /**
      * Observes a specific note by its unique identifier.
@@ -38,20 +46,36 @@ interface NoteRepository {
 
     /**
      * Inserts or updates a note.
-     * If note.id == 0L, performs an insert; otherwise updates existing record.
-     * Automatically sets updatedAt timestamp.
-     *
-     * @return The ID of the saved note.
      */
     suspend fun saveNote(note: Note): Long
 
     /**
-     * Deletes a note entity from local database.
+     * Moves a note to the Recycle Bin (soft delete).
+     */
+    suspend fun moveToTrash(id: Long)
+
+    /**
+     * Restores a note from the Recycle Bin back to active notes.
+     */
+    suspend fun restoreNote(id: Long)
+
+    /**
+     * Permanently deletes a note by its ID from the database.
+     */
+    suspend fun permanentlyDeleteNote(id: Long)
+
+    /**
+     * Empties all notes currently in the Recycle Bin.
+     */
+    suspend fun emptyTrash()
+
+    /**
+     * Legacy delete - moves to trash by default.
      */
     suspend fun deleteNote(note: Note)
 
     /**
-     * Deletes a note by its ID.
+     * Legacy delete by ID - moves to trash by default.
      */
     suspend fun deleteNoteById(id: Long)
 

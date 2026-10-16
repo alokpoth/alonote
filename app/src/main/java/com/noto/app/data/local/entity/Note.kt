@@ -3,6 +3,7 @@ package com.noto.app.data.local.entity
 import androidx.compose.runtime.Immutable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlin.math.ceil
 
 /**
  * Entity representing a single note stored locally in the Room database.
@@ -12,6 +13,8 @@ import androidx.room.PrimaryKey
  * @property body The multiline body text of the note.
  * @property isFavorite Whether the note has been starred as a favorite.
  * @property isPinned Whether the note has been pinned to the top of the list.
+ * @property isDeleted Whether the note has been moved to the Recycle Bin.
+ * @property deletedAt Timestamp in milliseconds when the note was soft-deleted.
  * @property createdAt Timestamp in milliseconds when the note was first created.
  * @property updatedAt Timestamp in milliseconds when the note was last modified.
  */
@@ -24,6 +27,8 @@ data class Note(
     val body: String = "",
     val isFavorite: Boolean = false,
     val isPinned: Boolean = false,
+    val isDeleted: Boolean = false,
+    val deletedAt: Long? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {
@@ -49,6 +54,39 @@ data class Note(
         get() = (title.length + body.length)
 
     /**
+     * Estimated reading time in minutes (based on 200 words per minute average).
+     */
+    val readingTimeMinutes: Int
+        get() = maxOf(1, ceil(wordCount / 200.0).toInt())
+
+    /**
+     * Total number of checklist task items in the note.
+     */
+    val totalTasks: Int
+        get() = TotalTasksRegex.findAll(body).count()
+
+    /**
+     * Number of completed checklist task items in the note.
+     */
+    val completedTasks: Int
+        get() = CompletedTasksRegex.findAll(body).count()
+
+    /**
+     * True if the note contains any checklist task items.
+     */
+    val hasChecklist: Boolean
+        get() = totalTasks > 0
+
+    /**
+     * Extracted hashtags (e.g. #work, #ideas, #কাজ) from title and body.
+     */
+    val tags: List<String>
+        get() = TagRegex.findAll("$title $body")
+            .map { it.groupValues[1] }
+            .distinct()
+            .toList()
+
+    /**
      * Resolves the primary title to display in note lists.
      * Falls back to the first non-empty line of the body, or "Untitled Note".
      */
@@ -65,8 +103,7 @@ data class Note(
 
     /**
      * Resolves a short preview of the note content.
-     * If the title was explicitly set, previews the body. If the title was empty,
-     * previews subsequent lines of the body.
+     * Strips Markdown formatting symbols for a clean card presentation.
      */
     val previewText: String
         get() {
@@ -85,5 +122,21 @@ data class Note(
                 .replace("[x] ", "☑ ")
                 .replace("- [ ] ", "☐ ")
                 .replace("- [x] ", "☑ ")
+                .replace(BoldStripRegex, "$1")
+                .replace(ItalicStripRegex, "$1")
+                .replace(StrikeStripRegex, "$1")
+                .replace(HeadingStripRegex, "")
+                .replace(CodeStripRegex, "$1")
         }
 }
+
+// Pre-compiled top-level regexes to prevent repeated compilation and thermal overhead
+private val TotalTasksRegex = Regex("""(?:^|\n)\s*(?:-\s+)?\[[ x]\]""")
+private val CompletedTasksRegex = Regex("""(?:^|\n)\s*(?:-\s+)?\[x\]""")
+private val BoldStripRegex = Regex("""\*\*(.*?)\*\*""")
+private val ItalicStripRegex = Regex("""\*(.*?)\*""")
+private val StrikeStripRegex = Regex("""~~(.*?)~~""")
+private val HeadingStripRegex = Regex("""^#{1,6}\s+""")
+private val CodeStripRegex = Regex("""`([^`]+)`""")
+private val TagRegex = Regex("""#([\p{L}\p{N}_]+)""")
+

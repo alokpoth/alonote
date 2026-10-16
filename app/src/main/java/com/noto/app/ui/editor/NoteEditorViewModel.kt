@@ -180,9 +180,9 @@ class NoteEditorViewModel(
 
         if (isBlank) {
             if (currentId > 0L) {
-                // User completely emptied an existing note; remove it from database
+                // User completely emptied an existing note; permanently remove it from database
                 viewModelScope.launch {
-                    repository.deleteNoteById(currentId)
+                    repository.permanentlyDeleteNote(currentId)
                     _uiState.update {
                         it.copy(
                             noteId = 0L,
@@ -207,6 +207,8 @@ class NoteEditorViewModel(
                 body = body,
                 isFavorite = currentState.isFavorite,
                 isPinned = currentState.isPinned,
+                isDeleted = false,
+                deletedAt = null,
                 createdAt = if (currentState.createdAt == 0L) now else currentState.createdAt,
                 updatedAt = now
             )
@@ -225,14 +227,14 @@ class NoteEditorViewModel(
     }
 
     /**
-     * Deletes the currently opened note immediately.
+     * Moves the currently opened note to the Recycle Bin.
      */
     fun deleteNote(onDeleted: () -> Unit) {
         autosaveJob?.cancel()
         val currentId = _uiState.value.noteId
         if (currentId > 0L) {
             viewModelScope.launch {
-                repository.deleteNoteById(currentId)
+                repository.moveToTrash(currentId)
                 onDeleted()
             }
         } else {

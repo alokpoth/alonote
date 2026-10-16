@@ -1,5 +1,6 @@
 package com.noto.app.ui.main
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -31,10 +32,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ViewAgenda
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +48,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,35 +58,45 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noto.app.data.local.entity.Note
 import com.noto.app.data.repository.ThemeMode
+import com.noto.app.ui.components.DeleteConfirmationDialog
 import com.noto.app.ui.components.EmptyStateView
-import com.noto.app.ui.components.NoteActionDialog
+import com.noto.app.ui.components.NoteActionBottomSheet
 import com.noto.app.ui.components.NoteCard
 import com.noto.app.ui.components.NotoBottomBar
 import com.noto.app.ui.components.NotoSearchBar
 import com.noto.app.ui.components.rememberReorderableState
 import com.noto.app.ui.components.reorderableItem
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import com.noto.app.ui.navigation.BottomTab
 import kotlinx.coroutines.launch
 
 /**
- * Filter mode for quick filter chips in the main screen.
+ * Filter modes for the quick filter chips row.
  */
 enum class QuickFilter {
     ALL,
     PINNED,
-    FAVORITES
+    FAVORITES,
+    TODO,
+    TRASH
 }
 
 /**
- * Main screen displaying user's notes with search, tabs, floating bottom navigation bar,
- * grid/list view mode toggle, filter chips, theme switcher (Light/Dark),
- * and drag-to-reorder (press and hold up/down).
+ * Main screen displaying notes with Apple-style action sheet popup, Recycle Bin,
+ * smooth animations, drag-to-reorder, grid/list view toggle, and search.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     viewModel: MainViewModel,
@@ -96,11 +110,19 @@ fun MainScreen(
     val isSearchBarVisible by viewModel.isSearchBarVisible.collectAsState()
     val isGridView by viewModel.isGridView.collectAsState()
     val themeMode by viewModel.themeMode.collectAsState()
+    val trashCount by viewModel.trashCount.collectAsState()
+    val sortOrder by viewModel.sortOrder.collectAsState()
+    val allTags by viewModel.allTags.collectAsState()
+    val selectedTag by viewModel.selectedTag.collectAsState()
 
     var quickFilter by remember { mutableStateOf(QuickFilter.ALL) }
     var selectedNoteForOptions by remember { mutableStateOf<Note?>(null) }
+    var noteToPermanentlyDelete by remember { mutableStateOf<Note?>(null) }
+    var showEmptyTrashDialog by remember { mutableStateOf(false) }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableState(
@@ -110,12 +132,18 @@ fun MainScreen(
         }
     )
 
-    // Apply quick chip filter in addition to active tab
+    // Sync ViewModel trash filter state with UI quick filter
+    LaunchedEffect(quickFilter) {
+        viewModel.setTrashFilter(quickFilter == QuickFilter.TRASH)
+    }
+
+    // Apply client-side pinned, favorite, or to-do checklist filtering for active notes
     val displayedNotes = remember(notes, quickFilter) {
         when (quickFilter) {
-            QuickFilter.ALL -> notes
+            QuickFilter.ALL, QuickFilter.TRASH -> notes
             QuickFilter.PINNED -> notes.filter { it.isPinned }
             QuickFilter.FAVORITES -> notes.filter { it.isFavorite }
+            QuickFilter.TODO -> notes.filter { it.hasChecklist }
         }
     }
 
@@ -145,16 +173,21 @@ fun MainScreen(
                 .padding(top = innerPadding.calculateTopPadding())
                 .statusBarsPadding()
         ) {
-            // App Header with Title, Count, Theme Toggle, Grid/List view toggle, and Search button
+            // Header: Title, Count, Theme Toggle, Grid/List view toggle, Search, Sort, or Empty Bin
             HeaderSection(
                 tab = currentTab,
+                quickFilter = quickFilter,
                 noteCount = displayedNotes.size,
+                trashCount = trashCount,
                 isGridView = isGridView,
                 isSearchBarVisible = isSearchBarVisible,
                 themeMode = themeMode,
+                sortOrder = sortOrder,
+                onSelectSortOrder = { viewModel.setSortOrder(it) },
                 onToggleTheme = { viewModel.toggleTheme() },
                 onToggleViewMode = { viewModel.toggleViewMode() },
-                onSearchToggle = { viewModel.toggleSearchBar() }
+                onSearchToggle = { viewModel.toggleSearchBar() },
+                onEmptyTrash = { showEmptyTrashDialog = true }
             )
 
             // Collapsible Search Field
@@ -167,12 +200,16 @@ fun MainScreen(
                     NotoSearchBar(
                         query = searchQuery,
                         onQueryChange = { viewModel.onSearchQueryChange(it) },
-                        placeholder = if (currentTab == BottomTab.FAVORITES) "Search favorites..." else "Search notes..."
+                        placeholder = when {
+                            quickFilter == QuickFilter.TRASH -> "Search recycle bin..."
+                            currentTab == BottomTab.FAVORITES -> "Search favorites..."
+                            else -> "Search notes..."
+                        }
                     )
                 }
             }
 
-            // Quick Filter Chips Row (All, Pinned, Favorites)
+            // Quick Filter Chips Row (All, Pinned, Favorites, Recycle Bin)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -180,26 +217,85 @@ fun MainScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val pinnedCount = notes.count { it.isPinned }
-                val favCount = notes.count { it.isFavorite }
+                val isTrash = quickFilter == QuickFilter.TRASH
+                val activeNotesCount = if (isTrash) notes.size else notes.size
+                val pinnedCount = if (!isTrash) notes.count { it.isPinned } else 0
+                val favCount = if (!isTrash) notes.count { it.isFavorite } else 0
+                val todoCount = if (!isTrash) notes.count { it.hasChecklist } else 0
 
                 FilterChipItem(
-                    label = "All (${notes.size})",
+                    label = if (isTrash) "Notes" else "All ($activeNotesCount)",
                     isSelected = quickFilter == QuickFilter.ALL,
                     onClick = { quickFilter = QuickFilter.ALL }
                 )
 
-                FilterChipItem(
-                    label = "📌 Pinned ($pinnedCount)",
-                    isSelected = quickFilter == QuickFilter.PINNED,
-                    onClick = { quickFilter = QuickFilter.PINNED }
-                )
+                if (!isTrash) {
+                    FilterChipItem(
+                        label = "📌 Pinned ($pinnedCount)",
+                        isSelected = quickFilter == QuickFilter.PINNED,
+                        onClick = { quickFilter = QuickFilter.PINNED }
+                    )
+
+                    FilterChipItem(
+                        label = "⭐ Favorites ($favCount)",
+                        isSelected = quickFilter == QuickFilter.FAVORITES,
+                        onClick = { quickFilter = QuickFilter.FAVORITES }
+                    )
+
+                    FilterChipItem(
+                        label = "☑ Tasks ($todoCount)",
+                        isSelected = quickFilter == QuickFilter.TODO,
+                        onClick = { quickFilter = QuickFilter.TODO }
+                    )
+                }
 
                 FilterChipItem(
-                    label = "⭐ Favorites ($favCount)",
-                    isSelected = quickFilter == QuickFilter.FAVORITES,
-                    onClick = { quickFilter = QuickFilter.FAVORITES }
+                    label = "🗑️ Bin ($trashCount)",
+                    isSelected = quickFilter == QuickFilter.TRASH,
+                    onClick = { quickFilter = QuickFilter.TRASH }
                 )
+            }
+
+            // Hashtag Filter Chips Row (shown if notes have hashtags and not in trash)
+            AnimatedVisibility(visible = allTags.isNotEmpty() && quickFilter != QuickFilter.TRASH) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 20.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    allTags.forEach { tag ->
+                        val isSelected = selectedTag == tag
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(
+                                    if (isSelected) {
+                                        MaterialTheme.colorScheme.onSurface
+                                    } else {
+                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                                    }
+                                )
+                                .clickable { viewModel.selectTag(tag) }
+                                .padding(horizontal = 10.dp, vertical = 5.dp)
+                        ) {
+                            Text(
+                                text = "#$tag",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 11.sp,
+                                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                                ),
+                                color = if (isSelected) {
+                                    MaterialTheme.colorScheme.surface
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
+                            )
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -209,6 +305,7 @@ fun MainScreen(
                 EmptyStateView(
                     tab = currentTab,
                     isSearching = searchQuery.isNotBlank(),
+                    isTrash = quickFilter == QuickFilter.TRASH,
                     modifier = Modifier.weight(1f)
                 )
             } else {
@@ -234,15 +331,21 @@ fun MainScreen(
                         ) { note ->
                             NoteCard(
                                 note = note,
-                                onClick = { onNoteClick(note.id) },
+                                onClick = {
+                                    if (quickFilter == QuickFilter.TRASH) {
+                                        selectedNoteForOptions = note
+                                    } else {
+                                        onNoteClick(note.id)
+                                    }
+                                },
                                 onLongClick = { selectedNoteForOptions = note },
                                 onTogglePin = { viewModel.togglePin(note) },
                                 onFavoriteToggle = { viewModel.toggleFavorite(note) },
                                 onDelete = {
-                                    viewModel.deleteNoteWithUndo(note) {
+                                    viewModel.moveToTrash(note) {
                                         scope.launch {
                                             val result = snackbarHostState.showSnackbar(
-                                                message = "Note deleted",
+                                                message = "Note moved to Recycle Bin",
                                                 actionLabel = "Undo",
                                                 duration = SnackbarDuration.Short
                                             )
@@ -251,7 +354,17 @@ fun MainScreen(
                                             }
                                         }
                                     }
-                                }
+                                },
+                                onRestore = {
+                                    viewModel.restoreNote(note) {
+                                        Toast.makeText(context, "Note restored", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                onPermanentDelete = {
+                                    noteToPermanentlyDelete = note
+                                },
+                                searchQuery = searchQuery,
+                                onTagClick = { viewModel.selectTag(it) }
                             )
                         }
                     }
@@ -276,15 +389,21 @@ fun MainScreen(
                         ) { index, note ->
                             NoteCard(
                                 note = note,
-                                onClick = { onNoteClick(note.id) },
+                                onClick = {
+                                    if (quickFilter == QuickFilter.TRASH) {
+                                        selectedNoteForOptions = note
+                                    } else {
+                                        onNoteClick(note.id)
+                                    }
+                                },
                                 onLongClick = { selectedNoteForOptions = note },
                                 onTogglePin = { viewModel.togglePin(note) },
                                 onFavoriteToggle = { viewModel.toggleFavorite(note) },
                                 onDelete = {
-                                    viewModel.deleteNoteWithUndo(note) {
+                                    viewModel.moveToTrash(note) {
                                         scope.launch {
                                             val result = snackbarHostState.showSnackbar(
-                                                message = "Note deleted",
+                                                message = "Note moved to Recycle Bin",
                                                 actionLabel = "Undo",
                                                 duration = SnackbarDuration.Short
                                             )
@@ -294,6 +413,16 @@ fun MainScreen(
                                         }
                                     }
                                 },
+                                onRestore = {
+                                    viewModel.restoreNote(note) {
+                                        Toast.makeText(context, "Note restored", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                onPermanentDelete = {
+                                    noteToPermanentlyDelete = note
+                                },
+                                searchQuery = searchQuery,
+                                onTagClick = { viewModel.selectTag(it) },
                                 modifier = Modifier
                                     .animateItem()
                                     .reorderableItem(state = reorderState, index = index)
@@ -305,17 +434,25 @@ fun MainScreen(
         }
     }
 
-    // Action sheet dialog (Pin, Star/Favorite, Delete)
+    // Apple-style Action Sheet Popup
     selectedNoteForOptions?.let { note ->
-        NoteActionDialog(
+        NoteActionBottomSheet(
             note = note,
+            onDismiss = { selectedNoteForOptions = null },
             onTogglePin = { viewModel.togglePin(note) },
             onToggleFavorite = { viewModel.toggleFavorite(note) },
-            onDelete = {
-                viewModel.deleteNoteWithUndo(note) {
+            onDuplicate = { viewModel.duplicateNote(note) },
+            onToggleAllTasks = {
+                viewModel.toggleAllTasks(note) {
+                    val msg = if (note.completedTasks == note.totalTasks) "Tasks reset to pending" else "All tasks completed"
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                }
+            },
+            onMoveToTrash = {
+                viewModel.moveToTrash(note) {
                     scope.launch {
                         val result = snackbarHostState.showSnackbar(
-                            message = "Note deleted",
+                            message = "Note moved to Recycle Bin",
                             actionLabel = "Undo",
                             duration = SnackbarDuration.Short
                         )
@@ -325,7 +462,49 @@ fun MainScreen(
                     }
                 }
             },
-            onDismiss = { selectedNoteForOptions = null }
+            onRestore = {
+                viewModel.restoreNote(note) {
+                    Toast.makeText(context, "Note restored", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onPermanentDelete = {
+                noteToPermanentlyDelete = note
+            }
+        )
+    }
+
+    // Permanent Delete Confirmation Dialog
+    noteToPermanentlyDelete?.let { note ->
+        DeleteConfirmationDialog(
+            title = "Delete Forever?",
+            message = "This note will be permanently erased. This action cannot be undone.",
+            confirmText = "Delete Forever",
+            isDestructive = true,
+            onConfirm = {
+                val target = note
+                noteToPermanentlyDelete = null
+                viewModel.permanentlyDeleteNote(target) {
+                    Toast.makeText(context, "Note permanently deleted", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onDismiss = { noteToPermanentlyDelete = null }
+        )
+    }
+
+    // Empty Recycle Bin Confirmation Dialog
+    if (showEmptyTrashDialog) {
+        DeleteConfirmationDialog(
+            title = "Empty Recycle Bin?",
+            message = "All $trashCount notes in the Recycle Bin will be permanently erased.",
+            confirmText = "Empty Bin",
+            isDestructive = true,
+            onConfirm = {
+                showEmptyTrashDialog = false
+                viewModel.emptyTrash {
+                    Toast.makeText(context, "Recycle Bin emptied", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onDismiss = { showEmptyTrashDialog = false }
         )
     }
 }
@@ -333,14 +512,21 @@ fun MainScreen(
 @Composable
 private fun HeaderSection(
     tab: BottomTab,
+    quickFilter: QuickFilter,
     noteCount: Int,
+    trashCount: Int,
     isGridView: Boolean,
     isSearchBarVisible: Boolean,
     themeMode: ThemeMode,
+    sortOrder: NoteSortOrder,
+    onSelectSortOrder: (NoteSortOrder) -> Unit,
     onToggleTheme: () -> Unit,
     onToggleViewMode: () -> Unit,
-    onSearchToggle: () -> Unit
+    onSearchToggle: () -> Unit,
+    onEmptyTrash: () -> Unit
 ) {
+    var showSortMenu by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -348,8 +534,10 @@ private fun HeaderSection(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val title = when (tab) {
-            BottomTab.FAVORITES -> "Favorites"
+        val title = when {
+            quickFilter == QuickFilter.TRASH -> "Recycle Bin"
+            quickFilter == QuickFilter.TODO -> "Tasks"
+            tab == BottomTab.FAVORITES -> "Favorites"
             else -> "Noto"
         }
 
@@ -387,36 +575,113 @@ private fun HeaderSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Theme Mode Toggle Button (Light / Dark)
-            IconButton(
-                onClick = onToggleTheme,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Icon(
-                    imageVector = if (themeMode == ThemeMode.DARK) Icons.Filled.LightMode else Icons.Filled.DarkMode,
-                    contentDescription = if (themeMode == ThemeMode.DARK) "Switch to Light mode" else "Switch to Dark mode",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
+            if (quickFilter == QuickFilter.TRASH) {
+                // Empty Bin Button (shown when there are notes in the trash)
+                if (trashCount > 0) {
+                    IconButton(
+                        onClick = onEmptyTrash,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.DeleteSweep,
+                            contentDescription = "Empty Recycle Bin",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            } else {
+                // Theme Mode Toggle Button (Light / Dark)
+                IconButton(
+                    onClick = onToggleTheme,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                ) {
+                    Icon(
+                        imageVector = if (themeMode == ThemeMode.DARK) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                        contentDescription = if (themeMode == ThemeMode.DARK) "Switch to Light mode" else "Switch to Dark mode",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
 
-            // View Mode Toggle Button (Grid / List)
-            IconButton(
-                onClick = onToggleViewMode,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Icon(
-                    imageVector = if (isGridView) Icons.Filled.ViewAgenda else Icons.Filled.GridView,
-                    contentDescription = if (isGridView) "Switch to list view" else "Switch to grid view",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(20.dp)
-                )
+                // Sort Options Dropdown Menu Button
+                Box {
+                    IconButton(
+                        onClick = { showSortMenu = true },
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Sort,
+                            contentDescription = "Sort notes",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = showSortMenu,
+                        onDismissRequest = { showSortMenu = false },
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        NoteSortOrder.entries.forEach { order ->
+                            DropdownMenuItem(
+                                text = {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = order.label,
+                                            style = MaterialTheme.typography.bodyMedium.copy(
+                                                fontWeight = if (order == sortOrder) FontWeight.Bold else FontWeight.Normal
+                                            ),
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        if (order == sortOrder) {
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Icon(
+                                                imageVector = Icons.Filled.Check,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
+                                    }
+                                },
+                                onClick = {
+                                    onSelectSortOrder(order)
+                                    showSortMenu = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // View Mode Toggle Button (Grid / List)
+                IconButton(
+                    onClick = onToggleViewMode,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                ) {
+                    Icon(
+                        imageVector = if (isGridView) Icons.Filled.ViewAgenda else Icons.Filled.GridView,
+                        contentDescription = if (isGridView) "Switch to list view" else "Switch to grid view",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
 
             // Search Toggle Button

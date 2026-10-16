@@ -19,22 +19,40 @@ class FakeNoteDao : NoteDao {
         return if (pinComp != 0) pinComp else b.updatedAt.compareTo(a.updatedAt)
     }
 
+    private fun compareTrashNotes(a: Note, b: Note): Int {
+        val delA = a.deletedAt ?: 0L
+        val delB = b.deletedAt ?: 0L
+        return delB.compareTo(delA)
+    }
+
     override fun getAllNotes(): Flow<List<Note>> {
         return notesFlow.map { map ->
-            map.values.sortedWith(::compareNotes)
+            map.values.filter { !it.isDeleted }.sortedWith(::compareNotes)
         }
     }
 
     override fun getFavoriteNotes(): Flow<List<Note>> {
         return notesFlow.map { map ->
-            map.values.filter { it.isFavorite }.sortedWith(::compareNotes)
+            map.values.filter { !it.isDeleted && it.isFavorite }.sortedWith(::compareNotes)
+        }
+    }
+
+    override fun getTrashNotes(): Flow<List<Note>> {
+        return notesFlow.map { map ->
+            map.values.filter { it.isDeleted }.sortedWith(::compareTrashNotes)
+        }
+    }
+
+    override fun getTrashCount(): Flow<Int> {
+        return notesFlow.map { map ->
+            map.values.count { it.isDeleted }
         }
     }
 
     override fun searchNotes(query: String): Flow<List<Note>> {
         return notesFlow.map { map ->
             map.values.filter {
-                it.title.contains(query, ignoreCase = true) || it.body.contains(query, ignoreCase = true)
+                !it.isDeleted && (it.title.contains(query, ignoreCase = true) || it.body.contains(query, ignoreCase = true))
             }.sortedWith(::compareNotes)
         }
     }
@@ -42,8 +60,16 @@ class FakeNoteDao : NoteDao {
     override fun searchFavoriteNotes(query: String): Flow<List<Note>> {
         return notesFlow.map { map ->
             map.values.filter {
-                it.isFavorite && (it.title.contains(query, ignoreCase = true) || it.body.contains(query, ignoreCase = true))
+                !it.isDeleted && it.isFavorite && (it.title.contains(query, ignoreCase = true) || it.body.contains(query, ignoreCase = true))
             }.sortedWith(::compareNotes)
+        }
+    }
+
+    override fun searchTrashNotes(query: String): Flow<List<Note>> {
+        return notesFlow.map { map ->
+            map.values.filter {
+                it.isDeleted && (it.title.contains(query, ignoreCase = true) || it.body.contains(query, ignoreCase = true))
+            }.sortedWith(::compareTrashNotes)
         }
     }
 
@@ -67,11 +93,25 @@ class FakeNoteDao : NoteDao {
     }
 
     override suspend fun deleteNote(note: Note) {
-        notesFlow.value = notesFlow.value - note.id
+        moveToTrash(note.id)
     }
 
-    override suspend fun deleteNoteById(id: Long) {
+    override suspend fun moveToTrash(id: Long, deletedAt: Long) {
+        val existing = notesFlow.value[id] ?: return
+        notesFlow.value = notesFlow.value + (id to existing.copy(isDeleted = true, deletedAt = deletedAt))
+    }
+
+    override suspend fun restoreNote(id: Long, updatedAt: Long) {
+        val existing = notesFlow.value[id] ?: return
+        notesFlow.value = notesFlow.value + (id to existing.copy(isDeleted = false, deletedAt = null, updatedAt = updatedAt))
+    }
+
+    override suspend fun permanentlyDeleteNote(id: Long) {
         notesFlow.value = notesFlow.value - id
+    }
+
+    override suspend fun emptyTrash() {
+        notesFlow.value = notesFlow.value.filterValues { !it.isDeleted }
     }
 
     override suspend fun updateFavorite(id: Long, isFavorite: Boolean, updatedAt: Long) {

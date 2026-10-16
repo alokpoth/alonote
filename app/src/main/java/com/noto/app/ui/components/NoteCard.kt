@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +21,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.StarOutline
@@ -35,9 +38,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -47,7 +54,8 @@ import com.noto.app.util.DateFormatter
 
 /**
  * Minimalist Apple-inspired note card with direct, visible UI actions
- * for Pin, Star/Favorite, Delete, and Copy.
+ * for Pin, Star/Favorite, Delete, and Copy (or Restore & Delete Forever in Recycle Bin),
+ * hashtag category pills, live search query highlighting, and tactile haptic feedback.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -58,19 +66,24 @@ fun NoteCard(
     onTogglePin: () -> Unit,
     onFavoriteToggle: () -> Unit,
     onDelete: () -> Unit,
+    onRestore: () -> Unit = {},
+    onPermanentDelete: () -> Unit = {},
+    searchQuery: String = "",
+    onTagClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val cardShape = RoundedCornerShape(18.dp)
     val interactionSource = remember { MutableInteractionSource() }
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
+    val hapticFeedback = LocalHapticFeedback.current
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(cardShape)
             .background(
-                if (note.isPinned) {
+                if (note.isPinned && !note.isDeleted) {
                     MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                 } else {
                     MaterialTheme.colorScheme.surface
@@ -78,8 +91,8 @@ fun NoteCard(
                 cardShape
             )
             .border(
-                width = if (note.isPinned) 1.5.dp else 1.dp,
-                color = if (note.isPinned) {
+                width = if (note.isPinned && !note.isDeleted) 1.5.dp else 1.dp,
+                color = if (note.isPinned && !note.isDeleted) {
                     MaterialTheme.colorScheme.onSurface.copy(alpha = 0.25f)
                 } else {
                     MaterialTheme.colorScheme.outline
@@ -90,25 +103,28 @@ fun NoteCard(
                 interactionSource = interactionSource,
                 indication = ripple(bounded = true),
                 onClick = onClick,
-                onLongClick = onLongClick
+                onLongClick = {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onLongClick()
+                }
             )
             .padding(horizontal = 16.dp, vertical = 14.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Header Row: Title & Visible Action Buttons (Pin, Star, Delete)
+            // Header Row: Title & Action Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Title and Pinned Badge
+                // Title and Pinned / Trash Badge
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f, fill = false)
                 ) {
-                    if (note.isPinned) {
+                    if (note.isPinned && !note.isDeleted) {
                         Box(
                             modifier = Modifier
                                 .padding(end = 6.dp)
@@ -122,14 +138,35 @@ fun NoteCard(
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     letterSpacing = 0.5.sp
-                                ),
+                               ),
                                 color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    } else if (note.isDeleted) {
+                        Box(
+                            modifier = Modifier
+                                .padding(end = 6.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(MaterialTheme.colorScheme.error.copy(alpha = 0.12f))
+                                .padding(horizontal = 5.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                text = "DELETED",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 0.5.sp
+                                ),
+                                color = MaterialTheme.colorScheme.error
                             )
                         }
                     }
 
+                    val highlightColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)
                     Text(
-                        text = note.displayTitle,
+                        text = remember(note.displayTitle, searchQuery) {
+                            highlightQuery(note.displayTitle, searchQuery, highlightColor)
+                        },
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 17.sp
@@ -147,66 +184,101 @@ fun NoteCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-                    // 1. Visible Pin Button
-                    IconButton(
-                        onClick = onTogglePin,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = if (note.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
-                            contentDescription = if (note.isPinned) "Unpin note" else "Pin note to top",
-                            tint = if (note.isPinned) {
-                                MaterialTheme.colorScheme.onSurface
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f)
-                            },
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+                    if (note.isDeleted) {
+                        // 1. Restore Button
+                        IconButton(
+                            onClick = onRestore,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.RestoreFromTrash,
+                                contentDescription = "Restore note",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(19.dp)
+                            )
+                        }
 
-                    // 2. Visible Favorite/Star Button
-                    IconButton(
-                        onClick = onFavoriteToggle,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = if (note.isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
-                            contentDescription = if (note.isFavorite) "Unmark favorite" else "Mark favorite",
-                            tint = if (note.isFavorite) {
-                                MaterialTheme.colorScheme.onSurface
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f)
-                            },
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+                        // 2. Permanent Delete Button
+                        IconButton(
+                            onClick = onPermanentDelete,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.DeleteForever,
+                                contentDescription = "Delete forever",
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(19.dp)
+                            )
+                        }
+                    } else {
+                        // 1. Visible Pin Button
+                        IconButton(
+                            onClick = onTogglePin,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = if (note.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                                contentDescription = if (note.isPinned) "Unpin note" else "Pin note to top",
+                                tint = if (note.isPinned) {
+                                    MaterialTheme.colorScheme.onSurface
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f)
+                                },
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
 
-                    // 3. Visible Delete Button
-                    IconButton(
-                        onClick = onDelete,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.DeleteOutline,
-                            contentDescription = "Delete note",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f),
-                            modifier = Modifier.size(18.dp)
-                        )
+                        // 2. Visible Favorite/Star Button
+                        IconButton(
+                            onClick = onFavoriteToggle,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = if (note.isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                                contentDescription = if (note.isFavorite) "Unmark favorite" else "Mark favorite",
+                                tint = if (note.isFavorite) {
+                                    MaterialTheme.colorScheme.onSurface
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f)
+                                },
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+
+                        // 3. Visible Delete Button
+                        IconButton(
+                            onClick = onDelete,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.DeleteOutline,
+                                contentDescription = "Delete note",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            // Body Preview Text
+            // Body Preview Text with search highlighting
+            val highlightColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)
             Text(
-                text = note.previewText,
+                text = remember(note.previewText, searchQuery) {
+                    highlightQuery(note.previewText, searchQuery, highlightColor)
+                },
                 style = MaterialTheme.typography.bodyMedium.copy(
                     lineHeight = 20.sp
                 ),
@@ -214,6 +286,42 @@ fun NoteCard(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
+
+            // Hashtag Pill Badges
+            if (note.tags.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    note.tags.take(3).forEach { tag ->
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f))
+                                .clickable { onTagClick(tag) }
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                text = "#$tag",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    if (note.tags.size > 3) {
+                        Text(
+                            text = "+${note.tags.size - 3}",
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -225,15 +333,45 @@ fun NoteCard(
             ) {
                 // Timestamp
                 Text(
-                    text = DateFormatter.formatShort(note.updatedAt),
+                    text = if (note.isDeleted && note.deletedAt != null) {
+                        "Deleted ${DateFormatter.formatShort(note.deletedAt)}"
+                    } else {
+                        DateFormatter.formatShort(note.updatedAt)
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
+                    // Checklist Progress Badge
+                    if (note.hasChecklist) {
+                        val allCompleted = note.completedTasks == note.totalTasks
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    if (allCompleted) {
+                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                                    } else {
+                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+                                    }
+                                )
+                                .padding(horizontal = 7.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                text = if (allCompleted) "✓ Done" else "✓ ${note.completedTasks}/${note.totalTasks}",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+
                     // Word Count Pill
                     Box(
                         modifier = Modifier
@@ -276,3 +414,32 @@ fun NoteCard(
         }
     }
 }
+
+/**
+ * Highlights matches of [query] in [text] with [highlightColor].
+ */
+private fun highlightQuery(
+    text: String,
+    query: String,
+    highlightColor: androidx.compose.ui.graphics.Color
+): AnnotatedString {
+    val trimmed = query.trim()
+    if (trimmed.isEmpty()) return AnnotatedString(text)
+
+    val builder = AnnotatedString.Builder(text)
+    var startIndex = text.indexOf(trimmed, ignoreCase = true)
+    while (startIndex >= 0) {
+        val endIndex = startIndex + trimmed.length
+        builder.addStyle(
+            SpanStyle(
+                background = highlightColor,
+                fontWeight = FontWeight.Bold
+            ),
+            startIndex,
+            endIndex
+        )
+        startIndex = text.indexOf(trimmed, endIndex, ignoreCase = true)
+    }
+    return builder.toAnnotatedString()
+}
+

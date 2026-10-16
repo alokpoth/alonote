@@ -36,6 +36,7 @@ class NoteRepositoryTest {
         assertEquals("Shopping List", fetched?.title)
         assertEquals("Milk, Eggs, Bread", fetched?.body)
         assertFalse(fetched?.isFavorite ?: true)
+        assertFalse(fetched?.isDeleted ?: true)
     }
 
     @Test
@@ -51,16 +52,55 @@ class NoteRepositoryTest {
     }
 
     @Test
-    fun deleteNote_removesFromDatabase() = runTest(testDispatcher) {
+    fun moveToTrash_and_restore_and_permanentDelete() = runTest(testDispatcher) {
         val note = Note(title = "To Delete", body = "Goodbye")
         val savedId = repository.saveNote(note)
 
         val fetched = repository.getNoteByIdOnce(savedId)
         assertNotNull(fetched)
 
-        repository.deleteNote(fetched!!)
+        // Move to trash
+        repository.moveToTrash(savedId)
+        val activeNotes = repository.getAllNotes().first()
+        assertTrue(activeNotes.isEmpty())
+
+        val trashNotes = repository.getTrashNotes().first()
+        assertEquals(1, trashNotes.size)
+        assertEquals(savedId, trashNotes.first().id)
+        val trashCount = repository.getTrashCount().first()
+        assertEquals(1, trashCount)
+
+        // Restore note
+        repository.restoreNote(savedId)
+        val activeAfterRestore = repository.getAllNotes().first()
+        assertEquals(1, activeAfterRestore.size)
+        val trashAfterRestore = repository.getTrashNotes().first()
+        assertTrue(trashAfterRestore.isEmpty())
+
+        // Move to trash again and permanently delete
+        repository.moveToTrash(savedId)
+        repository.permanentlyDeleteNote(savedId)
         val afterDelete = repository.getNoteByIdOnce(savedId)
         assertNull(afterDelete)
+    }
+
+    @Test
+    fun emptyTrash_removesAllDeletedNotes() = runTest(testDispatcher) {
+        val id1 = repository.saveNote(Note(title = "Note 1", body = "Body 1"))
+        val id2 = repository.saveNote(Note(title = "Note 2", body = "Body 2"))
+        val id3 = repository.saveNote(Note(title = "Note 3", body = "Body 3"))
+
+        repository.moveToTrash(id1)
+        repository.moveToTrash(id2)
+
+        assertEquals(2, repository.getTrashCount().first())
+        assertEquals(1, repository.getAllNotes().first().size)
+
+        repository.emptyTrash()
+
+        assertEquals(0, repository.getTrashCount().first())
+        assertTrue(repository.getTrashNotes().first().isEmpty())
+        assertEquals(1, repository.getAllNotes().first().size)
     }
 
     @Test

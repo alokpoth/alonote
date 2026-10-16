@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.SearchOff
 import androidx.compose.material.icons.outlined.StarOutline
@@ -26,19 +27,25 @@ import androidx.compose.ui.unit.sp
 import com.noto.app.ui.navigation.BottomTab
 
 /**
- * Calm, monochrome empty state display.
+ * Calm, monochrome empty state display for notes, favorites, search, and Recycle Bin.
  */
 @Composable
 fun EmptyStateView(
     tab: BottomTab,
     isSearching: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isTrash: Boolean = false
 ) {
     val (icon: ImageVector, title: String, subtitle: String) = when {
         isSearching -> Triple(
             Icons.Outlined.SearchOff,
             "No Results",
             "No notes match your search query."
+        )
+        isTrash -> Triple(
+            Icons.Filled.DeleteOutline,
+            "Recycle Bin is Empty",
+            "Deleted notes will appear here."
         )
         tab == BottomTab.FAVORITES -> Triple(
             Icons.Outlined.StarOutline,

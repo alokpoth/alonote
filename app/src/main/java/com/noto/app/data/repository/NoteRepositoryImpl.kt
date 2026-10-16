@@ -24,12 +24,20 @@ class NoteRepositoryImpl(
         return noteDao.getFavoriteNotes().flowOn(ioDispatcher)
     }
 
-    override fun searchNotes(query: String, favoritesOnly: Boolean): Flow<List<Note>> {
+    override fun getTrashNotes(): Flow<List<Note>> {
+        return noteDao.getTrashNotes().flowOn(ioDispatcher)
+    }
+
+    override fun getTrashCount(): Flow<Int> {
+        return noteDao.getTrashCount().flowOn(ioDispatcher)
+    }
+
+    override fun searchNotes(query: String, favoritesOnly: Boolean, trashOnly: Boolean): Flow<List<Note>> {
         val trimmed = query.trim()
-        val flow = if (favoritesOnly) {
-            noteDao.searchFavoriteNotes(trimmed)
-        } else {
-            noteDao.searchNotes(trimmed)
+        val flow = when {
+            trashOnly -> noteDao.searchTrashNotes(trimmed)
+            favoritesOnly -> noteDao.searchFavoriteNotes(trimmed)
+            else -> noteDao.searchNotes(trimmed)
         }
         return flow.flowOn(ioDispatcher)
     }
@@ -47,7 +55,9 @@ class NoteRepositoryImpl(
         if (note.id == 0L) {
             val newNote = note.copy(
                 createdAt = if (note.createdAt == 0L) now else note.createdAt,
-                updatedAt = now
+                updatedAt = now,
+                isDeleted = false,
+                deletedAt = null
             )
             noteDao.insertNote(newNote)
         } else {
@@ -57,12 +67,28 @@ class NoteRepositoryImpl(
         }
     }
 
+    override suspend fun moveToTrash(id: Long): Unit = withContext(ioDispatcher) {
+        noteDao.moveToTrash(id)
+    }
+
+    override suspend fun restoreNote(id: Long): Unit = withContext(ioDispatcher) {
+        noteDao.restoreNote(id)
+    }
+
+    override suspend fun permanentlyDeleteNote(id: Long): Unit = withContext(ioDispatcher) {
+        noteDao.permanentlyDeleteNote(id)
+    }
+
+    override suspend fun emptyTrash(): Unit = withContext(ioDispatcher) {
+        noteDao.emptyTrash()
+    }
+
     override suspend fun deleteNote(note: Note): Unit = withContext(ioDispatcher) {
-        noteDao.deleteNote(note)
+        noteDao.moveToTrash(note.id)
     }
 
     override suspend fun deleteNoteById(id: Long): Unit = withContext(ioDispatcher) {
-        noteDao.deleteNoteById(id)
+        noteDao.moveToTrash(id)
     }
 
     override suspend fun setFavorite(id: Long, isFavorite: Boolean): Unit = withContext(ioDispatcher) {

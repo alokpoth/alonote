@@ -75,4 +75,13 @@ object DateFormatter {
             }
         }
     }
+
+    /**
+     * Formats timestamp into a full date and time string for note detail sheets.
+     * Example: "October 16, 2026 at 7:30 PM"
+     */
+    fun formatFull(timestamp: Long): String {
+        if (timestamp <= 0L) return "N/A"
+        return SimpleDateFormat("MMMM d, yyyy 'at' h:mm a", Locale.getDefault()).format(Date(timestamp))
+    }
 }

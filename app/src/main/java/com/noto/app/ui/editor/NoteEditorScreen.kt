@@ -1,5 +1,6 @@
 package com.noto.app.ui.editor
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -34,10 +35,14 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.AutoStories
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +64,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -70,16 +76,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.noto.app.ui.components.DeleteConfirmationDialog
+import com.noto.app.ui.components.MarkdownReaderView
 import com.noto.app.ui.components.MarkdownToolbar
+import com.noto.app.ui.components.NoteStatsBottomSheet
 import com.noto.app.util.DateFormatter
 import com.noto.app.util.MarkdownFormatter
+import com.noto.app.util.SmartListContinuation
+import com.noto.app.util.UndoRedoHistory
+import com.noto.app.util.rememberMarkdownVisualTransformation
 
 /**
- * Clean, distraction-free note editor screen with zero typing lag,
- * visible UI action buttons for Pin, Star, Copy, Delete, Done,
- * live word/character count pill, and an Apple-inspired Markdown formatting toolbar
- * (Bold, Italic, Heading, Bullet List, To-do Checklist, Strikethrough).
+ * Clean, distraction-free note editor screen with live visual Markdown rendering,
+ * zero typing lag, visible UI action buttons (Pin, Star, Share, Copy, Delete, Done),
+ * word/character count pill, and an Apple-inspired formatting toolbar.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteEditorScreen(
     viewModel: NoteEditorViewModel,
@@ -88,15 +99,21 @@ fun NoteEditorScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var isReaderMode by remember { mutableStateOf(false) }
+    var showStatsSheet by remember { mutableStateOf(false) }
 
     val titleFocusRequester = remember { FocusRequester() }
     val bodyFocusRequester = remember { FocusRequester() }
     val clipboardManager = LocalClipboardManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val undoHistory = remember { UndoRedoHistory() }
     val context = LocalContext.current
 
     // Maintain local TextFieldValue state for smooth selection and formatting
     var bodyTextFieldValue by remember(uiState.isLoaded) {
-        mutableStateOf(TextFieldValue(uiState.body, selection = TextRange(uiState.body.length)))
+        val initial = TextFieldValue(uiState.body, selection = TextRange(uiState.body.length))
+        undoHistory.record(initial, force = true)
+        mutableStateOf(initial)
     }
 
     // Intercept back navigation to flush pending changes
@@ -137,6 +154,7 @@ fun NoteEditorScreen(
     val charCount = remember(uiState.title, bodyTextFieldValue.text) {
         uiState.title.length + bodyTextFieldValue.text.length
     }
+    val readingTime = maxOf(1, kotlin.math.ceil(wordCount / 200.0).toInt())
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -145,6 +163,7 @@ fun NoteEditorScreen(
             EditorTopBar(
                 isFavorite = uiState.isFavorite,
                 isPinned = uiState.isPinned,
+                isReaderMode = isReaderMode,
                 saveStatus = uiState.saveStatus,
                 onBack = {
                     viewModel.flushSave()
@@ -154,8 +173,26 @@ fun NoteEditorScreen(
                     viewModel.flushSave()
                     onNavigateBack()
                 },
+                onToggleReaderMode = {
+                    if (!isReaderMode) {
+                        keyboardController?.hide()
+                    }
+                    isReaderMode = !isReaderMode
+                },
                 onToggleFavorite = { viewModel.toggleFavorite() },
                 onTogglePin = { viewModel.togglePin() },
+                onShare = {
+                    val shareContent = buildString {
+                        if (uiState.title.isNotBlank()) appendLine(uiState.title)
+                        if (bodyTextFieldValue.text.isNotBlank()) append(bodyTextFieldValue.text)
+                    }.trim()
+                    val sendIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, shareContent)
+                        type = "text/plain"
+                    }
+                    context.startActivity(Intent.createChooser(sendIntent, "Share note via"))
+                },
                 onCopy = {
                     val contentToCopy = buildString {
                         if (uiState.title.isNotBlank()) appendLine(uiState.title)
@@ -168,26 +205,12 @@ fun NoteEditorScreen(
             )
         },
         bottomBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .imePadding()
-                    .navigationBarsPadding()
-            ) {
-                // Docked Formatting Toolbar (Bold, Italic, Heading, Bullet, Checklist, Strike)
-                MarkdownToolbar(
-                    value = bodyTextFieldValue,
-                    onValueChange = {
-                        bodyTextFieldValue = it
-                        viewModel.onBodyChange(it.text)
-                    }
-                )
-
-                // Minimal Live Word & Character Count Bar
+            if (isReaderMode) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 6.dp),
+                        .navigationBarsPadding()
+                        .padding(horizontal = 24.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -195,145 +218,252 @@ fun NoteEditorScreen(
                         modifier = Modifier
                             .clip(RoundedCornerShape(999.dp))
                             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                            .clickable { showStatsSheet = true }
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
-                            text = "$wordCount words • $charCount characters",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 11.sp
-                            ),
+                            text = "📖 Reader Mode • $wordCount words • ~${readingTime}m read",
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
-                    if (uiState.lastUpdated > 0L) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(999.dp))
+                            .clickable { isReaderMode = false }
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
                         Text(
-                            text = DateFormatter.formatEditor(uiState.lastUpdated),
+                            text = "Tap ✏️ to edit",
                             style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 11.sp
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium
                             ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .imePadding()
+                        .navigationBarsPadding()
+                ) {
+                    // Docked Formatting Toolbar (Undo, Redo, Bold, Italic, Heading, Bullet, Checklist, Strike, Code, Tag)
+                    MarkdownToolbar(
+                        value = bodyTextFieldValue,
+                        onValueChange = { newValue ->
+                            undoHistory.record(bodyTextFieldValue, force = true)
+                            bodyTextFieldValue = newValue
+                            viewModel.onBodyChange(newValue.text)
+                            undoHistory.record(newValue, force = true)
+                        },
+                        canUndo = undoHistory.canUndo,
+                        canRedo = undoHistory.canRedo,
+                        onUndo = {
+                            undoHistory.undo(bodyTextFieldValue)?.let { reverted ->
+                                bodyTextFieldValue = reverted
+                                viewModel.onBodyChange(reverted.text)
+                            }
+                        },
+                        onRedo = {
+                            undoHistory.redo(bodyTextFieldValue)?.let { redone ->
+                                bodyTextFieldValue = redone
+                                viewModel.onBodyChange(redone.text)
+                            }
+                        }
+                    )
+
+                    // Minimal Live Word & Character Count Bar (Clickable to open Note Details modal)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp, vertical = 6.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(999.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                .clickable { showStatsSheet = true }
+                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "$wordCount words • $charCount chars • ~${readingTime}m read",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 11.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        if (uiState.lastUpdated > 0L) {
+                            Text(
+                                text = DateFormatter.formatEditor(uiState.lastUpdated),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontSize = 11.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            )
+                        }
                     }
                 }
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
-                    bodyFocusRequester.requestFocus()
-                }
-                .padding(horizontal = 24.dp, vertical = 8.dp)
-        ) {
-            // Editable Title Field
-            Box(
+        if (isReaderMode) {
+            MarkdownReaderView(
+                title = uiState.title,
+                body = bodyTextFieldValue.text,
+                onToggleTaskAtLine = { lineIdx ->
+                    val lines = bodyTextFieldValue.text.lines().toMutableList()
+                    if (lineIdx in lines.indices) {
+                        val line = lines[lineIdx]
+                        val toggled = when {
+                            line.contains("- [ ] ") -> line.replaceFirst("- [ ] ", "- [x] ")
+                            line.contains("[ ] ") -> line.replaceFirst("[ ] ", "[x] ")
+                            line.contains("- [x] ") -> line.replaceFirst("- [x] ", "- [ ] ")
+                            line.contains("[x] ") -> line.replaceFirst("[x] ", "[ ] ")
+                            else -> line
+                        }
+                        lines[lineIdx] = toggled
+                        val newText = lines.joinToString("\n")
+                        val newSel = TextRange(bodyTextFieldValue.selection.start.coerceIn(0, newText.length))
+                        val updated = TextFieldValue(newText, newSel)
+                        undoHistory.record(bodyTextFieldValue, force = true)
+                        bodyTextFieldValue = updated
+                        viewModel.onBodyChange(newText)
+                        undoHistory.record(updated, force = true)
+                    }
+                },
+                modifier = Modifier.padding(innerPadding)
+            )
+        } else {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        titleFocusRequester.requestFocus()
-                    },
-                contentAlignment = Alignment.CenterStart
-            ) {
-                if (uiState.title.isEmpty()) {
-                    Text(
-                        text = "Title",
-                        style = MaterialTheme.typography.displayLarge.copy(
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
-                    )
-                }
-
-                BasicTextField(
-                    value = uiState.title,
-                    onValueChange = { viewModel.onTitleChange(it) },
-                    textStyle = MaterialTheme.typography.displayLarge.copy(
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    ),
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = { bodyFocusRequester.requestFocus() }),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(titleFocusRequester)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Multiline Note Body Field - tap anywhere on this surface to write
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .defaultMinSize(minHeight = 450.dp)
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
                         bodyFocusRequester.requestFocus()
-                    },
-                contentAlignment = Alignment.TopStart
+                    }
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
             ) {
-                if (bodyTextFieldValue.text.isEmpty()) {
-                    Text(
-                        text = "Note",
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 17.sp,
-                            lineHeight = 26.sp
+                // Editable Title Field
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            titleFocusRequester.requestFocus()
+                        },
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (uiState.title.isEmpty()) {
+                        Text(
+                            text = "Title",
+                            style = MaterialTheme.typography.displayLarge.copy(
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                        )
+                    }
+
+                    BasicTextField(
+                        value = uiState.title,
+                        onValueChange = { viewModel.onTitleChange(it) },
+                        textStyle = MaterialTheme.typography.displayLarge.copy(
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(onNext = { bodyFocusRequester.requestFocus() }),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(titleFocusRequester)
                     )
                 }
 
-                BasicTextField(
-                    value = bodyTextFieldValue,
-                    onValueChange = { newValue ->
-                        // Automatically continue checklist [ ] or bullet • on Enter key press
-                        if (newValue.text.length == bodyTextFieldValue.text.length + 1 &&
-                            newValue.selection.start > 0 &&
-                            newValue.text.getOrNull(newValue.selection.start - 1) == '\n') {
-                            val handled = MarkdownFormatter.handleEnterKey(bodyTextFieldValue)
-                            if (handled != null) {
-                                bodyTextFieldValue = handled
-                                viewModel.onBodyChange(handled.text)
-                                return@BasicTextField
-                            }
-                        }
-                        bodyTextFieldValue = newValue
-                        viewModel.onBodyChange(newValue.text)
-                    },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 17.sp,
-                        lineHeight = 26.sp,
-                        color = MaterialTheme.colorScheme.onBackground
-                    ),
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Multiline Note Body Field with Live Markdown Transformation & Smart List Continuation
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .defaultMinSize(minHeight = 450.dp)
-                        .focusRequester(bodyFocusRequester)
-                )
-            }
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            bodyFocusRequester.requestFocus()
+                        },
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    if (bodyTextFieldValue.text.isEmpty()) {
+                        Text(
+                            text = "Note",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 17.sp,
+                                lineHeight = 26.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                        )
+                    }
 
-            Spacer(modifier = Modifier.height(60.dp))
+                    BasicTextField(
+                        value = bodyTextFieldValue,
+                        onValueChange = { newValue ->
+                            val processed = SmartListContinuation.processChange(newValue, bodyTextFieldValue)
+                            undoHistory.record(bodyTextFieldValue, force = processed != newValue)
+                            bodyTextFieldValue = processed
+                            viewModel.onBodyChange(processed.text)
+                        },
+                        visualTransformation = rememberMarkdownVisualTransformation(),
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = 17.sp,
+                            lineHeight = 26.sp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        ),
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .defaultMinSize(minHeight = 450.dp)
+                            .focusRequester(bodyFocusRequester)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(60.dp))
+            }
         }
+    }
+
+    if (showStatsSheet) {
+        NoteStatsBottomSheet(
+            title = uiState.title,
+            body = bodyTextFieldValue.text,
+            createdAt = uiState.createdAt,
+            updatedAt = uiState.lastUpdated,
+            onDismiss = { showStatsSheet = false }
+        )
     }
 
     if (showDeleteDialog) {
         DeleteConfirmationDialog(
+            title = "Move to Recycle Bin?",
+            message = "You can restore this note anytime from the Recycle Bin.",
+            confirmText = "Move to Bin",
+            isDestructive = true,
             onConfirm = {
                 showDeleteDialog = false
                 viewModel.deleteNote {
@@ -349,11 +479,14 @@ fun NoteEditorScreen(
 private fun EditorTopBar(
     isFavorite: Boolean,
     isPinned: Boolean,
+    isReaderMode: Boolean,
     saveStatus: SaveStatus,
     onBack: () -> Unit,
     onDone: () -> Unit,
+    onToggleReaderMode: () -> Unit,
     onToggleFavorite: () -> Unit,
     onTogglePin: () -> Unit,
+    onShare: () -> Unit,
     onCopy: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -395,7 +528,7 @@ private fun EditorTopBar(
             )
         }
 
-        // 1. Visible Pin Button
+        // 1. Pin Button
         IconButton(
             onClick = onTogglePin,
             modifier = Modifier
@@ -414,7 +547,7 @@ private fun EditorTopBar(
             )
         }
 
-        // 2. Visible Star / Favorite Toggle Button
+        // 2. Star / Favorite Toggle Button
         IconButton(
             onClick = onToggleFavorite,
             modifier = Modifier
@@ -433,7 +566,22 @@ private fun EditorTopBar(
             )
         }
 
-        // 3. Visible Copy Note Button
+        // 3. Share Note Button (Native Android Intent)
+        IconButton(
+            onClick = onShare,
+            modifier = Modifier
+                .size(38.dp)
+                .clip(CircleShape)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Share,
+                contentDescription = "Share Note",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(19.dp)
+            )
+        }
+
+        // 4. Copy Note Button
         IconButton(
             onClick = onCopy,
             modifier = Modifier
@@ -448,7 +596,7 @@ private fun EditorTopBar(
             )
         }
 
-        // 4. Visible Delete Button
+        // 5. Delete Button (Moves to Recycle Bin)
         IconButton(
             onClick = onDelete,
             modifier = Modifier
@@ -457,13 +605,32 @@ private fun EditorTopBar(
         ) {
             Icon(
                 imageVector = Icons.Filled.DeleteOutline,
-                contentDescription = "Delete Note",
+                contentDescription = "Move to Recycle Bin",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
             )
         }
 
-        // 5. Visible Done / Save Checkmark Button
+        // 6. Reader / Focus Mode Toggle Button
+        IconButton(
+            onClick = onToggleReaderMode,
+            modifier = Modifier
+                .size(38.dp)
+                .clip(CircleShape)
+                .background(
+                    if (isReaderMode) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                    else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                )
+        ) {
+            Icon(
+                imageVector = if (isReaderMode) Icons.Filled.Edit else Icons.Filled.AutoStories,
+                contentDescription = if (isReaderMode) "Switch to Editor" else "Reader Mode",
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(19.dp)
+            )
+        }
+
+        // 7. Done / Save Checkmark Button
         IconButton(
             onClick = onDone,
             modifier = Modifier

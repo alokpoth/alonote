@@ -351,6 +351,64 @@
       font-weight: 600;
     }
 
+    /* Tag Chips Row */
+    .tag-chips {
+      display: flex;
+      gap: 6px;
+      padding: 0 16px 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .tag-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tag-chip {
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--surface-variant);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .tag-chip.active {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .tag-pill {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 500;
+      background: var(--surface-variant);
+      color: var(--text-muted);
+      margin-right: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .tag-pill:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    .search-highlight {
+      background: rgba(250, 204, 21, 0.35);
+      color: inherit;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+
     /* Notes List: List vs Grid modes */
     .notes-list {
       flex: 1;
@@ -673,6 +731,152 @@
       color: var(--text-muted);
     }
 
+    .editor-stats-clickable {
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: var(--surface-variant);
+      transition: opacity 0.15s ease;
+    }
+
+    .editor-stats-clickable:hover {
+      opacity: 0.8;
+    }
+
+    /* Reader Mode View */
+    .editor-reader-view {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 2px 20px;
+    }
+
+    .reader-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+
+    .reader-task-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .reader-task-row:hover {
+      background: var(--surface-variant);
+    }
+
+    .reader-checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1.5px solid var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .reader-checkbox.checked {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .reader-task-text {
+      font-size: 15px;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    .reader-task-text.checked {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .reader-code-block {
+      background: var(--surface-variant);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-family: monospace;
+      font-size: 13px;
+      margin: 8px 0;
+      overflow-x: auto;
+    }
+
+    /* Stats Modal Bottom Sheet */
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(4px);
+      z-index: 60;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .modal-sheet {
+      width: 100%;
+      background: var(--surface);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 18px 20px 24px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.3);
+      animation: slideUpSheet 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUpSheet {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .sheet-drag-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--border);
+      margin: 0 auto 14px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+
+    .stats-group {
+      background: var(--surface-variant);
+      border-radius: 14px;
+      padding: 4px 14px;
+      margin-bottom: 10px;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .stats-row:last-child {
+      border-bottom: none;
+    }
+
+    .stats-row b {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
     /* Toast Snackbar */
     .toast-snackbar {
       position: absolute;
@@ -829,6 +1033,14 @@
               <button class="ctrl-btn" id="preview-view-toggle" title="Toggle Grid / List View">
                 <svg id="icon-grid" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
               </button>
+              <!-- Sort Notes Button -->
+              <button class="ctrl-btn" id="preview-sort-btn" title="Sort Notes: Recently Edited">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="8" y2="18"/></svg>
+              </button>
+              <!-- Empty Bin Button (shown when viewing trash) -->
+              <button class="ctrl-btn" id="preview-empty-trash" style="display: none; color: #ef4444;" title="Empty Recycle Bin">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              </button>
               <!-- Search Button -->
               <button class="ctrl-btn" id="preview-search-toggle" title="Search Notes">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -847,9 +1059,12 @@
             <button class="chip active" data-filter="all" id="chip-all">All</button>
             <button class="chip" data-filter="pinned" id="chip-pinned">📌 Pinned</button>
             <button class="chip" data-filter="starred" id="chip-starred">⭐ Favorites</button>
-            <button class="chip" data-filter="ideas">💡 Ideas</button>
-            <button class="chip" data-filter="work">💼 Work</button>
+            <button class="chip" data-filter="todo" id="chip-todo">☑ Tasks</button>
+            <button class="chip" data-filter="trash" id="chip-trash">🗑️ Bin (<span id="trash-count-badge">0</span>)</button>
           </div>
+
+          <!-- Hashtag Chips Row -->
+          <div class="tag-chips" id="preview-tag-chips" style="display: none;"></div>
 
           <!-- Notes List / Grid Container -->
           <div class="notes-list" id="preview-notes-list">
@@ -877,6 +1092,10 @@
               </button>
               <span id="editor-status" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Saved</span>
               <div class="editor-top-actions">
+                <!-- Reader / Focus Mode Button in Editor -->
+                <button class="editor-btn" id="editor-reader-toggle" title="Reader / Focus Mode">
+                  <svg id="icon-reader-book" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </button>
                 <!-- Pin Button in Editor -->
                 <button class="editor-btn" id="editor-pin" title="Pin / Unpin">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5"/><path d="M5 17h14l-1-7H6l-1 7z"/><path d="M7 10V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6"/></svg>
@@ -884,6 +1103,10 @@
                 <!-- Favorite Button in Editor -->
                 <button class="editor-btn" id="editor-fav" title="Star / Favorite">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </button>
+                <!-- Share Button in Editor -->
+                <button class="editor-btn" id="editor-share" title="Share Note">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                 </button>
                 <!-- Copy Button in Editor -->
                 <button class="editor-btn" id="editor-copy" title="Copy Note">
@@ -899,25 +1122,56 @@
                 </button>
               </div>
             </div>
+
+            <!-- Edit Mode View Inputs -->
             <input type="text" class="editor-title" id="editor-title" placeholder="Title">
             <div class="editor-body-wrapper" id="editor-body-wrapper">
               <textarea class="editor-body" id="editor-body" placeholder="Note (Try Markdown: bold, italic, todo, list)"></textarea>
             </div>
 
-            <!-- Markdown Formatting Toolbar -->
-            <div class="markdown-toolbar">
+            <!-- Reader Mode Rendered Document View -->
+            <div class="editor-reader-view" id="editor-reader-view" style="display: none;"></div>
+
+            <!-- Markdown Formatting Toolbar with Undo / Redo -->
+            <div class="markdown-toolbar" id="editor-toolbar">
+              <button class="md-tool-btn" data-tool="undo" title="Undo">↺</button>
+              <button class="md-tool-btn" data-tool="redo" title="Redo">↻</button>
               <button class="md-tool-btn" data-tool="h" title="Heading"><b>H</b></button>
               <button class="md-tool-btn" data-tool="b" title="Bold"><b>B</b></button>
               <button class="md-tool-btn" data-tool="i" title="Italic"><i>I</i></button>
               <button class="md-tool-btn" data-tool="list" title="Bullet List">• List</button>
               <button class="md-tool-btn" data-tool="todo" title="To-do Checklist">☑ Task</button>
               <button class="md-tool-btn" data-tool="strike" title="Strikethrough"><s>S</s></button>
+              <button class="md-tool-btn" data-tool="code" title="Inline Code"><code>&lt;/&gt;</code></button>
+              <button class="md-tool-btn" data-tool="tag" title="Insert Tag"># Tag</button>
             </div>
 
-            <!-- Editor Live Word Count Bar -->
+            <!-- Editor Live Word Count Bar (Clickable for Note Statistics) -->
             <div class="editor-footer">
-              <span id="editor-stats">0 words • 0 characters</span>
+              <span class="editor-stats-clickable" id="editor-stats" title="Tap to view detailed note statistics">0 words • 0 characters</span>
               <span id="editor-readtime">~1 min read</span>
+            </div>
+          </div>
+
+          <!-- Note Statistics Modal Bottom Sheet -->
+          <div class="modal-backdrop" id="stats-modal" style="display: none;">
+            <div class="modal-sheet">
+              <div class="sheet-drag-handle"></div>
+              <div class="modal-title">Note Statistics</div>
+              <div class="stats-group">
+                <div class="stats-row"><span>Words</span><b id="stats-words">0</b></div>
+                <div class="stats-row"><span>Characters (all / no spaces)</span><b id="stats-chars">0 / 0</b></div>
+                <div class="stats-row"><span>Lines / Paragraphs</span><b id="stats-lines">0 / 0</b></div>
+                <div class="stats-row" id="stats-tasks-row" style="display: none;"><span>Checklist Tasks</span><b id="stats-tasks">0 / 0</b></div>
+              </div>
+              <div class="stats-group">
+                <div class="stats-row"><span>Reading Time</span><b id="stats-read-time">~1 min (200 wpm)</b></div>
+                <div class="stats-row"><span>Speaking Time</span><b id="stats-speak-time">~1 min (130 wpm)</b></div>
+              </div>
+              <div class="stats-group">
+                <div class="stats-row"><span>Last Modified</span><b id="stats-modified">Just now</b></div>
+              </div>
+              <button class="btn btn-primary" id="stats-modal-done" style="width: 100%; margin-top: 10px; height: 44px; border-radius: 12px;">Done</button>
             </div>
           </div>
 
@@ -937,12 +1191,28 @@
         <p>Seamless toggle between monochrome pure black Dark Mode and paper-white Light Mode, respecting your system preferences automatically.</p>
       </div>
       <div class="feature-card">
+        <h3>📖 Distraction-Free Reader Mode</h3>
+        <p>Switch with one tap to a beautiful, clean typography reading view with interactive checkboxes that can be checked off in real time.</p>
+      </div>
+      <div class="feature-card">
+        <h3>↺ Dedicated Undo & Redo</h3>
+        <p>Effortlessly undo or redo accidental typing mistakes and formatting changes right from the mobile toolbar.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📊 Detailed Note Insights</h3>
+        <p>Live word, character, paragraph, checklist completion, and estimated reading and speaking time metrics with one tap.</p>
+      </div>
+      <div class="feature-card">
         <h3>↕️ Drag-and-Drop Reorder</h3>
         <p>Press and hold any note card to drag up or down to reorder your thoughts with buttery smooth 120 FPS animations and instant persistence.</p>
       </div>
       <div class="feature-card">
-        <h3>📝 Markdown & Checklist</h3>
-        <p>Docked Apple-style formatting toolbar for Bold, Italic, Headings, Bullet Lists, and To-Do Checklists with auto-continuation on Enter.</p>
+        <h3>🗑️ Recycle Bin & Soft Delete</h3>
+        <p>Accidentally deleted a note? Safely restore your notes anytime from the Recycle Bin with instant undo toasts.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📝 Live Markdown & Checklists</h3>
+        <p>Docked Apple-style formatting toolbar for Bold, Italic, Headings, Bullet Lists, and To-Do Checklists with smart auto-continuation on Enter.</p>
       </div>
       <div class="feature-card">
         <h3>🔒 100% Offline & Private</h3>
@@ -967,17 +1237,26 @@
     themeBtn.addEventListener('click', toggleAppTheme);
     demoThemeBtn.addEventListener('click', toggleAppTheme);
 
-    // Notes Data
+    // Notes Data & State
     let currentTab = 'notes';
     let currentFilter = 'all';
     let isGridView = false;
+    let currentSort = 'recently_modified';
+    let selectedTag = null;
     let recentlyDeletedNote = null;
     let toastTimeout = null;
 
+    const sortLabels = {
+      'recently_modified': 'Recently Edited',
+      'date_created': 'Date Created',
+      'title_a_z': 'Title (A-Z)',
+      'todo_progress': 'Task Progress'
+    };
+
     let notes = JSON.parse(localStorage.getItem('noto_web_notes')) || [
-      { id: 1, title: 'Welcome to Noto', body: 'A minimal, distraction-free note app.\n• 100% offline, zero trackers\n[ ] Try drag-and-drop reordering\n[x] Enjoy pure writing', isFav: true, isPinned: true, category: 'all', updated: 'Just now' },
-      { id: 2, title: 'Weekly Groceries', body: '[x] Almond milk\n[ ] Fresh avocados\n[ ] Whole bean coffee\n[ ] Sourdough bread', isFav: false, isPinned: false, category: 'ideas', updated: 'Today, 2:15 PM' },
-      { id: 3, title: 'Work Tasks', body: '• Clean architecture MVVM\n• Jetpack Compose Material 3\n[ ] Release native APK v1.0', isFav: false, isPinned: false, category: 'work', updated: 'Yesterday' }
+      { id: 1, title: 'Welcome to Noto #ideas', body: 'A minimal, distraction-free note app.\n• 100% offline, zero trackers\n[ ] Try drag-and-drop reordering\n[x] Enjoy pure writing\n#offline #notes', isFav: true, isPinned: true, category: 'all', updated: 'Just now' },
+      { id: 2, title: 'Weekly Groceries #personal', body: '[x] Almond milk\n[ ] Fresh avocados\n[ ] Whole bean coffee\n[ ] Sourdough bread\n#shopping', isFav: false, isPinned: false, category: 'ideas', updated: 'Today, 2:15 PM' },
+      { id: 3, title: 'Work Tasks #work', body: '• Clean architecture MVVM\n• Jetpack Compose Material 3\n[ ] Release native APK v1.0\n#android #dev', isFav: false, isPinned: false, category: 'work', updated: 'Yesterday' }
     ];
 
     let currentEditingId = null;
@@ -987,12 +1266,28 @@
       return trimmed ? trimmed.split(/\s+/).length : 0;
     }
 
-    function formatChecklists(text) {
+    function extractTags(text) {
+      const matches = (text || '').match(/#([\p{L}\p{N}_]+)/gu) || [];
+      return [...new Set(matches.map(m => m.substring(1)))];
+    }
+
+    function highlightMatch(text, query) {
+      if (!query || !query.trim()) return text;
+      const escaped = query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark class="search-highlight">$1</mark>');
+    }
+
+    function cleanPreview(text) {
       return (text || '')
         .replace(/\[ \]/g, '☐')
         .replace(/\[x\]/g, '☑')
         .replace(/- \[ \]/g, '☐')
-        .replace(/- \[x\]/g, '☑');
+        .replace(/- \[x\]/g, '☑')
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/(?<!\*)\*(.*?)\*(?!\*)/g, '$1')
+        .replace(/~~(.*?)~~/g, '$1')
+        .replace(/^#{1,6}\s+/gm, '')
+        .replace(/`([^`]+)`/g, '$1');
     }
 
     function showToast(message, showUndo = false) {
@@ -1013,7 +1308,8 @@
     // Toast Undo Action
     document.getElementById('toast-undo').addEventListener('click', () => {
       if (recentlyDeletedNote) {
-        notes.unshift(recentlyDeletedNote);
+        recentlyDeletedNote.isDeleted = false;
+        delete recentlyDeletedNote.deletedAt;
         localStorage.setItem('noto_web_notes', JSON.stringify(notes));
         recentlyDeletedNote = null;
         document.getElementById('toast-bar').classList.remove('show');
@@ -1026,19 +1322,75 @@
 
     function renderNotes() {
       const listEl = document.getElementById('preview-notes-list');
-      const searchVal = document.getElementById('preview-search-input').value.toLowerCase();
-      
+      const searchVal = document.getElementById('preview-search-input').value.toLowerCase().trim();
+      const isTrashView = currentFilter === 'trash';
+      const emptyTrashBtn = document.getElementById('preview-empty-trash');
+      const trashCount = notes.filter(n => n.isDeleted).length;
+      const trashBadge = document.getElementById('trash-count-badge');
+      if (trashBadge) trashBadge.innerText = trashCount;
+      if (emptyTrashBtn) {
+        emptyTrashBtn.style.display = (isTrashView && trashCount > 0) ? 'inline-flex' : 'none';
+      }
+
+      // Collect distinct hashtags from active notes
+      const tagChipsContainer = document.getElementById('preview-tag-chips');
+      if (!isTrashView) {
+        const activeNotes = notes.filter(n => !n.isDeleted);
+        const allTags = [...new Set(activeNotes.flatMap(n => extractTags(`${n.title} ${n.body}`)))].sort();
+        if (allTags.length > 0) {
+          tagChipsContainer.style.display = 'flex';
+          tagChipsContainer.innerHTML = allTags.map(tag => `
+            <button class="tag-chip ${selectedTag === tag ? 'active' : ''}" data-tag="${tag}">#${tag}</button>
+          `).join('');
+          tagChipsContainer.querySelectorAll('.tag-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const tag = btn.getAttribute('data-tag');
+              selectedTag = (selectedTag === tag) ? null : tag;
+              renderNotes();
+            });
+          });
+        } else {
+          tagChipsContainer.style.display = 'none';
+        }
+      } else {
+        tagChipsContainer.style.display = 'none';
+      }
+
       let filtered = notes.filter(n => {
-        if (currentTab === 'favorites' && !n.isFav) return false;
-        if (currentFilter === 'pinned' && !n.isPinned) return false;
-        if (currentFilter === 'starred' && !n.isFav) return false;
-        if (currentFilter === 'ideas' && n.category !== 'ideas') return false;
-        if (currentFilter === 'work' && n.category !== 'work') return false;
+        if (isTrashView) {
+          if (!n.isDeleted) return false;
+        } else {
+          if (n.isDeleted) return false;
+          if (currentTab === 'favorites' && !n.isFav) return false;
+          if (currentFilter === 'pinned' && !n.isPinned) return false;
+          if (currentFilter === 'starred' && !n.isFav) return false;
+          if (currentFilter === 'todo' && !((n.body || '').match(/(?:^|\n)\s*(?:-\s+)?\[[ x]\]/))) return false;
+          if (selectedTag && !extractTags(`${n.title} ${n.body}`).includes(selectedTag)) return false;
+        }
 
         if (searchVal) {
           return (n.title && n.title.toLowerCase().includes(searchVal)) || (n.body && n.body.toLowerCase().includes(searchVal));
         }
         return true;
+      });
+
+      // Apply sorting
+      filtered.sort((a, b) => {
+        if (a.isPinned !== b.isPinned) return b.isPinned ? 1 : -1;
+        if (currentSort === 'title_a_z') {
+          return (a.title || '').localeCompare(b.title || '');
+        } else if (currentSort === 'date_created') {
+          return b.id - a.id;
+        } else if (currentSort === 'todo_progress') {
+          const aTasks = (a.body.match(/(?:^|\n)\s*(?:-\s+)?\[[ x]\]/g) || []).length;
+          const aDone = (a.body.match(/(?:^|\n)\s*(?:-\s+)?\[x\]/g) || []).length;
+          const aRatio = aTasks > 0 ? aDone / aTasks : -1;
+          const bTasks = (b.body.match(/(?:^|\n)\s*(?:-\s+)?\[[ x]\]/g) || []).length;
+          const bDone = (b.body.match(/(?:^|\n)\s*(?:-\s+)?\[x\]/g) || []).length;
+          const bRatio = bTasks > 0 ? bDone / bTasks : -1;
+          return bRatio - aRatio;
+        }
+        return 0; // Default order
       });
 
       document.getElementById('preview-count').innerText = filtered.length;
@@ -1051,41 +1403,73 @@
       }
 
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin-top: 80px; font-size: 14px;">No notes found</div>`;
+        listEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin-top: 80px; font-size: 14px;">${isTrashView ? '🗑️ Recycle Bin is empty' : 'No notes found'}</div>`;
         return;
       }
 
       listEl.innerHTML = filtered.map(n => {
         const words = countWords(`${n.title} ${n.body}`);
-        const preview = formatChecklists(n.body).replace(/\n/g, ' ');
+        const rawPreview = cleanPreview(n.body).replace(/\n/g, ' ');
+        const highlightedTitle = highlightMatch(n.title || 'Untitled Note', searchVal);
+        const highlightedPreview = highlightMatch(rawPreview, searchVal);
+        const totalTasks = (n.body.match(/(?:^|\n)\s*(?:-\s+)?\[[ x]\]/g) || []).length;
+        const completedTasks = (n.body.match(/(?:^|\n)\s*(?:-\s+)?\[x\]/g) || []).length;
+        const tasksBadge = totalTasks > 0 ? `<span class="word-badge" data-action="toggle-tasks" data-id="${n.id}" title="Tap to toggle all tasks" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 600; cursor: pointer;">✓ ${completedTasks}/${totalTasks}</span>` : '';
+        const tags = extractTags(`${n.title} ${n.body}`);
+        const tagsHtml = tags.length > 0 ? `
+          <div style="margin-top: 4px; margin-bottom: 6px;">
+            ${tags.slice(0, 3).map(t => `<span class="tag-pill" data-tag="${t}">#${t}</span>`).join('')}
+          </div>
+        ` : '';
+
         return `
-        <div class="note-item ${n.isPinned ? 'pinned' : ''}" data-id="${n.id}" draggable="true">
+        <div class="note-item ${n.isPinned && !n.isDeleted ? 'pinned' : ''}" data-id="${n.id}" draggable="${!isTrashView}">
           <div class="note-item-header">
             <div class="note-item-title-wrapper">
-              <span class="drag-handle" title="Drag to reorder">≡</span>
-              ${n.isPinned ? '<span class="pinned-badge">PIN</span>' : ''}
-              <span class="note-item-title">${n.title || 'Untitled Note'}</span>
+              ${!isTrashView ? '<span class="drag-handle" title="Drag to reorder">≡</span>' : ''}
+              ${n.isPinned && !n.isDeleted ? '<span class="pinned-badge">PIN</span>' : ''}
+              ${n.isDeleted ? '<span class="pinned-badge" style="background: rgba(239,68,68,0.15); color: #ef4444;">DELETED</span>' : ''}
+              <span class="note-item-title">${highlightedTitle}</span>
             </div>
             <!-- Direct Action Buttons Row on Card -->
             <div class="card-actions">
-              <button class="card-btn ${n.isPinned ? 'active' : ''}" data-action="pin" data-id="${n.id}" title="${n.isPinned ? 'Unpin' : 'Pin to top'}">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="${n.isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 17v5"/><path d="M5 17h14l-1-7H6l-1 7z"/><path d="M7 10V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6"/></svg>
-              </button>
-              <button class="card-btn ${n.isFav ? 'active' : ''}" data-action="star" data-id="${n.id}" title="${n.isFav ? 'Unmark Favorite' : 'Mark Favorite'}">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="${n.isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </button>
-              <button class="card-btn" data-action="copy" data-id="${n.id}" title="Copy Note">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              </button>
-              <button class="card-btn delete" data-action="delete" data-id="${n.id}" title="Delete Note">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-              </button>
+              ${isTrashView ? `
+                <button class="card-btn" data-action="restore" data-id="${n.id}" title="Restore Note">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                </button>
+                <button class="card-btn delete" data-action="permanent-delete" data-id="${n.id}" title="Delete Permanently">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                </button>
+              ` : `
+                <button class="card-btn ${n.isPinned ? 'active' : ''}" data-action="pin" data-id="${n.id}" title="${n.isPinned ? 'Unpin' : 'Pin to top'}">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="${n.isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 17v5"/><path d="M5 17h14l-1-7H6l-1 7z"/><path d="M7 10V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6"/></svg>
+                </button>
+                <button class="card-btn ${n.isFav ? 'active' : ''}" data-action="star" data-id="${n.id}" title="${n.isFav ? 'Unmark Favorite' : 'Mark Favorite'}">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="${n.isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </button>
+                <button class="card-btn" data-action="export" data-id="${n.id}" title="Export as Markdown (.md)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="18"/><line x1="15" y1="15" x2="12" y2="18"/></svg>
+                </button>
+                <button class="card-btn" data-action="duplicate" data-id="${n.id}" title="Duplicate Note">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                </button>
+                <button class="card-btn" data-action="copy" data-id="${n.id}" title="Copy Note">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+                <button class="card-btn delete" data-action="delete" data-id="${n.id}" title="Move to Recycle Bin">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              `}
             </div>
           </div>
-          <div class="note-item-preview">${preview}</div>
+          <div class="note-item-preview">${highlightedPreview}</div>
+          ${tagsHtml}
           <div class="note-item-footer">
             <span>${n.updated || 'Recent'}</span>
-            <span class="word-badge">${words} words</span>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              ${tasksBadge}
+              <span class="word-badge">${words} words</span>
+            </div>
           </div>
         </div>
       `}).join('');
@@ -1094,15 +1478,18 @@
       listEl.querySelectorAll('.note-item').forEach(el => {
         const id = parseInt(el.getAttribute('data-id'));
 
-        // Tap on card body opens editor
+        // Tap on card body opens editor (unless in trash)
         el.addEventListener('click', (e) => {
-          if (!e.target.closest('.card-btn') && !e.target.closest('.drag-handle')) {
-            openEditor(id);
+          if (!e.target.closest('.card-btn') && !e.target.closest('.drag-handle') && !e.target.closest('.tag-pill') && !e.target.closest('[data-action="toggle-tasks"]')) {
+            if (!isTrashView) {
+              openEditor(id);
+            }
           }
         });
 
         // HTML5 Drag and Drop Handlers
         el.addEventListener('dragstart', (e) => {
+          if (isTrashView) return;
           draggedId = id;
           el.classList.add('dragging');
           e.dataTransfer.effectAllowed = 'move';
@@ -1114,6 +1501,7 @@
         });
 
         el.addEventListener('dragover', (e) => {
+          if (isTrashView) return;
           e.preventDefault();
           e.dataTransfer.dropEffect = 'move';
           el.classList.add('drag-over');
@@ -1124,6 +1512,7 @@
         });
 
         el.addEventListener('drop', (e) => {
+          if (isTrashView) return;
           e.preventDefault();
           el.classList.remove('drag-over');
           if (draggedId !== null && draggedId !== id) {
@@ -1138,6 +1527,56 @@
             }
           }
           draggedId = null;
+        });
+      });
+
+      // Tag pill click filters by tag
+      listEl.querySelectorAll('.tag-pill').forEach(pill => {
+        pill.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tag = pill.getAttribute('data-tag');
+          selectedTag = (selectedTag === tag) ? null : tag;
+          renderNotes();
+        });
+      });
+
+      // Quick toggle tasks on badge tap
+      listEl.querySelectorAll('[data-action="toggle-tasks"]').forEach(badge => {
+        badge.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(badge.getAttribute('data-id'));
+          const note = notes.find(n => n.id === id);
+          if (note) {
+            const totalTasks = (note.body.match(/(?:^|\n)\s*(?:-\s+)?\[[ x]\]/g) || []).length;
+            const completedTasks = (note.body.match(/(?:^|\n)\s*(?:-\s+)?\[x\]/g) || []).length;
+            if (completedTasks === totalTasks && totalTasks > 0) {
+              note.body = note.body.replace(/\[x\]/g, '[ ]');
+              showToast('Tasks reset to pending');
+            } else {
+              note.body = note.body.replace(/\[ \]/g, '[x]');
+              showToast('All tasks marked done');
+            }
+            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            renderNotes();
+          }
+        });
+      });
+
+      // Export as Markdown
+      listEl.querySelectorAll('.card-btn[data-action="export"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'));
+          const note = notes.find(n => n.id === id);
+          if (note) {
+            const content = `${note.title ? '# ' + note.title + '\n\n' : ''}${note.body || ''}`;
+            const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${(note.title || 'Note').replace(/[^a-zA-Z0-9_-]/g, '_')}.md`;
+            a.click();
+            showToast('📥 Markdown file exported');
+          }
         });
       });
 
@@ -1171,6 +1610,27 @@
         });
       });
 
+      // Duplicate button on card
+      listEl.querySelectorAll('.card-btn[data-action="duplicate"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'));
+          const note = notes.find(n => n.id === id);
+          if (note) {
+            const clone = {
+              ...note,
+              id: Date.now(),
+              title: note.title ? `${note.title} (Copy)` : '',
+              updated: 'Just now'
+            };
+            notes.unshift(clone);
+            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            showToast('📋 Note duplicated');
+            renderNotes();
+          }
+        });
+      });
+
       // Copy button on card
       listEl.querySelectorAll('.card-btn[data-action="copy"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -1185,20 +1645,65 @@
         });
       });
 
-      // Delete button on card
+      // Move to Trash button on card
       listEl.querySelectorAll('.card-btn[data-action="delete"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'));
+          const note = notes.find(n => n.id === id);
+          if (note) {
+            note.isDeleted = true;
+            note.deletedAt = Date.now();
+            recentlyDeletedNote = note;
+            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            showToast('🗑️ Note moved to Recycle Bin', true);
+            renderNotes();
+          }
+        });
+      });
+
+      // Restore button on card (Trash view)
+      listEl.querySelectorAll('.card-btn[data-action="restore"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'));
+          const note = notes.find(n => n.id === id);
+          if (note) {
+            note.isDeleted = false;
+            delete note.deletedAt;
+            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            showToast('Note restored');
+            renderNotes();
+          }
+        });
+      });
+
+      // Permanent Delete button on card (Trash view)
+      listEl.querySelectorAll('.card-btn[data-action="permanent-delete"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const id = parseInt(btn.getAttribute('data-id'));
           const index = notes.findIndex(n => n.id === id);
           if (index !== -1) {
-            recentlyDeletedNote = notes[index];
             notes.splice(index, 1);
             localStorage.setItem('noto_web_notes', JSON.stringify(notes));
-            showToast('Note deleted', true);
+            showToast('Note permanently deleted');
             renderNotes();
           }
         });
+      });
+    }
+
+    // Sort button toggle in header
+    const sortBtn = document.getElementById('preview-sort-btn');
+    if (sortBtn) {
+      sortBtn.addEventListener('click', () => {
+        const modes = ['recently_modified', 'date_created', 'title_a_z', 'todo_progress'];
+        const nextIdx = (modes.indexOf(currentSort) + 1) % modes.length;
+        currentSort = modes[nextIdx];
+        sortBtn.title = `Sort: ${sortLabels[currentSort]}`;
+        showToast(`Sort: ${sortLabels[currentSort]}`);
+        renderNotes();
       });
     }
 
@@ -1214,6 +1719,7 @@
         document.querySelectorAll('.filter-chips .chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
         currentFilter = chip.getAttribute('data-filter');
+        selectedTag = null;
         renderNotes();
       });
     });
@@ -1230,7 +1736,18 @@
       document.getElementById('editor-readtime').innerText = `~${readMins} min read`;
     }
 
-    // Markdown Formatting Toolbar Actions
+    // Undo & Redo History for Web Demo
+    let undoStack = [];
+    let redoStack = [];
+
+    function recordWebHistory(val) {
+      if (undoStack.length > 0 && undoStack[undoStack.length - 1] === val) return;
+      undoStack.push(val);
+      if (undoStack.length > 30) undoStack.shift();
+      redoStack = [];
+    }
+
+    // Markdown Formatting Toolbar Actions (including Undo & Redo)
     document.querySelectorAll('.md-tool-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const tool = btn.getAttribute('data-tool');
@@ -1239,6 +1756,28 @@
         const end = textarea.selectionEnd;
         const text = textarea.value;
         const selText = text.substring(start, end);
+
+        if (tool === 'undo') {
+          if (undoStack.length > 1) {
+            const current = undoStack.pop();
+            redoStack.push(current);
+            textarea.value = undoStack[undoStack.length - 1];
+            scheduleWebAutosave();
+          }
+          return;
+        }
+
+        if (tool === 'redo') {
+          if (redoStack.length > 0) {
+            const next = redoStack.pop();
+            undoStack.push(next);
+            textarea.value = next;
+            scheduleWebAutosave();
+          }
+          return;
+        }
+
+        recordWebHistory(text);
 
         if (tool === 'b') {
           textarea.value = text.substring(0, start) + `**${selText || 'bold'}**` + text.substring(end);
@@ -1252,6 +1791,14 @@
           textarea.value = text.substring(0, start) + `~~${selText || 'strike'}~~` + text.substring(end);
           textarea.selectionStart = start + 2;
           textarea.selectionEnd = start + 2 + (selText.length || 6);
+        } else if (tool === 'code') {
+          textarea.value = text.substring(0, start) + `\`${selText || 'code'}\`` + text.substring(end);
+          textarea.selectionStart = start + 1;
+          textarea.selectionEnd = start + 1 + (selText.length || 4);
+        } else if (tool === 'tag') {
+          const prefix = (start > 0 && text[start - 1] !== ' ' && text[start - 1] !== '\n') ? ' #' : '#';
+          textarea.value = text.substring(0, start) + prefix + text.substring(end);
+          textarea.selectionStart = textarea.selectionEnd = start + prefix.length;
         } else if (tool === 'h') {
           const lineStart = text.lastIndexOf('\n', start - 1) + 1;
           textarea.value = text.substring(0, lineStart) + '# ' + text.substring(lineStart);
@@ -1264,6 +1811,7 @@
         }
 
         textarea.focus();
+        recordWebHistory(textarea.value);
         scheduleWebAutosave();
       });
     });
@@ -1281,6 +1829,7 @@
           e.preventDefault();
           textarea.value = text.substring(0, lineStart) + text.substring(cursor);
           textarea.selectionStart = textarea.selectionEnd = lineStart;
+          recordWebHistory(textarea.value);
           scheduleWebAutosave();
           return;
         }
@@ -1290,6 +1839,7 @@
           const prefix = '\n[ ] ';
           textarea.value = text.substring(0, cursor) + prefix + text.substring(cursor);
           textarea.selectionStart = textarea.selectionEnd = cursor + prefix.length;
+          recordWebHistory(textarea.value);
           scheduleWebAutosave();
           return;
         }
@@ -1299,9 +1849,153 @@
           const prefix = '\n• ';
           textarea.value = text.substring(0, cursor) + prefix + text.substring(cursor);
           textarea.selectionStart = textarea.selectionEnd = cursor + prefix.length;
+          recordWebHistory(textarea.value);
           scheduleWebAutosave();
           return;
         }
+      }
+    });
+
+    // Reader Mode Rendering
+    let isReaderMode = false;
+
+    function renderReaderMode() {
+      const title = document.getElementById('editor-title').value.trim();
+      const body = document.getElementById('editor-body').value;
+      const container = document.getElementById('editor-reader-view');
+
+      let html = '';
+      if (title) {
+        html += `<div class="reader-title">${title}</div>`;
+      }
+
+      const lines = body.split('\n');
+      lines.forEach((line, idx) => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('- [ ] ') || trimmed.startsWith('[ ] ')) {
+          const taskText = trimmed.replace(/^(?:-\s+)?\[ \]\s*/, '');
+          html += `
+            <div class="reader-task-row" data-line="${idx}">
+              <div class="reader-checkbox"></div>
+              <div class="reader-task-text">${formatInlineMarkdown(taskText)}</div>
+            </div>`;
+        } else if (trimmed.startsWith('- [x] ') || trimmed.startsWith('[x] ')) {
+          const taskText = trimmed.replace(/^(?:-\s+)?\[x\]\s*/, '');
+          html += `
+            <div class="reader-task-row" data-line="${idx}">
+              <div class="reader-checkbox checked">✓</div>
+              <div class="reader-task-text checked">${formatInlineMarkdown(taskText)}</div>
+            </div>`;
+        } else if (trimmed.startsWith('# ')) {
+          html += `<h2 style="font-size: 20px; font-weight: 700; margin: 10px 0 4px;">${formatInlineMarkdown(trimmed.substring(2))}</h2>`;
+        } else if (trimmed.startsWith('## ')) {
+          html += `<h3 style="font-size: 17px; font-weight: 700; margin: 8px 0 3px;">${formatInlineMarkdown(trimmed.substring(3))}</h3>`;
+        } else if (trimmed.startsWith('• ') || trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+          html += `<div style="display: flex; gap: 8px; margin: 3px 0;"><span>•</span><span>${formatInlineMarkdown(trimmed.substring(2))}</span></div>`;
+        } else if (trimmed.startsWith('```')) {
+          html += `<pre class="reader-code-block">${trimmed.substring(3)}</pre>`;
+        } else if (!trimmed) {
+          html += `<div style="height: 10px;"></div>`;
+        } else {
+          html += `<p style="margin: 4px 0; font-size: 15px; line-height: 1.5;">${formatInlineMarkdown(line)}</p>`;
+        }
+      });
+
+      container.innerHTML = html;
+
+      // Clicking any task toggles it in the note body in real time!
+      container.querySelectorAll('.reader-task-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const lineIdx = parseInt(row.getAttribute('data-line'));
+          const curLines = document.getElementById('editor-body').value.split('\n');
+          if (curLines[lineIdx]) {
+            if (curLines[lineIdx].includes('[ ]')) {
+              curLines[lineIdx] = curLines[lineIdx].replace('[ ]', '[x]');
+            } else if (curLines[lineIdx].includes('[x]')) {
+              curLines[lineIdx] = curLines[lineIdx].replace('[x]', '[ ]');
+            }
+            document.getElementById('editor-body').value = curLines.join('\n');
+            saveEditor();
+            renderReaderMode();
+          }
+        });
+      });
+    }
+
+    function formatInlineMarkdown(str) {
+      return (str || '')
+        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+        .replace(/(?<!\*)\*(.*?)\*(?!\*)/g, '<i>$1</i>')
+        .replace(/~~(.*?)~~/g, '<s>$1</s>')
+        .replace(/`([^`]+)`/g, '<code style="background:var(--surface-variant); padding: 2px 4px; border-radius:4px;">$1</code>')
+        .replace(/(?<=^|\s)(#[\p{L}\p{N}_]+)/gu, '<span class="tag-pill">$1</span>');
+    }
+
+    document.getElementById('editor-reader-toggle').addEventListener('click', () => {
+      isReaderMode = !isReaderMode;
+      const titleInput = document.getElementById('editor-title');
+      const bodyWrapper = document.getElementById('editor-body-wrapper');
+      const readerView = document.getElementById('editor-reader-view');
+      const toolbar = document.getElementById('editor-toolbar');
+
+      if (isReaderMode) {
+        titleInput.style.display = 'none';
+        bodyWrapper.style.display = 'none';
+        toolbar.style.display = 'none';
+        readerView.style.display = 'block';
+        document.getElementById('editor-reader-toggle').title = 'Switch to Editor';
+        document.getElementById('editor-reader-toggle').style.background = 'var(--surface-variant)';
+        renderReaderMode();
+      } else {
+        titleInput.style.display = 'block';
+        bodyWrapper.style.display = 'flex';
+        toolbar.style.display = 'flex';
+        readerView.style.display = 'none';
+        document.getElementById('editor-reader-toggle').title = 'Switch to Reader Mode';
+        document.getElementById('editor-reader-toggle').style.background = 'transparent';
+      }
+    });
+
+    // Note Statistics Modal Handler
+    document.getElementById('editor-stats').addEventListener('click', () => {
+      const title = document.getElementById('editor-title').value;
+      const body = document.getElementById('editor-body').value;
+      const full = `${title} ${body}`.trim();
+      const words = countWords(full);
+      const charsAll = full.length;
+      const charsNoSpace = full.replace(/\s/g, '').length;
+      const lines = body ? body.split('\n').length : (title ? 1 : 0);
+      const paras = body ? body.split(/\n\n+/).filter(Boolean).length : 0;
+      const readTime = Math.max(1, Math.ceil(words / 200));
+      const speakTime = Math.max(1, Math.ceil(words / 130));
+
+      const totalTasks = (body.match(/(?:^|\n)\s*(?:-\s+)?\[[ x]\]/g) || []).length;
+      const doneTasks = (body.match(/(?:^|\n)\s*(?:-\s+)?\[x\]/g) || []).length;
+
+      document.getElementById('stats-words').innerText = words;
+      document.getElementById('stats-chars').innerText = `${charsAll} / ${charsNoSpace}`;
+      document.getElementById('stats-lines').innerText = `${lines} lines • ${paras} paras`;
+      document.getElementById('stats-read-time').innerText = `~${readTime} min (200 wpm)`;
+      document.getElementById('stats-speak-time').innerText = `~${speakTime} min (130 wpm)`;
+
+      const tasksRow = document.getElementById('stats-tasks-row');
+      if (totalTasks > 0) {
+        tasksRow.style.display = 'flex';
+        const pct = Math.round((doneTasks / totalTasks) * 100);
+        document.getElementById('stats-tasks').innerText = `${doneTasks} of ${totalTasks} done (${pct}%)`;
+      } else {
+        tasksRow.style.display = 'none';
+      }
+
+      document.getElementById('stats-modal').style.display = 'flex';
+    });
+
+    document.getElementById('stats-modal-done').addEventListener('click', () => {
+      document.getElementById('stats-modal').style.display = 'none';
+    });
+    document.getElementById('stats-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'stats-modal') {
+        document.getElementById('stats-modal').style.display = 'none';
       }
     });
 
@@ -1309,9 +2003,25 @@
     window.openEditor = function(id) {
       currentEditingId = id;
       const note = notes.find(n => n.id === id);
+      const initialBody = note ? note.body : '';
       document.getElementById('editor-title').value = note ? note.title : '';
-      document.getElementById('editor-body').value = note ? note.body : '';
+      document.getElementById('editor-body').value = initialBody;
       
+      undoStack = [initialBody];
+      redoStack = [];
+
+      // Reset to Edit Mode
+      isReaderMode = false;
+      document.getElementById('editor-title').style.display = 'block';
+      document.getElementById('editor-body-wrapper').style.display = 'flex';
+      document.getElementById('editor-toolbar').style.display = 'flex';
+      document.getElementById('editor-reader-view').style.display = 'none';
+      const readerBtn = document.getElementById('editor-reader-toggle');
+      if (readerBtn) {
+        readerBtn.title = 'Switch to Reader Mode';
+        readerBtn.style.background = 'transparent';
+      }
+
       updatePinButton(note ? note.isPinned : false);
       updateFavButton(note ? note.isFav : false);
       
@@ -1420,19 +2130,43 @@
       showToast('📋 Copied to clipboard');
     });
 
-    // Editor Delete
+    // Editor Share Note
+    document.getElementById('editor-share').addEventListener('click', () => {
+      const title = document.getElementById('editor-title').value.trim();
+      const body = document.getElementById('editor-body').value.trim();
+      const fullText = `${title}\n\n${body}`.trim();
+      if (navigator.share) {
+        navigator.share({ title: title || 'Note', text: fullText }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(fullText).catch(() => {});
+        showToast('📋 Copied to clipboard');
+      }
+    });
+
+    // Editor Delete (Move to Recycle Bin)
     document.getElementById('editor-delete').addEventListener('click', () => {
       if (currentEditingId) {
-        const index = notes.findIndex(n => n.id === currentEditingId);
-        if (index !== -1) {
-          recentlyDeletedNote = notes[index];
-          notes.splice(index, 1);
+        const note = notes.find(n => n.id === currentEditingId);
+        if (note) {
+          note.isDeleted = true;
+          note.deletedAt = Date.now();
+          recentlyDeletedNote = note;
           localStorage.setItem('noto_web_notes', JSON.stringify(notes));
-          showToast('Note deleted', true);
+          showToast('🗑️ Note moved to Recycle Bin', true);
         }
       }
       document.getElementById('preview-editor').classList.remove('active');
       renderNotes();
+    });
+
+    // Empty Recycle Bin Button
+    document.getElementById('preview-empty-trash').addEventListener('click', () => {
+      if (confirm('Empty Recycle Bin? All deleted notes will be permanently erased.')) {
+        notes = notes.filter(n => !n.isDeleted);
+        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+        showToast('Recycle Bin emptied');
+        renderNotes();
+      }
     });
 
     // Editor Back & Done Buttons

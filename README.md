@@ -82,55 +82,71 @@ com.noto.app
 
 ## 4. Key Features
 
-### 🗂️ Note Management
-- **All Notes:** Displays saved notes sorted by last edited date.
-- **Favorites:** Star important notes to access them instantly from the Favorites tab.
-- **Instant Search:** Debounced real-time search across titles and body contents.
-- **Delete with Confirmation:** Delete notes with a native dialog or instant undo support.
+### 🗂️ Note Management & Organization
+- **All Notes & Pinned Section:** Notes can be pinned to the top of the list for immediate access.
+- **Favorites & Star:** Dedicated Favorites tab filters your most essential thoughts.
+- **Recycle Bin (Trash):** Soft-delete architecture with safety confirmation, restore notes anytime, or permanently empty trash.
+- **Apple-Style Long-Press Actions:** Long-press any note card to trigger a bottom action sheet with haptic feedback: Pin/Unpin, Star/Unstar, Share, Copy Text, or Move to Trash.
+- **Order Adjustment:** Move notes up or down with tactile feedback.
+- **Instant Search:** Debounced real-time search across titles and body contents with match highlighting.
 
-### ✍️ Note Editor
-- **Borderless Typography:** Clean Apple Notes inspired layout with large title and comfortable line height.
+### ✍️ Intelligent Markdown Editor
+- **Live Markdown Syntax Highlighting:** Headings (`#`), bold (`**bold**`), italics (`*italic*`), strikethrough (`~~strike~~`), quotes (`>`), and checkboxes (`- [ ]`, `- [x]`) styled in real time without cursor jumping.
+- **Reader / Focus Mode:** One-tap toggle into distraction-free reading mode with interactive checkboxes that toggle directly in the note body.
+- **Smart Undo / Redo:** Discrete history stack with debounced character snapshots and discrete formatting action pushes.
+- **Smart List Continuation:** Pressing Enter on an active bullet or checklist item automatically continues the list; pressing Enter on an empty checklist cleanly terminates it.
+- **Note Statistics Sheet:** Tap the live word pill to inspect word count, character count, lines, paragraphs, estimated reading/speaking time, and checklist completion percentage.
+- **Formatting Toolbar:** Docked Apple-style formatting toolbar with Undo, Redo, Bold, Italic, Strikethrough, Heading, Checklist, Bullet List, Code, and Quote.
 - **Automatic Saving:** Debounced 500ms background saving ensures you never lose a word.
-- **Smart Draft Cleanup:** Completely empty drafts are never saved, keeping your database clean.
-- **Keyboard Handling:** Keyboard opens automatically on new note creation, preserving cursor positions without jarring recomposition.
 
-### 🧭 Floating Translucent Navigation Bar
-- **Favorites (Star):** Toggles between all notes and starred favorites.
-- **New Note (Plus):** Centered primary action button that immediately opens a fresh editor.
-- **Notes (Document):** Default tab displaying all notes.
-- **Translucent Glass Surface:** Subtle border and light blur fallback with complete navigation bar inset awareness.
+### 🎨 Design & Experience
+- **Apple-Inspired Monochrome Aesthetic:** Pure black and white design with subtle gray accents, rounded corners, clean typography, and a floating translucent glass navigation bar.
+- **Theme Switcher:** Seamless switching between System, Light, and Dark mode.
+- **Haptic Feedback:** Tactile vibrations on actions, long-presses, and toolbar formatting.
+- **120 FPS Fluid Animations:** Smooth spring physics and enter/exit transitions optimized for thermal efficiency.
 
 ---
 
-## 5. Building & Running the Project
+## 5. Security & Signing
+
+- **100% Offline & No Permissions:** Omission of `android.permission.INTERNET` guarantees zero data leakage or telemetry.
+- **Developer Signed:** Official release APKs are signed with a custom 2048-bit RSA key:
+  - **Developer:** Zihan Fakir (`@zihanfakir`)
+  - **Organization:** Zihan Fakir (github.com/zihanfakir)
+  - **Validity:** 2026–2054 (10,000+ days)
+- **Play Protect Trusted:** Eliminates untrusted developer warnings during sideloading.
+
+---
+
+## 6. Building & Running the Project
 
 ### Prerequisites
 - JDK 17 or higher
 - Android SDK Platform 35/36 with Build-Tools
 - Android device or emulator running Android 8.0+
 
-### Compile & Build Debug APK
+### Compile & Build Release APK
 ```bash
-./gradlew assembleDebug
+./gradlew assembleRelease
 ```
-The compiled APK will be located at:
-`app/build/outputs/apk/debug/app-debug.apk`
+The compiled, signed APK will be located at:
+`docs/downloads/Noto-v1.0.apk`
 
 ### Run Unit Tests
 ```bash
 ./gradlew testDebugUnitTest
 ```
-Runs the complete unit test suite verifying CRUD operations, debounced autosave, empty draft policy, and date formatting.
+Runs the complete 26-test suite verifying CRUD operations, debounced autosave, empty draft policy, undo/redo history, smart list continuation, and Markdown visual transformation.
 
 ---
 
-## 6. Privacy Policy & Backup
+## 7. Privacy Policy & Backup
 - **100% Offline:** Noto does not request or possess `android.permission.INTERNET`.
 - **Local Storage:** All data is stored in the app's private SQLite database on the internal file system.
-- **Cloud Backup:** Cloud auto-backup is explicitly disabled in `data_extraction_rules.xml` and `backup_rules.xml` to prevent note contents from leaking into third-party cloud backups. Direct device-to-device transfers remain permitted for switching phones.
+- **Cloud Backup Disabled:** Cloud auto-backup is explicitly disabled in `data_extraction_rules.xml` and `backup_rules.xml` to prevent note contents from leaking into third-party cloud backups. Direct device-to-device transfers remain permitted for switching phones.
 
 ---
 
-## 7. License
-Open-source under the [MIT License](LICENSE).
-Developed by [Zihan Fakir](https://zihan.xyz).
+## 8. License
+Open-source under the [MIT License](LICENSE).  
+Authored by [Zihan Fakir](https://zihan.xyz) ([@zihanfakir](https://github.com/zihanfakir)).

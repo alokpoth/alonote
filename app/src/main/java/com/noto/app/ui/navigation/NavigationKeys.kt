@@ -28,3 +28,9 @@ data class NoteEditorNavKey(
     val noteId: Long = 0L,
     val draftKey: Long = 0L
 ) : NavKey
+
+/**
+ * Navigation key for the settings and customization screen.
+ */
+@Serializable
+class SettingsNavKey : NavKey

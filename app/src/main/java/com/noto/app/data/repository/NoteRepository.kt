@@ -88,4 +88,24 @@ interface NoteRepository {
      * Toggles or sets the pinned status of a note.
      */
     suspend fun setPinned(id: Long, isPinned: Boolean)
+
+    /**
+     * Inserts a list of notes for backup restore.
+     */
+    suspend fun insertNotes(notes: List<Note>): List<Long>
+
+    /**
+     * Retrieves an immediate snapshot of active notes.
+     */
+    suspend fun getAllNotesSnapshot(): List<Note>
+
+    /**
+     * Retrieves an immediate snapshot of all notes including trash.
+     */
+    suspend fun getAllNotesIncludingTrashSnapshot(): List<Note>
+
+    /**
+     * Updates the scheduled reminder timestamp of a note.
+     */
+    suspend fun updateReminder(id: Long, reminderTime: Long?)
 }

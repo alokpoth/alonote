@@ -39,26 +39,74 @@ private val DarkColorScheme = darkColorScheme(
     outlineVariant = DarkOutlineVariant
 )
 
+private val OledColorScheme = darkColorScheme(
+    primary = OledOnBackground,
+    onPrimary = OledBackground,
+    background = OledBackground,
+    onBackground = OledOnBackground,
+    surface = OledSurface,
+    onSurface = OledOnSurface,
+    surfaceVariant = OledSurfaceVariant,
+    onSurfaceVariant = OledOnSurfaceVariant,
+    surfaceContainer = OledSurfaceContainer,
+    outline = OledOutline,
+    outlineVariant = OledOutlineVariant
+)
+
+private val EyeCareColorScheme = lightColorScheme(
+    primary = EyeCareOnBackground,
+    onPrimary = EyeCareBackground,
+    background = EyeCareBackground,
+    onBackground = EyeCareOnBackground,
+    surface = EyeCareSurface,
+    onSurface = EyeCareOnSurface,
+    surfaceVariant = EyeCareSurfaceVariant,
+    onSurfaceVariant = EyeCareOnSurfaceVariant,
+    surfaceContainer = EyeCareSurfaceContainer,
+    outline = EyeCareOutline,
+    outlineVariant = EyeCareOutlineVariant
+)
+
 @Composable
 fun NotoTheme(
     themeMode: com.noto.app.data.repository.ThemeMode = com.noto.app.data.repository.ThemeMode.SYSTEM,
+    fontFamily: com.noto.app.data.repository.AppFontFamily = com.noto.app.data.repository.AppFontFamily.SYSTEM_SANS,
+    fontSizeScale: com.noto.app.data.repository.FontSizeScale = com.noto.app.data.repository.FontSizeScale.DEFAULT,
     content: @Composable () -> Unit
 ) {
-    val darkTheme = when (themeMode) {
-        com.noto.app.data.repository.ThemeMode.SYSTEM -> isSystemInDarkTheme()
+    val isSystemDark = isSystemInDarkTheme()
+    val isDark = when (themeMode) {
+        com.noto.app.data.repository.ThemeMode.SYSTEM -> isSystemDark
         com.noto.app.data.repository.ThemeMode.LIGHT -> false
         com.noto.app.data.repository.ThemeMode.DARK -> true
+        com.noto.app.data.repository.ThemeMode.OLED -> true
+        com.noto.app.data.repository.ThemeMode.EYE_CARE -> false
     }
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+
+    val colorScheme = when (themeMode) {
+        com.noto.app.data.repository.ThemeMode.SYSTEM -> if (isSystemDark) DarkColorScheme else LightColorScheme
+        com.noto.app.data.repository.ThemeMode.LIGHT -> LightColorScheme
+        com.noto.app.data.repository.ThemeMode.DARK -> DarkColorScheme
+        com.noto.app.data.repository.ThemeMode.OLED -> OledColorScheme
+        com.noto.app.data.repository.ThemeMode.EYE_CARE -> EyeCareColorScheme
+    }
+
+    val composeFont = when (fontFamily) {
+        com.noto.app.data.repository.AppFontFamily.SYSTEM_SANS -> androidx.compose.ui.text.font.FontFamily.Default
+        com.noto.app.data.repository.AppFontFamily.SERIF -> androidx.compose.ui.text.font.FontFamily.Serif
+        com.noto.app.data.repository.AppFontFamily.MONOSPACE -> androidx.compose.ui.text.font.FontFamily.Monospace
+    }
+
+    val typography = getAppTypography(composeFont, fontSizeScale.scaleFactor)
 
     val view = LocalView.current
     if (!view.isInEditMode) {
-        androidx.compose.runtime.DisposableEffect(darkTheme) {
+        androidx.compose.runtime.DisposableEffect(isDark, themeMode) {
             val window = (view.context as? Activity)?.window
             if (window != null) {
                 val insetsController = WindowCompat.getInsetsController(window, view)
-                insetsController.isAppearanceLightStatusBars = !darkTheme
-                insetsController.isAppearanceLightNavigationBars = !darkTheme
+                insetsController.isAppearanceLightStatusBars = !isDark
+                insetsController.isAppearanceLightNavigationBars = !isDark
             }
             onDispose { }
         }
@@ -66,7 +114,7 @@ fun NotoTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         content = content
     )
 }

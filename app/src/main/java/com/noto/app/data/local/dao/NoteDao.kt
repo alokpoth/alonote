@@ -87,4 +87,16 @@ interface NoteDao {
 
     @Query("UPDATE notes SET isPinned = :isPinned, updatedAt = :updatedAt WHERE id = :id")
     suspend fun updatePinned(id: Long, isPinned: Boolean, updatedAt: Long = System.currentTimeMillis())
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNotes(notes: List<Note>): List<Long>
+
+    @Query("SELECT * FROM notes WHERE isDeleted = 0 ORDER BY isPinned DESC, updatedAt DESC")
+    suspend fun getAllNotesSnapshot(): List<Note>
+
+    @Query("SELECT * FROM notes ORDER BY id ASC")
+    suspend fun getAllNotesIncludingTrashSnapshot(): List<Note>
+
+    @Query("UPDATE notes SET reminderTime = :reminderTime, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateReminder(id: Long, reminderTime: Long?, updatedAt: Long = System.currentTimeMillis())
 }

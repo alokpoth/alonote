@@ -30,6 +30,8 @@ data class Note(
     val isDeleted: Boolean = false,
     val deletedAt: Long? = null,
     val imagePaths: String = "",
+    val audioPaths: String = "",
+    val reminderTime: Long? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {
@@ -46,10 +48,28 @@ data class Note(
         get() = images.isNotEmpty()
 
     /**
-     * Returns true if the note contains neither title, body, nor any attached photos.
+     * List of attached audio voice memo filenames stored in the app's private files directory.
+     */
+    val audios: List<String>
+        get() = if (audioPaths.isBlank()) emptyList() else audioPaths.split(",").filter { it.isNotBlank() }
+
+    /**
+     * True if the note has at least one attached voice memo.
+     */
+    val hasAudio: Boolean
+        get() = audios.isNotEmpty()
+
+    /**
+     * True if the note has a scheduled reminder timestamp in the future.
+     */
+    val hasReminder: Boolean
+        get() = reminderTime != null && reminderTime > 0L
+
+    /**
+     * Returns true if the note contains neither title, body, attached photos, nor voice memos.
      */
     val isEmpty: Boolean
-        get() = title.isBlank() && body.isBlank() && imagePaths.isBlank()
+        get() = title.isBlank() && body.isBlank() && imagePaths.isBlank() && audioPaths.isBlank()
 
     /**
      * Calculates the word count of the combined title and body.

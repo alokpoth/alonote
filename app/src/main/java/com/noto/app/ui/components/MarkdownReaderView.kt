@@ -57,6 +57,13 @@ fun MarkdownReaderView(
     onToggleTaskAtLine: (Int) -> Unit,
     images: List<String> = emptyList(),
     onImageClick: ((String) -> Unit)? = null,
+    audios: List<String> = emptyList(),
+    currentPlayingAudio: String? = null,
+    isAudioPlaying: Boolean = false,
+    audioPositionMs: Int = 0,
+    audioDurationMs: Int = 0,
+    onTogglePlayAudio: ((String) -> Unit)? = null,
+    onSeekAudio: ((Int) -> Unit)? = null,
     onTagClick: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -86,6 +93,31 @@ fun MarkdownReaderView(
                             .size(width = 140.dp, height = 105.dp),
                         showRemoveButton = false,
                         onClick = { onImageClick?.invoke(filename) }
+                    )
+                }
+            }
+        }
+
+        // Attached Voice Memos in Reader Mode
+        if (audios.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                audios.forEach { filename ->
+                    val isPlayingThis = currentPlayingAudio == filename && isAudioPlaying
+                    val pos = if (currentPlayingAudio == filename) audioPositionMs else 0
+                    val dur = if (currentPlayingAudio == filename) audioDurationMs else 0
+                    NoteAudioPlayerItem(
+                        filename = filename,
+                        isPlaying = isPlayingThis,
+                        currentPositionMs = pos,
+                        durationMs = dur,
+                        onTogglePlay = { onTogglePlayAudio?.invoke(filename) },
+                        onSeek = { onSeekAudio?.invoke(it) },
+                        showRemoveButton = false
                     )
                 }
             }

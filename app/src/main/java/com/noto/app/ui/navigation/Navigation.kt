@@ -12,15 +12,29 @@ import com.noto.app.ui.editor.NoteEditorViewModel
 import com.noto.app.ui.main.MainScreen
 import com.noto.app.ui.main.MainViewModel
 
+import com.noto.app.ui.settings.SettingsScreen
+import com.noto.app.ui.navigation.SettingsNavKey
+
 /**
  * Top-level application navigation using Navigation 3.
  */
 @Composable
 fun NotoNavigation(
     application: NotoApplication,
+    initialNoteId: Long = 0L,
+    initialNewNote: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val backStack = rememberNavBackStack(MainNavKey())
+    val backStack = rememberNavBackStack(
+        MainNavKey(),
+        *if (initialNoteId > 0L) {
+            arrayOf(NoteEditorNavKey(noteId = initialNoteId))
+        } else if (initialNewNote) {
+            arrayOf(NoteEditorNavKey(noteId = 0L, draftKey = System.currentTimeMillis()))
+        } else {
+            emptyArray()
+        }
+    )
     val repository = application.noteRepository
 
     NavDisplay(
@@ -39,6 +53,9 @@ fun NotoNavigation(
                     },
                     onNewNoteClick = {
                         backStack.add(NoteEditorNavKey(noteId = 0L, draftKey = System.currentTimeMillis()))
+                    },
+                    onSettingsClick = {
+                        backStack.add(SettingsNavKey())
                     }
                 )
             }
@@ -50,6 +67,15 @@ fun NotoNavigation(
                 )
                 NoteEditorScreen(
                     viewModel = editorViewModel,
+                    onNavigateBack = {
+                        backStack.removeLastOrNull()
+                    }
+                )
+            }
+            entry<SettingsNavKey> {
+                SettingsScreen(
+                    themeRepository = application.themeRepository,
+                    noteRepository = repository,
                     onNavigateBack = {
                         backStack.removeLastOrNull()
                     }

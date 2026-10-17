@@ -82,18 +82,27 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.material.icons.filled.Close
+import com.noto.app.data.local.entity.Note
 import com.noto.app.ui.components.DeleteConfirmationDialog
 import com.noto.app.ui.components.MarkdownReaderView
 import com.noto.app.ui.components.MarkdownToolbar
+import com.noto.app.ui.components.NoteAudioPlayerItem
 import com.noto.app.ui.components.NoteImageThumbnail
 import com.noto.app.ui.components.NoteStatsBottomSheet
 import com.noto.app.ui.components.PhotoViewerDialog
+import com.noto.app.util.AudioStorageManager
 import com.noto.app.util.DateFormatter
 import com.noto.app.util.ImageStorageManager
 import com.noto.app.util.MarkdownFormatter
+import com.noto.app.util.NoteAudioPlayer
+import com.noto.app.util.NoteAudioRecorder
+import com.noto.app.util.PdfExporter
+import com.noto.app.util.ReminderManager
 import com.noto.app.util.SmartListContinuation
 import com.noto.app.util.UndoRedoHistory
 import com.noto.app.util.rememberMarkdownVisualTransformation
+import java.util.Calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -146,6 +155,95 @@ fun NoteEditorScreen(
         val initial = TextFieldValue(uiState.body, selection = TextRange(uiState.body.length))
         undoHistory.record(initial, force = true)
         mutableStateOf(initial)
+    }
+
+    val audioRecorder = remember { NoteAudioRecorder(context) }
+    val audioPlayer = remember { NoteAudioPlayer(context) }
+    var isRecordingVoice by remember { mutableStateOf(false) }
+    var recordingDurationSeconds by remember { mutableStateOf(0) }
+    val isAudioPlaying by audioPlayer.isPlaying.collectAsState()
+    val currentPlayingAudio by audioPlayer.currentPlayingFile.collectAsState()
+    val audioPositionMs by audioPlayer.currentPositionMs.collectAsState()
+    val audioDurationMs by audioPlayer.durationMs.collectAsState()
+    var showReminderDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isRecordingVoice) {
+        if (isRecordingVoice) {
+            recordingDurationSeconds = 0
+            while (isRecordingVoice) {
+                kotlinx.coroutines.delay(1000L)
+                recordingDurationSeconds++
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            audioRecorder.stopRecording()
+            audioPlayer.release()
+        }
+    }
+
+    val recordAudioPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            val started = audioRecorder.startRecording()
+            if (started != null) {
+                isRecordingVoice = true
+                recordingDurationSeconds = 0
+                Toast.makeText(context, "Recording voice memo...", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Failed to start audio recording", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(context, "Microphone permission required for voice memos", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            showReminderDialog = true
+        } else {
+            Toast.makeText(context, "Notification permission is required for reminders", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val pdfExportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/pdf")
+    ) { uri ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                try {
+                    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                        val currentNote = Note(
+                            id = uiState.noteId,
+                            title = uiState.title,
+                            body = bodyTextFieldValue.text,
+                            isFavorite = uiState.isFavorite,
+                            isPinned = uiState.isPinned,
+                            isDeleted = false,
+                            deletedAt = null,
+                            imagePaths = uiState.imagePaths,
+                            audioPaths = uiState.audioPaths,
+                            reminderTime = uiState.reminderTime,
+                            createdAt = if (uiState.createdAt == 0L) System.currentTimeMillis() else uiState.createdAt,
+                            updatedAt = System.currentTimeMillis()
+                        )
+                        PdfExporter.exportNoteToPdf(currentNote, outputStream)
+                    }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Note exported to PDF successfully!", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Failed to export PDF: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
     }
 
     // Intercept back navigation to flush pending changes
@@ -310,6 +408,32 @@ fun NoteEditorScreen(
                             photoPickerLauncher.launch(
                                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                             )
+                        },
+                        onRecordVoice = {
+                            if (isRecordingVoice) {
+                                val recordedFile = audioRecorder.stopRecording()
+                                isRecordingVoice = false
+                                if (recordedFile != null) {
+                                    viewModel.attachAudio(recordedFile)
+                                    Toast.makeText(context, "Voice memo attached", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                recordAudioPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                            }
+                        },
+                        isRecordingVoice = isRecordingVoice,
+                        recordingDurationSeconds = recordingDurationSeconds,
+                        onSetReminder = {
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                            } else {
+                                showReminderDialog = true
+                            }
+                        },
+                        onExportPdf = {
+                            val sanitizedTitle = (uiState.title.ifBlank { "Noto_Export" })
+                                .replace(Regex("[^a-zA-Z0-9_-]"), "_")
+                            pdfExportLauncher.launch("$sanitizedTitle.pdf")
                         }
                     )
 
@@ -357,6 +481,13 @@ fun NoteEditorScreen(
                 body = bodyTextFieldValue.text,
                 images = uiState.images,
                 onImageClick = { previewImage = it },
+                audios = uiState.audios,
+                currentPlayingAudio = currentPlayingAudio,
+                isAudioPlaying = isAudioPlaying,
+                audioPositionMs = audioPositionMs,
+                audioDurationMs = audioDurationMs,
+                onTogglePlayAudio = { audioPlayer.togglePlay(it) },
+                onSeekAudio = { audioPlayer.seekTo(it) },
                 onToggleTaskAtLine = { lineIdx ->
                     val lines = bodyTextFieldValue.text.lines().toMutableList()
                     if (lineIdx in lines.indices) {
@@ -445,6 +576,77 @@ fun NoteEditorScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
+                        }
+                    }
+                }
+
+                // Active Reminder Banner
+                if (uiState.hasReminder && uiState.reminderTime != null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                            .clickable { showReminderDialog = true }
+                            .padding(horizontal = 14.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "⏰ Reminder: ${ReminderManager.formatReminderTime(uiState.reminderTime!!)}",
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        IconButton(
+                            onClick = {
+                                viewModel.setReminder(null, context)
+                                Toast.makeText(context, "Reminder cleared", Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Clear reminder",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+                }
+
+                // Attached Voice Memos Player List
+                if (uiState.audios.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 14.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        uiState.audios.forEach { audioFilename ->
+                            val isThisPlaying = isAudioPlaying && currentPlayingAudio == audioFilename
+                            NoteAudioPlayerItem(
+                                filename = audioFilename,
+                                isPlaying = isThisPlaying,
+                                currentPositionMs = if (isThisPlaying) audioPositionMs else 0,
+                                durationMs = if (isThisPlaying) audioDurationMs else 0,
+                                onTogglePlay = {
+                                    audioPlayer.togglePlay(audioFilename)
+                                },
+                                onSeek = { seekPos ->
+                                    if (isThisPlaying) {
+                                        audioPlayer.seekTo(seekPos)
+                                    }
+                                },
+                                onRemove = {
+                                    if (currentPlayingAudio == audioFilename) {
+                                        audioPlayer.stop()
+                                    }
+                                    viewModel.removeAudio(audioFilename, context)
+                                }
+                            )
                         }
                     }
                 }
@@ -572,6 +774,143 @@ fun NoteEditorScreen(
         PhotoViewerDialog(
             filename = previewImage!!,
             onDismiss = { previewImage = null }
+        )
+    }
+
+    if (showReminderDialog) {
+        val now = System.currentTimeMillis()
+        val calendar = Calendar.getInstance()
+
+        val in1Hour = now + (60 * 60 * 1000L)
+
+        val calEvening = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 18)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            if (timeInMillis <= now) {
+                add(Calendar.DAY_OF_YEAR, 1)
+            }
+        }
+
+        val calMorning = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_YEAR, 1)
+            set(Calendar.HOUR_OF_DAY, 9)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
+
+        val calTomorrowEvening = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_YEAR, 1)
+            set(Calendar.HOUR_OF_DAY, 18)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
+
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showReminderDialog = false },
+            title = {
+                Text(
+                    text = "Set Reminder",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ReminderOptionRow(
+                        label = "In 1 Hour",
+                        timeDesc = ReminderManager.formatReminderTime(in1Hour),
+                        onClick = {
+                            showReminderDialog = false
+                            viewModel.setReminder(in1Hour, context)
+                            Toast.makeText(context, "Reminder set for 1 hour later", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                    ReminderOptionRow(
+                        label = if (calEvening.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR)) "This Evening" else "Tomorrow Evening",
+                        timeDesc = ReminderManager.formatReminderTime(calEvening.timeInMillis),
+                        onClick = {
+                            showReminderDialog = false
+                            viewModel.setReminder(calEvening.timeInMillis, context)
+                            Toast.makeText(context, "Reminder set for ${ReminderManager.formatReminderTime(calEvening.timeInMillis)}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                    ReminderOptionRow(
+                        label = "Tomorrow Morning",
+                        timeDesc = ReminderManager.formatReminderTime(calMorning.timeInMillis),
+                        onClick = {
+                            showReminderDialog = false
+                            viewModel.setReminder(calMorning.timeInMillis, context)
+                            Toast.makeText(context, "Reminder set for tomorrow morning", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                    ReminderOptionRow(
+                        label = "Tomorrow Evening",
+                        timeDesc = ReminderManager.formatReminderTime(calTomorrowEvening.timeInMillis),
+                        onClick = {
+                            showReminderDialog = false
+                            viewModel.setReminder(calTomorrowEvening.timeInMillis, context)
+                            Toast.makeText(context, "Reminder set for tomorrow evening", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                    if (uiState.hasReminder) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        ReminderOptionRow(
+                            label = "Clear Reminder",
+                            timeDesc = "Remove active notification",
+                            isDestructive = true,
+                            onClick = {
+                                showReminderDialog = false
+                                viewModel.setReminder(null, context)
+                                Toast.makeText(context, "Reminder cleared", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { showReminderDialog = false }) {
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurface)
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+}
+
+@Composable
+private fun ReminderOptionRow(
+    label: String,
+    timeDesc: String,
+    isDestructive: Boolean = false,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(
+                if (isDestructive) MaterialTheme.colorScheme.error.copy(alpha = 0.08f)
+                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            )
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+            color = if (isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+        )
+        Text(
+            text = timeDesc,
+            style = MaterialTheme.typography.labelSmall,
+            color = if (isDestructive) MaterialTheme.colorScheme.error.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

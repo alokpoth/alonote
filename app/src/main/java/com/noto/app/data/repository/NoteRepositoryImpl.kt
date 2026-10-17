@@ -98,4 +98,20 @@ class NoteRepositoryImpl(
     override suspend fun setPinned(id: Long, isPinned: Boolean): Unit = withContext(ioDispatcher) {
         noteDao.updatePinned(id = id, isPinned = isPinned, updatedAt = System.currentTimeMillis())
     }
+
+    override suspend fun insertNotes(notes: List<Note>): List<Long> = withContext(ioDispatcher) {
+        noteDao.insertNotes(notes)
+    }
+
+    override suspend fun getAllNotesSnapshot(): List<Note> = withContext(ioDispatcher) {
+        noteDao.getAllNotesSnapshot()
+    }
+
+    override suspend fun getAllNotesIncludingTrashSnapshot(): List<Note> = withContext(ioDispatcher) {
+        noteDao.getAllNotesIncludingTrashSnapshot()
+    }
+
+    override suspend fun updateReminder(id: Long, reminderTime: Long?): Unit = withContext(ioDispatcher) {
+        noteDao.updateReminder(id = id, reminderTime = reminderTime, updatedAt = System.currentTimeMillis())
+    }
 }

@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -102,6 +103,7 @@ fun MainScreen(
     viewModel: MainViewModel,
     onNoteClick: (Long) -> Unit,
     onNewNoteClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val notes by viewModel.notes.collectAsState()
@@ -187,6 +189,7 @@ fun MainScreen(
                 onToggleTheme = { viewModel.toggleTheme() },
                 onToggleViewMode = { viewModel.toggleViewMode() },
                 onSearchToggle = { viewModel.toggleSearchBar() },
+                onSettingsClick = onSettingsClick,
                 onEmptyTrash = { showEmptyTrashDialog = true }
             )
 
@@ -523,6 +526,7 @@ private fun HeaderSection(
     onToggleTheme: () -> Unit,
     onToggleViewMode: () -> Unit,
     onSearchToggle: () -> Unit,
+    onSettingsClick: () -> Unit,
     onEmptyTrash: () -> Unit
 ) {
     var showSortMenu by remember { mutableStateOf(false) }
@@ -695,6 +699,22 @@ private fun HeaderSection(
                 Icon(
                     imageVector = if (isSearchBarVisible) Icons.Filled.Close else Icons.Filled.Search,
                     contentDescription = if (isSearchBarVisible) "Close search" else "Search notes",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            // Settings Button
+            IconButton(
+                onClick = onSettingsClick,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = "Settings",
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(20.dp)
                 )

@@ -123,4 +123,21 @@ class FakeNoteDao : NoteDao {
         val existing = notesFlow.value[id] ?: return
         notesFlow.value = notesFlow.value + (id to existing.copy(isPinned = isPinned, updatedAt = updatedAt))
     }
+
+    override suspend fun insertNotes(notes: List<Note>): List<Long> {
+        return notes.map { insertNote(it) }
+    }
+
+    override suspend fun getAllNotesSnapshot(): List<Note> {
+        return notesFlow.value.values.filter { !it.isDeleted }.sortedWith(::compareNotes)
+    }
+
+    override suspend fun getAllNotesIncludingTrashSnapshot(): List<Note> {
+        return notesFlow.value.values.sortedBy { it.id }
+    }
+
+    override suspend fun updateReminder(id: Long, reminderTime: Long?, updatedAt: Long) {
+        val existing = notesFlow.value[id] ?: return
+        notesFlow.value = notesFlow.value + (id to existing.copy(reminderTime = reminderTime, updatedAt = updatedAt))
+    }
 }

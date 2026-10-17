@@ -168,4 +168,22 @@ class NoteEditorViewModelTest {
         assertTrue(savedNotes.first().hasImages)
         assertEquals(1, savedNotes.first().images.size)
     }
+
+    @Test
+    fun attachingAudio_triggersAutosaveAndStoresAudioPaths() = runTest(testDispatcher) {
+        val viewModel = NoteEditorViewModel(initialNoteId = 0L, repository = repository)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.attachAudio("memo_12345.m4a")
+        viewModel.flushSave()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(1, viewModel.uiState.value.audios.size)
+        assertEquals("memo_12345.m4a", viewModel.uiState.value.audioPaths)
+
+        val savedNotes = fakeDao.notesFlow.value.values.toList()
+        assertEquals(1, savedNotes.size)
+        assertEquals("memo_12345.m4a", savedNotes.first().audioPaths)
+        assertTrue(savedNotes.first().hasAudio)
+    }
 }

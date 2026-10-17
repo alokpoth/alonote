@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- ব্যাকগ্রাউন্ড গ্রেডিয়েন্ট -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <!-- কাগজের পৃষ্ঠার গ্রেডিয়েন্ট -->
+    <linearGradient id="paperGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F1F5F9" />
+    </linearGradient>
+
+    <!-- কলম/পেন্সিলের গ্রেডিয়েন্ট -->
+    <linearGradient id="penGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+
+    <!-- সূক্ষ্ম শ্যাডো -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- অ্যাপ আইকন বেস (স্কয়ার-রাউন্ডেড ব্যাকগ্রাউন্ড) -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <!-- নোটবুক বডি -->
+  <g filter="url(#dropShadow)">
+    <rect x="116" y="96" width="280" height="320" rx="28" fill="url(#paperGrad)" />
+    
+    <!-- পেজের ফোল্ড বা ক্লিপ অ্যাকসেন্ট -->
+    <path d="M116 144 C116 117.5 137.5 96 164 96 L348 96 C374.5 96 396 117.5 396 144 L396 152 L116 152 Z" fill="#E2E8F0" />
+
+    <!-- নোটের টেক্সট লাইনগুলো -->
+    <rect x="160" y="196" width="120" height="14" rx="7" fill="#94A3B8" />
+    <rect x="160" y="240" width="192" height="14" rx="7" fill="#CBD5E1" />
+    <rect x="160" y="284" width="160" height="14" rx="7" fill="#CBD5E1" />
+    <rect x="160" y="328" width="100" height="14" rx="7" fill="#CBD5E1" />
+  </g>
+
+  <!-- ফ্লোটিং এডিটর পেন/পেন্সিল -->
+  <g transform="rotate(45 350 330)" filter="url(#dropShadow)">
+    <!-- পেনের বডি -->
+    <rect x="330" y="220" width="36" height="140" rx="8" fill="url(#penGrad)" />
+    <!-- পেনের নিব/টিপ -->
+    <polygon points="330,360 366,360 348,395" fill="#F59E0B" />
+    <polygon points="342,382 354,382 348,395" fill="#1E293B" />
+    <!-- ক্যাপ একসেন্ট -->
+    <rect x="330" y="230" width="36" height="12" fill="#60A5FA" />
+  </g>
+</svg>

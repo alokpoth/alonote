@@ -3,6 +3,7 @@ package com.noto.app.ui.components
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,6 +55,8 @@ fun MarkdownReaderView(
     title: String,
     body: String,
     onToggleTaskAtLine: (Int) -> Unit,
+    images: List<String> = emptyList(),
+    onImageClick: ((String) -> Unit)? = null,
     onTagClick: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -67,6 +70,27 @@ fun MarkdownReaderView(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 12.dp)
     ) {
+        // Attached Photos strip in Reader Mode
+        if (images.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                images.forEach { filename ->
+                    NoteImageThumbnail(
+                        filename = filename,
+                        modifier = Modifier
+                            .size(width = 140.dp, height = 105.dp),
+                        showRemoveButton = false,
+                        onClick = { onImageClick?.invoke(filename) }
+                    )
+                }
+            }
+        }
+
         // Render Title
         if (title.isNotBlank()) {
             Text(

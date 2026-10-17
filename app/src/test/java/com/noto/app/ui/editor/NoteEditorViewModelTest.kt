@@ -135,4 +135,37 @@ class NoteEditorViewModelTest {
         val noteInDb = fakeDao.getNoteByIdOnce(5L)
         assertTrue(noteInDb?.isFavorite == true)
     }
+
+    @Test
+    fun attachingImages_triggersAutosaveAndStoresPaths() = runTest(testDispatcher) {
+        val viewModel = NoteEditorViewModel(initialNoteId = 0L, repository = repository)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.attachImages(listOf("img_1.jpg", "img_2.jpg"))
+        viewModel.flushSave()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(2, viewModel.uiState.value.images.size)
+        assertEquals("img_1.jpg,img_2.jpg", viewModel.uiState.value.imagePaths)
+
+        val savedNotes = fakeDao.notesFlow.value.values.toList()
+        assertEquals(1, savedNotes.size)
+        assertEquals("img_1.jpg,img_2.jpg", savedNotes.first().imagePaths)
+    }
+
+    @Test
+    fun noteWithOnlyImages_isNotConsideredBlankAndIsSaved() = runTest(testDispatcher) {
+        val viewModel = NoteEditorViewModel(initialNoteId = 0L, repository = repository)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Title and body are empty, but an image is attached
+        viewModel.attachImages(listOf("photo_vacation.jpg"))
+        viewModel.flushSave()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val savedNotes = fakeDao.notesFlow.value.values.toList()
+        assertEquals(1, savedNotes.size)
+        assertTrue(savedNotes.first().hasImages)
+        assertEquals(1, savedNotes.first().images.size)
+    }
 }

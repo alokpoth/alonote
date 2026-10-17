@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.FormatBold
@@ -50,6 +51,7 @@ fun MarkdownToolbar(
     canRedo: Boolean = false,
     onUndo: (() -> Unit)? = null,
     onRedo: (() -> Unit)? = null,
+    onAddPhoto: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -265,6 +267,24 @@ fun MarkdownToolbar(
                     ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
+            }
+
+            // 9. Attach Photo
+            if (onAddPhoto != null) {
+                IconButton(
+                    onClick = onAddPhoto,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AddPhotoAlternate,
+                        contentDescription = "Attach Photo",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(19.dp)
+                    )
+                }
             }
         }
     }

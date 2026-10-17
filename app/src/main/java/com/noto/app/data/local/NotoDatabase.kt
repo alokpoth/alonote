@@ -15,7 +15,7 @@ import com.noto.app.data.local.entity.Note
  */
 @Database(
     entities = [Note::class],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 abstract class NotoDatabase : RoomDatabase() {
@@ -32,6 +32,12 @@ abstract class NotoDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE notes ADD COLUMN imagePaths TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
         @Volatile
         private var INSTANCE: NotoDatabase? = null
 
@@ -42,7 +48,7 @@ abstract class NotoDatabase : RoomDatabase() {
                     NotoDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .fallbackToDestructiveMigration(dropAllTables = true)
                     .build()
                 INSTANCE = instance

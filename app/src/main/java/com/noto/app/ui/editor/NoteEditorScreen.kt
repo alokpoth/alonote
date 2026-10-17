@@ -27,11 +27,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DeleteOutline
@@ -55,6 +61,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,12 +85,18 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.noto.app.ui.components.DeleteConfirmationDialog
 import com.noto.app.ui.components.MarkdownReaderView
 import com.noto.app.ui.components.MarkdownToolbar
+import com.noto.app.ui.components.NoteImageThumbnail
 import com.noto.app.ui.components.NoteStatsBottomSheet
+import com.noto.app.ui.components.PhotoViewerDialog
 import com.noto.app.util.DateFormatter
+import com.noto.app.util.ImageStorageManager
 import com.noto.app.util.MarkdownFormatter
 import com.noto.app.util.SmartListContinuation
 import com.noto.app.util.UndoRedoHistory
 import com.noto.app.util.rememberMarkdownVisualTransformation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Clean, distraction-free note editor screen with live visual Markdown rendering,
@@ -101,6 +114,8 @@ fun NoteEditorScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isReaderMode by remember { mutableStateOf(false) }
     var showStatsSheet by remember { mutableStateOf(false) }
+    var previewImage by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
 
     val titleFocusRequester = remember { FocusRequester() }
     val bodyFocusRequester = remember { FocusRequester() }
@@ -108,6 +123,23 @@ fun NoteEditorScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val undoHistory = remember { UndoRedoHistory() }
     val context = LocalContext.current
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 10)
+    ) { uris ->
+        if (uris.isNotEmpty()) {
+            scope.launch(Dispatchers.IO) {
+                val savedFilenames = uris.mapNotNull { uri ->
+                    ImageStorageManager.saveImageFromUri(context, uri)
+                }
+                if (savedFilenames.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        viewModel.attachImages(savedFilenames)
+                    }
+                }
+            }
+        }
+    }
 
     // Maintain local TextFieldValue state for smooth selection and formatting
     var bodyTextFieldValue by remember(uiState.isLoaded) {
@@ -273,6 +305,11 @@ fun NoteEditorScreen(
                                 bodyTextFieldValue = redone
                                 viewModel.onBodyChange(redone.text)
                             }
+                        },
+                        onAddPhoto = {
+                            photoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
                         }
                     )
 
@@ -318,6 +355,8 @@ fun NoteEditorScreen(
             MarkdownReaderView(
                 title = uiState.title,
                 body = bodyTextFieldValue.text,
+                images = uiState.images,
+                onImageClick = { previewImage = it },
                 onToggleTaskAtLine = { lineIdx ->
                     val lines = bodyTextFieldValue.text.lines().toMutableList()
                     if (lineIdx in lines.indices) {
@@ -355,6 +394,61 @@ fun NoteEditorScreen(
                     }
                     .padding(horizontal = 24.dp, vertical = 8.dp)
             ) {
+                // Attached Photos Horizontal Strip
+                if (uiState.images.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                            .padding(bottom = 14.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        uiState.images.forEach { filename ->
+                            NoteImageThumbnail(
+                                filename = filename,
+                                modifier = Modifier.size(width = 130.dp, height = 100.dp),
+                                showRemoveButton = true,
+                                onClick = { previewImage = filename },
+                                onRemove = { viewModel.removeImage(filename, context) }
+                            )
+                        }
+
+                        // Quick "+ Add" card
+                        Box(
+                            modifier = Modifier
+                                .size(width = 90.dp, height = 100.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f))
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+                                .clickable {
+                                    photoPickerLauncher.launch(
+                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                    )
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.AddPhotoAlternate,
+                                    contentDescription = "Add photo",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Add",
+                                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+
                 // Editable Title Field
                 Box(
                     modifier = Modifier
@@ -471,6 +565,13 @@ fun NoteEditorScreen(
                 }
             },
             onDismiss = { showDeleteDialog = false }
+        )
+    }
+
+    if (previewImage != null) {
+        PhotoViewerDialog(
+            filename = previewImage!!,
+            onDismiss = { previewImage = null }
         )
     }
 }

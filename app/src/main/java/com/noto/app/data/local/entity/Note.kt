@@ -29,14 +29,27 @@ data class Note(
     val isPinned: Boolean = false,
     val isDeleted: Boolean = false,
     val deletedAt: Long? = null,
+    val imagePaths: String = "",
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {
     /**
-     * Returns true if the note contains neither title nor body content.
+     * List of attached image filenames stored in the app's private files directory.
+     */
+    val images: List<String>
+        get() = if (imagePaths.isBlank()) emptyList() else imagePaths.split(",").filter { it.isNotBlank() }
+
+    /**
+     * True if the note has at least one attached photo.
+     */
+    val hasImages: Boolean
+        get() = images.isNotEmpty()
+
+    /**
+     * Returns true if the note contains neither title, body, nor any attached photos.
      */
     val isEmpty: Boolean
-        get() = title.isBlank() && body.isBlank()
+        get() = title.isBlank() && body.isBlank() && imagePaths.isBlank()
 
     /**
      * Calculates the word count of the combined title and body.

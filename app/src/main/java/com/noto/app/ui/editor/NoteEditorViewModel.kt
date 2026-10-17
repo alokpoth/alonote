@@ -31,12 +31,16 @@ data class NoteEditorUiState(
     val body: String = "",
     val isFavorite: Boolean = false,
     val isPinned: Boolean = false,
+    val imagePaths: String = "",
     val createdAt: Long = 0L,
     val lastUpdated: Long = 0L,
     val saveStatus: SaveStatus = SaveStatus.IDLE,
     val isLoaded: Boolean = false,
     val isNewNote: Boolean = true
-)
+) {
+    val images: List<String>
+        get() = if (imagePaths.isBlank()) emptyList() else imagePaths.split(",").filter { it.isNotBlank() }
+}
 
 /**
  * ViewModel managing note creation, editing, debounced autosave, and empty draft policy.
@@ -76,6 +80,7 @@ class NoteEditorViewModel(
                             body = existing.body,
                             isFavorite = existing.isFavorite,
                             isPinned = existing.isPinned,
+                            imagePaths = existing.imagePaths,
                             createdAt = existing.createdAt,
                             lastUpdated = existing.updatedAt,
                             saveStatus = SaveStatus.SAVED,
@@ -145,6 +150,28 @@ class NoteEditorViewModel(
     }
 
     /**
+     * Attaches newly saved image filenames and immediately triggers autosave.
+     */
+    fun attachImages(newFilenames: List<String>) {
+        if (newFilenames.isEmpty()) return
+        val existing = _uiState.value.images
+        val combined = (existing + newFilenames).distinct()
+        _uiState.update { it.copy(imagePaths = combined.joinToString(",")) }
+        scheduleAutosave()
+    }
+
+    /**
+     * Removes an attached image by filename and cleans up its internal file.
+     */
+    fun removeImage(filename: String, context: android.content.Context) {
+        val existing = _uiState.value.images
+        val updated = existing.filter { it != filename }
+        _uiState.update { it.copy(imagePaths = updated.joinToString(",")) }
+        com.noto.app.util.ImageStorageManager.deleteImage(context, filename)
+        scheduleAutosave()
+    }
+
+    /**
      * Schedules debounced autosave (400ms after user stops typing).
      */
     private fun scheduleAutosave() {
@@ -175,7 +202,7 @@ class NoteEditorViewModel(
         val currentState = _uiState.value
         val title = currentState.title
         val body = currentState.body
-        val isBlank = title.isBlank() && body.isBlank()
+        val isBlank = title.isBlank() && body.isBlank() && currentState.imagePaths.isBlank()
         val currentId = currentState.noteId
 
         if (isBlank) {
@@ -209,6 +236,7 @@ class NoteEditorViewModel(
                 isPinned = currentState.isPinned,
                 isDeleted = false,
                 deletedAt = null,
+                imagePaths = currentState.imagePaths,
                 createdAt = if (currentState.createdAt == 0L) now else currentState.createdAt,
                 updatedAt = now
             )

@@ -35,10 +35,12 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,6 +63,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noto.app.data.local.entity.Note
@@ -173,7 +176,6 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding())
-                .statusBarsPadding()
         ) {
             // Header: Title, Count, Theme Toggle, Grid/List view toggle, Search, Sort, or Empty Bin
             HeaderSection(
@@ -212,16 +214,17 @@ fun MainScreen(
                 }
             }
 
-            // Quick Filter Chips Row (All, Pinned, Favorites, Recycle Bin)
+            // Quick Filter Chips Row (Horizontally scrollable, never squished)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp, vertical = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 val isTrash = quickFilter == QuickFilter.TRASH
-                val activeNotesCount = if (isTrash) notes.size else notes.size
+                val activeNotesCount = notes.size
                 val pinnedCount = if (!isTrash) notes.count { it.isPinned } else 0
                 val favCount = if (!isTrash) notes.count { it.isFavorite } else 0
                 val todoCount = if (!isTrash) notes.count { it.hasChecklist } else 0
@@ -239,11 +242,14 @@ fun MainScreen(
                         onClick = { quickFilter = QuickFilter.PINNED }
                     )
 
-                    FilterChipItem(
-                        label = "⭐ Favorites ($favCount)",
-                        isSelected = quickFilter == QuickFilter.FAVORITES,
-                        onClick = { quickFilter = QuickFilter.FAVORITES }
-                    )
+                    // Only show Favorites chip when NOT on the Favorites tab
+                    if (currentTab != BottomTab.FAVORITES) {
+                        FilterChipItem(
+                            label = "⭐ Favorites ($favCount)",
+                            isSelected = quickFilter == QuickFilter.FAVORITES,
+                            onClick = { quickFilter = QuickFilter.FAVORITES }
+                        )
+                    }
 
                     FilterChipItem(
                         label = "☑ Tasks ($todoCount)",
@@ -529,12 +535,12 @@ private fun HeaderSection(
     onSettingsClick: () -> Unit,
     onEmptyTrash: () -> Unit
 ) {
-    var showSortMenu by remember { mutableStateOf(false) }
+    var showMoreMenu by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 10.dp),
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -545,14 +551,20 @@ private fun HeaderSection(
             else -> "Noto"
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f, fill = false)
+        ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.displayLarge.copy(
                     fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-0.5).sp
                 ),
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -562,7 +574,7 @@ private fun HeaderSection(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(horizontal = 7.dp, vertical = 3.dp)
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
             ) {
                 Text(
                     text = "$noteCount",
@@ -575,114 +587,23 @@ private fun HeaderSection(
             }
         }
 
+        // Apple-style clean header actions: Search + More Menu
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (quickFilter == QuickFilter.TRASH) {
-                // Empty Bin Button (shown when there are notes in the trash)
-                if (trashCount > 0) {
-                    IconButton(
-                        onClick = onEmptyTrash,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.DeleteSweep,
-                            contentDescription = "Empty Recycle Bin",
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-            } else {
-                // Theme Mode Toggle Button (Light / Dark)
+            if (quickFilter == QuickFilter.TRASH && trashCount > 0) {
                 IconButton(
-                    onClick = onToggleTheme,
+                    onClick = onEmptyTrash,
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Icon(
-                        imageVector = if (themeMode == ThemeMode.DARK) Icons.Filled.LightMode else Icons.Filled.DarkMode,
-                        contentDescription = if (themeMode == ThemeMode.DARK) "Switch to Light mode" else "Switch to Dark mode",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                // Sort Options Dropdown Menu Button
-                Box {
-                    IconButton(
-                        onClick = { showSortMenu = true },
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Sort,
-                            contentDescription = "Sort notes",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-
-                    DropdownMenu(
-                        expanded = showSortMenu,
-                        onDismissRequest = { showSortMenu = false },
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        NoteSortOrder.entries.forEach { order ->
-                            DropdownMenuItem(
-                                text = {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = order.label,
-                                            style = MaterialTheme.typography.bodyMedium.copy(
-                                                fontWeight = if (order == sortOrder) FontWeight.Bold else FontWeight.Normal
-                                            ),
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                        if (order == sortOrder) {
-                                            Spacer(modifier = Modifier.width(12.dp))
-                                            Icon(
-                                                imageVector = Icons.Filled.Check,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(16.dp)
-                                            )
-                                        }
-                                    }
-                                },
-                                onClick = {
-                                    onSelectSortOrder(order)
-                                    showSortMenu = false
-                                }
-                            )
-                        }
-                    }
-                }
-
-                // View Mode Toggle Button (Grid / List)
-                IconButton(
-                    onClick = onToggleViewMode,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                ) {
-                    Icon(
-                        imageVector = if (isGridView) Icons.Filled.ViewAgenda else Icons.Filled.GridView,
-                        contentDescription = if (isGridView) "Switch to list view" else "Switch to grid view",
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        imageVector = Icons.Filled.DeleteSweep,
+                        contentDescription = "Empty Recycle Bin",
+                        tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -694,30 +615,143 @@ private fun HeaderSection(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .background(
+                        if (isSearchBarVisible) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surfaceVariant
+                    )
             ) {
                 Icon(
                     imageVector = if (isSearchBarVisible) Icons.Filled.Close else Icons.Filled.Search,
                     contentDescription = if (isSearchBarVisible) "Close search" else "Search notes",
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = if (isSearchBarVisible) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(20.dp)
                 )
             }
 
-            // Settings Button
-            IconButton(
-                onClick = onSettingsClick,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = "Settings",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(20.dp)
-                )
+            // More Options (•••) Action Menu
+            Box {
+                IconButton(
+                    onClick = { showMoreMenu = true },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = "More options",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = showMoreMenu,
+                    onDismissRequest = { showMoreMenu = false },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                ) {
+                    // 1. View Mode (Grid / List)
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = if (isGridView) "View as List" else "View as Grid",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = if (isGridView) Icons.Filled.ViewAgenda else Icons.Filled.GridView,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        },
+                        onClick = {
+                            showMoreMenu = false
+                            onToggleViewMode()
+                        }
+                    )
+
+                    // 2. Appearance Toggle (Light / Dark)
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = if (themeMode == ThemeMode.DARK) "Light Appearance" else "Dark Appearance",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = if (themeMode == ThemeMode.DARK) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        },
+                        onClick = {
+                            showMoreMenu = false
+                            onToggleTheme()
+                        }
+                    )
+
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                    // 3. Sort By Options
+                    NoteSortOrder.entries.forEach { order ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = "Sort: ${order.label}",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = if (order == sortOrder) FontWeight.Bold else FontWeight.Normal
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Sort,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            },
+                            trailingIcon = {
+                                if (order == sortOrder) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Check,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            },
+                            onClick = {
+                                onSelectSortOrder(order)
+                                showMoreMenu = false
+                            }
+                        )
+                    }
+
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                    // 4. Settings
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "Settings",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        },
+                        onClick = {
+                            showMoreMenu = false
+                            onSettingsClick()
+                        }
+                    )
+                }
             }
         }
     }
@@ -736,23 +770,25 @@ private fun FilterChipItem(
                 if (isSelected) {
                     MaterialTheme.colorScheme.onBackground
                 } else {
-                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f)
                 }
             )
             .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .padding(horizontal = 14.dp, vertical = 7.dp)
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall.copy(
                 fontSize = 12.sp,
-                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium
             ),
             color = if (isSelected) {
                 MaterialTheme.colorScheme.background
             } else {
                 MaterialTheme.colorScheme.onSurfaceVariant
-            }
+            },
+            maxLines = 1,
+            softWrap = false
         )
     }
 }

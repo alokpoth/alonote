@@ -9,7 +9,7 @@
 > **Noto** is an extremely simple, lightweight, 100% offline note-taking native Android application inspired by Apple Notes and Google Keep. Built with Jetpack Compose, Material 3, and Room Database.
 
 🌐 **Website & Live Demo:** [note.zihan.xyz](https://note.zihan.xyz)  
-📦 **Direct APK Download:** [Download Noto v2.0 APK](https://note.zihan.xyz/downloads/Noto-v2.0.apk) (or [Noto v1.0 APK](https://note.zihan.xyz/downloads/Noto-v1.0.apk))
+📦 **Direct APK Download:** [Download Noto v2.0.1 APK](https://note.zihan.xyz/downloads/Noto-v2.0.1.apk) (or [Noto v1.0 APK](https://note.zihan.xyz/downloads/Noto-v1.0.apk))
 
 ---
 
@@ -130,7 +130,7 @@ com.noto.app
 ./gradlew assembleRelease
 ```
 The compiled, signed APK will be located at:
-`docs/downloads/Noto-v2.0.apk`
+`docs/downloads/Noto-v2.0.1.apk`
 
 ### Run Unit Tests
 ```bash

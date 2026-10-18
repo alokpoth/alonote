@@ -448,7 +448,7 @@ fun SettingsScreen(
             ) {
                 AboutInfoRow(title = "Architecture", subtitle = "100% Offline • Zero Analytics • Zero Cloud Sync")
                 AboutInfoRow(title = "Display Engine", subtitle = "120Hz ProMotion & Low-End GPU Optimized")
-                AboutInfoRow(title = "App Version", subtitle = "v2.1 (Monochrome Native Edition)")
+                AboutInfoRow(title = "App Version", subtitle = "v2.0.1 (Monochrome Native Edition)")
             }
 
             Spacer(modifier = Modifier.height(30.dp))

@@ -10,6 +10,7 @@ import com.noto.app.data.repository.ThemeRepository
 import com.noto.app.ui.navigation.BottomTab
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -79,7 +81,8 @@ class MainViewModel(
         .debounce(300L)
 
     // Raw database notes flow based on tab, trash mode, and search
-    private val rawNotes = combine(_currentTab, _isTrashFilter, debouncedQuery) { tab, isTrash, query ->
+    // Shared via shareIn to avoid duplicate Room database executions when consumed by both 'notes' and 'allTags'
+    private val rawNotes: Flow<List<Note>> = combine(_currentTab, _isTrashFilter, debouncedQuery) { tab, isTrash, query ->
         Triple(tab, isTrash, query)
     }.flatMapLatest { (tab, isTrash, query) ->
         if (query.isBlank()) {
@@ -95,7 +98,11 @@ class MainViewModel(
                 trashOnly = isTrash
             )
         }
-    }
+    }.shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        replay = 1
+    )
 
     // Dynamic notes flow supporting sorting and tag filtering
     val notes: StateFlow<List<Note>> = combine(rawNotes, _sortOrder, _selectedTag) { list, sort, tag ->

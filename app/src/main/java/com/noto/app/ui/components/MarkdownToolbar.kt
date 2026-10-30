@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.FormatBold
 import androidx.compose.material.icons.filled.FormatItalic
 import androidx.compose.material.icons.filled.FormatStrikethrough
@@ -65,6 +66,7 @@ fun MarkdownToolbar(
     recordingDurationSeconds: Int = 0,
     onSetReminder: (() -> Unit)? = null,
     onExportPdf: (() -> Unit)? = null,
+    onExportMarkdown: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -376,6 +378,24 @@ fun MarkdownToolbar(
                     Icon(
                         imageVector = Icons.Filled.PictureAsPdf,
                         contentDescription = "Export PDF",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            // 13. Export Markdown (.md)
+            if (onExportMarkdown != null) {
+                IconButton(
+                    onClick = onExportMarkdown,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Description,
+                        contentDescription = "Export Markdown",
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(18.dp)
                     )

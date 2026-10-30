@@ -161,10 +161,6 @@ fun NoteEditorScreen(
     val audioPlayer = remember { NoteAudioPlayer(context) }
     var isRecordingVoice by remember { mutableStateOf(false) }
     var recordingDurationSeconds by remember { mutableStateOf(0) }
-    val isAudioPlaying by audioPlayer.isPlaying.collectAsState()
-    val currentPlayingAudio by audioPlayer.currentPlayingFile.collectAsState()
-    val audioPositionMs by audioPlayer.currentPositionMs.collectAsState()
-    val audioDurationMs by audioPlayer.durationMs.collectAsState()
     var showReminderDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(isRecordingVoice) {
@@ -240,6 +236,36 @@ fun NoteEditorScreen(
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(context, "Failed to export PDF: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    val mdExportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/markdown")
+    ) { uri ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                try {
+                    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                        val content = buildString {
+                            if (uiState.title.isNotBlank()) {
+                                appendLine("# ${uiState.title}")
+                                appendLine()
+                            }
+                            if (bodyTextFieldValue.text.isNotBlank()) {
+                                append(bodyTextFieldValue.text)
+                            }
+                        }.trim()
+                        outputStream.write(content.toByteArray(Charsets.UTF_8))
+                    }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Note exported to Markdown (.md) successfully!", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Failed to export Markdown: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -434,6 +460,11 @@ fun NoteEditorScreen(
                             val sanitizedTitle = (uiState.title.ifBlank { "Noto_Export" })
                                 .replace(Regex("[^a-zA-Z0-9_-]"), "_")
                             pdfExportLauncher.launch("$sanitizedTitle.pdf")
+                        },
+                        onExportMarkdown = {
+                            val sanitizedTitle = (uiState.title.ifBlank { "Noto_Export" })
+                                .replace(Regex("[^a-zA-Z0-9_-]"), "_")
+                            mdExportLauncher.launch("$sanitizedTitle.md")
                         }
                     )
 
@@ -482,12 +513,7 @@ fun NoteEditorScreen(
                 images = uiState.images,
                 onImageClick = { previewImage = it },
                 audios = uiState.audios,
-                currentPlayingAudio = currentPlayingAudio,
-                isAudioPlaying = isAudioPlaying,
-                audioPositionMs = audioPositionMs,
-                audioDurationMs = audioDurationMs,
-                onTogglePlayAudio = { audioPlayer.togglePlay(it) },
-                onSeekAudio = { audioPlayer.seekTo(it) },
+                audioPlayer = audioPlayer,
                 onToggleTaskAtLine = { lineIdx ->
                     val lines = bodyTextFieldValue.text.lines().toMutableList()
                     if (lineIdx in lines.indices) {
@@ -626,24 +652,12 @@ fun NoteEditorScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         uiState.audios.forEach { audioFilename ->
-                            val isThisPlaying = isAudioPlaying && currentPlayingAudio == audioFilename
                             NoteAudioPlayerItem(
                                 filename = audioFilename,
-                                isPlaying = isThisPlaying,
-                                currentPositionMs = if (isThisPlaying) audioPositionMs else 0,
-                                durationMs = if (isThisPlaying) audioDurationMs else 0,
-                                onTogglePlay = {
-                                    audioPlayer.togglePlay(audioFilename)
-                                },
-                                onSeek = { seekPos ->
-                                    if (isThisPlaying) {
-                                        audioPlayer.seekTo(seekPos)
-                                    }
-                                },
+                                audioPlayer = audioPlayer,
+                                showRemoveButton = true,
                                 onRemove = {
-                                    if (currentPlayingAudio == audioFilename) {
-                                        audioPlayer.stop()
-                                    }
+                                    audioPlayer.stop()
                                     viewModel.removeAudio(audioFilename, context)
                                 }
                             )

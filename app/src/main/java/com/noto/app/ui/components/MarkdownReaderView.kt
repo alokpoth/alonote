@@ -58,6 +58,7 @@ fun MarkdownReaderView(
     images: List<String> = emptyList(),
     onImageClick: ((String) -> Unit)? = null,
     audios: List<String> = emptyList(),
+    audioPlayer: com.noto.app.util.NoteAudioPlayer? = null,
     currentPlayingAudio: String? = null,
     isAudioPlaying: Boolean = false,
     audioPositionMs: Int = 0,
@@ -98,7 +99,7 @@ fun MarkdownReaderView(
             }
         }
 
-        // Attached Voice Memos in Reader Mode
+        // Attached Voice Memos in Reader Mode (uses isolated player item if audioPlayer is provided)
         if (audios.isNotEmpty()) {
             Column(
                 modifier = Modifier
@@ -107,18 +108,26 @@ fun MarkdownReaderView(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 audios.forEach { filename ->
-                    val isPlayingThis = currentPlayingAudio == filename && isAudioPlaying
-                    val pos = if (currentPlayingAudio == filename) audioPositionMs else 0
-                    val dur = if (currentPlayingAudio == filename) audioDurationMs else 0
-                    NoteAudioPlayerItem(
-                        filename = filename,
-                        isPlaying = isPlayingThis,
-                        currentPositionMs = pos,
-                        durationMs = dur,
-                        onTogglePlay = { onTogglePlayAudio?.invoke(filename) },
-                        onSeek = { onSeekAudio?.invoke(it) },
-                        showRemoveButton = false
-                    )
+                    if (audioPlayer != null) {
+                        NoteAudioPlayerItem(
+                            filename = filename,
+                            audioPlayer = audioPlayer,
+                            showRemoveButton = false
+                        )
+                    } else {
+                        val isPlayingThis = currentPlayingAudio == filename && isAudioPlaying
+                        val pos = if (currentPlayingAudio == filename) audioPositionMs else 0
+                        val dur = if (currentPlayingAudio == filename) audioDurationMs else 0
+                        NoteAudioPlayerItem(
+                            filename = filename,
+                            isPlaying = isPlayingThis,
+                            currentPositionMs = pos,
+                            durationMs = dur,
+                            onTogglePlay = { onTogglePlayAudio?.invoke(filename) },
+                            onSeek = { onSeekAudio?.invoke(it) },
+                            showRemoveButton = false
+                        )
+                    }
                 }
             }
         }

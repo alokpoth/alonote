@@ -509,15 +509,18 @@ private fun highlightQuery(
 
     val builder = AnnotatedString.Builder(text)
     var startIndex = text.indexOf(trimmed, ignoreCase = true)
-    while (startIndex >= 0) {
+    var count = 0
+    while (startIndex >= 0 && count < 100) {
+        count++
         val endIndex = startIndex + trimmed.length
+        if (endIndex <= startIndex) break
         builder.addStyle(
             SpanStyle(
                 background = highlightColor,
                 fontWeight = FontWeight.Bold
             ),
             startIndex,
-            endIndex
+            endIndex.coerceAtMost(text.length)
         )
         startIndex = text.indexOf(trimmed, endIndex, ignoreCase = true)
     }

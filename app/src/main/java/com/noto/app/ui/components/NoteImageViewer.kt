@@ -59,7 +59,7 @@ import kotlinx.coroutines.withContext
  */
 object BitmapCache {
     private val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
-    private val cacheSize = maxMemory / 8 // Use 1/8th of available runtime memory
+    private val cacheSize = (maxMemory / 6).coerceAtLeast(16 * 1024) // 1/6th of available runtime memory, at least 16MB
 
     private val cache = object : LruCache<String, Bitmap>(cacheSize) {
         override fun sizeOf(key: String, bitmap: Bitmap): Int {
@@ -67,24 +67,30 @@ object BitmapCache {
         }
     }
 
-    fun get(filename: String): Bitmap? = cache.get(filename)
+    fun get(key: String): Bitmap? = cache.get(key)
 
-    fun put(filename: String, bitmap: Bitmap) {
-        if (cache.get(filename) == null) {
-            cache.put(filename, bitmap)
+    fun put(key: String, bitmap: Bitmap) {
+        if (cache.get(key) == null) {
+            cache.put(key, bitmap)
         }
+    }
+
+    fun clear() {
+        cache.evictAll()
     }
 }
 
 /**
  * Asynchronously loads a bitmap from the app's internal storage with caching and thumbnail downsampling.
+ * Uses a size-aware cache key to prevent collision between thumbnails and full-size dialogs.
  */
 @Composable
-fun rememberNoteBitmap(filename: String, targetMaxDim: Int = 800): Bitmap? {
+fun rememberNoteBitmap(filename: String, targetMaxDim: Int = 360): Bitmap? {
     val context = LocalContext.current
+    val cacheKey = "${filename}_$targetMaxDim"
 
-    val bitmapState = produceState<Bitmap?>(initialValue = BitmapCache.get(filename), key1 = filename) {
-        val cached = BitmapCache.get(filename)
+    val bitmapState = produceState<Bitmap?>(initialValue = BitmapCache.get(cacheKey), key1 = cacheKey) {
+        val cached = BitmapCache.get(cacheKey)
         if (cached != null) {
             value = cached
             return@produceState
@@ -114,7 +120,7 @@ fun rememberNoteBitmap(filename: String, targetMaxDim: Int = 800): Bitmap? {
         }
 
         if (decoded != null) {
-            BitmapCache.put(filename, decoded)
+            BitmapCache.put(cacheKey, decoded)
             value = decoded
         }
     }
@@ -130,11 +136,12 @@ fun NoteImageThumbnail(
     filename: String,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 12.dp,
+    targetMaxDim: Int = 360,
     showRemoveButton: Boolean = false,
     onClick: (() -> Unit)? = null,
     onRemove: (() -> Unit)? = null
 ) {
-    val bitmap = rememberNoteBitmap(filename)
+    val bitmap = rememberNoteBitmap(filename, targetMaxDim = targetMaxDim)
     val haptic = LocalHapticFeedback.current
     val shape = RoundedCornerShape(cornerRadius)
 

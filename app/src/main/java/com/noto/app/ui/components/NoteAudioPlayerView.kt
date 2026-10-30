@@ -27,6 +27,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +41,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.noto.app.util.AudioStorageManager
+import com.noto.app.util.NoteAudioPlayer
+
+/**
+ * Self-contained audio player item that collects playback position and state locally.
+ * Prevents triggering full-screen recomposition storms on the parent editor or reader screen.
+ */
+@Composable
+fun NoteAudioPlayerItem(
+    filename: String,
+    audioPlayer: NoteAudioPlayer,
+    modifier: Modifier = Modifier,
+    showRemoveButton: Boolean = true,
+    onRemove: (() -> Unit)? = null
+) {
+    val isAudioPlaying by audioPlayer.isPlaying.collectAsState()
+    val currentPlayingFile by audioPlayer.currentPlayingFile.collectAsState()
+    val isThisPlaying = isAudioPlaying && currentPlayingFile == filename
+
+    val currentPositionMs by if (isThisPlaying) audioPlayer.currentPositionMs.collectAsState() else remember { mutableIntStateOf(0) }
+    val durationMs by if (isThisPlaying) audioPlayer.durationMs.collectAsState() else remember { mutableIntStateOf(0) }
+
+    NoteAudioPlayerItem(
+        filename = filename,
+        isPlaying = isThisPlaying,
+        currentPositionMs = currentPositionMs,
+        durationMs = durationMs,
+        onTogglePlay = { audioPlayer.togglePlay(filename) },
+        onSeek = { if (isThisPlaying) audioPlayer.seekTo(it) },
+        modifier = modifier,
+        showRemoveButton = showRemoveButton,
+        onRemove = onRemove
+    )
+}
 
 /**
  * Minimalist Apple-inspired in-note audio voice memo player item.

@@ -4,14 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import android.content.Intent
 import com.noto.app.ui.navigation.NotoNavigation
+import com.noto.app.ui.splash.AlokpathSplashScreen
 import com.noto.app.ui.theme.NotoTheme
 import com.noto.app.util.ReminderBroadcastReceiver
 import com.noto.app.widget.NotoQuickWidgetProvider
@@ -50,11 +56,25 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NotoNavigation(
-                        application = notoApplication,
-                        initialNoteId = initialNoteId,
-                        initialNewNote = initialNewNote
-                    )
+                    var showSplash by rememberSaveable { mutableStateOf(true) }
+
+                    Crossfade(
+                        targetState = showSplash,
+                        animationSpec = tween(durationMillis = 400),
+                        label = "AlokpathSplashCrossfade"
+                    ) { isSplash ->
+                        if (isSplash) {
+                            AlokpathSplashScreen(
+                                onSplashFinished = { showSplash = false }
+                            )
+                        } else {
+                            NotoNavigation(
+                                application = notoApplication,
+                                initialNoteId = initialNoteId,
+                                initialNewNote = initialNewNote
+                            )
+                        }
+                    }
                 }
             }
         }

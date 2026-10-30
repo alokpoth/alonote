@@ -7,14 +7,15 @@ plugins {
 }
 
 android {
+    layout.buildDirectory.set(file("build_out"))
     namespace = "com.noto.app"
     compileSdk = 36
     defaultConfig {
         applicationId = "com.noto.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "2.0.1"
+        versionCode = 4
+        versionName = "2.1.0"
     }
 
     signingConfigs {

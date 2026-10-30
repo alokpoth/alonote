@@ -4,6 +4,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,13 +50,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.noto.app.R
 import com.noto.app.data.repository.AppFontFamily
 import com.noto.app.data.repository.FontSizeScale
 import com.noto.app.data.repository.NoteRepository
@@ -435,8 +441,8 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // SECTION: ABOUT & PRIVACY
-            SettingsSectionHeader(title = "Privacy & Performance", icon = Icons.Filled.Security)
+            // SECTION: ALOKPATH BRAND & PRIVACY
+            SettingsSectionHeader(title = "Alokpath Ecosystem", icon = Icons.Filled.Security)
 
             Column(
                 modifier = Modifier
@@ -444,11 +450,36 @@ fun SettingsScreen(
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp))
-                    .padding(14.dp)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+                Image(
+                    painter = painterResource(
+                        if (isDark) R.drawable.alokpath_logo_dark else R.drawable.alokpath_logo_light
+                    ),
+                    contentDescription = "Alokpath Logo",
+                    modifier = Modifier.height(26.dp),
+                    contentScale = ContentScale.Fit
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "An Alokpath Sovereign Privacy Product",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = "আলোকপথের নিজস্ব অফলাইন ইকোসিস্টেম • ১০০% লোকাল ও প্রাইভেট",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                Spacer(modifier = Modifier.height(8.dp))
                 AboutInfoRow(title = "Architecture", subtitle = "100% Offline • Zero Analytics • Zero Cloud Sync")
                 AboutInfoRow(title = "Display Engine", subtitle = "120Hz ProMotion & Low-End GPU Optimized")
-                AboutInfoRow(title = "App Version", subtitle = "v2.0.1 (Monochrome Native Edition)")
+                AboutInfoRow(title = "Parent Company", subtitle = "Alokpath Foundation (আলোকপথ)")
+                AboutInfoRow(title = "App Version", subtitle = "v2.1.0 (Alokpath Edition)")
             }
 
             Spacer(modifier = Modifier.height(30.dp))

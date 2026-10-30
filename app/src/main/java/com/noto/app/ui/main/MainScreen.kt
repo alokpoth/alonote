@@ -548,7 +548,7 @@ private fun HeaderSection(
             quickFilter == QuickFilter.TRASH -> "Recycle Bin"
             quickFilter == QuickFilter.TODO -> "Tasks"
             tab == BottomTab.FAVORITES -> "Favorites"
-            else -> "Noto"
+            else -> "AloNote"
         }
 
         Row(

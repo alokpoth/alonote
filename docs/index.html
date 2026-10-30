@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Noto — Minimal Offline Notes App</title>
-  <meta name="description" content="Extremely simple, lightweight, 100% offline note-taking native Android app inspired by Apple Notes and Google Keep.">
+  <title>AloNote (আলোনোট) — Minimal Offline Notes App</title>
+  <meta name="description" content="AloNote (আলোনোট) — Extremely simple, lightweight, 100% offline note-taking native Android app by Alokpath (আলোকপথ).">
   <meta name="theme-color" content="#121212">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1059,11 +1059,11 @@
 
   <header>
     <div class="brand">
-      <img src="./logo.svg" alt="Noto Logo" class="brand-logo-img">
-      <span>Noto</span>
+      <img src="./logo.svg" alt="AloNote Logo" class="brand-logo-img">
+      <span>AloNote</span>
     </div>
     <div class="nav-actions">
-      <a href="./downloads/Noto-v2.2.0-Alokpath.apk" class="btn btn-primary" download>
+      <a href="./downloads/AloNote-v2.2.0-Alokpath.apk" class="btn btn-primary" download>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span>APK v2.2.0</span>
       </a>
@@ -1078,12 +1078,12 @@
 
   <main>
     <section class="hero">
-      <img src="./logo.svg" alt="Noto App Icon" class="app-icon-badge">
+      <img src="./logo.svg" alt="AloNote App Icon" class="app-icon-badge">
       <div class="tag">100% Offline • Sovereign Privacy • An Alokpath Product</div>
       <h1>Pure Writing.<br>Zero Distraction.</h1>
-      <p>A minimal, lightweight, Apple-inspired note app for Android. No accounts, no internet permissions, no cloud sync, and zero trackers. All your notes stay private on your device.</p>
+      <p>AloNote (আলোনোট) is a minimal, lightweight, Apple-inspired note app for Android. No accounts, no internet permissions, no cloud sync, and zero trackers. All your notes stay private on your device.</p>
       <div class="hero-buttons">
-        <a href="./downloads/Noto-v2.2.0-Alokpath.apk" class="btn btn-primary" download>
+        <a href="./downloads/AloNote-v2.2.0-Alokpath.apk" class="btn btn-primary" download>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download Native APK (v2.2.0)
         </a>
@@ -1101,7 +1101,7 @@
           <!-- Top App Bar -->
           <div class="app-header">
             <div class="app-title-area">
-              <div class="app-title" id="preview-tab-title">Noto</div>
+              <div class="app-title" id="preview-tab-title">AloNote</div>
               <span class="badge-count" id="preview-count">0</span>
             </div>
             <div class="header-controls">
@@ -1305,7 +1305,7 @@
   </main>
 
   <footer>
-    <p>Noto • Minimal Offline Notes App • <a href="https://note.zihan.xyz" style="text-decoration: underline;">note.zihan.xyz</a> • An <a href="https://alokpoth.zihan.xyz" target="_blank" style="text-decoration: underline;">Alokpath (আলোকপথ)</a> Product • Developed by <a href="https://zihan.xyz" target="_blank" style="text-decoration: underline;">Zihan</a></p>
+    <p>AloNote (আলোনোট) • Minimal Offline Notes App • <a href="https://alonote.zihan.xyz" style="text-decoration: underline;">alonote.zihan.xyz</a> • An <a href="https://alokpoth.zihan.xyz" target="_blank" style="text-decoration: underline;">Alokpath (আলোকপথ)</a> Product • Developed by <a href="https://zihan.xyz" target="_blank" style="text-decoration: underline;">Zihan</a></p>
   </footer>
 
   <script>
@@ -1336,10 +1336,10 @@
       'todo_progress': 'Task Progress'
     };
 
-    let notes = JSON.parse(localStorage.getItem('noto_web_notes')) || [
-      { id: 1, title: 'Welcome to Noto #ideas', body: 'A minimal, distraction-free note app.\n• 100% offline, zero trackers\n[ ] Try drag-and-drop reordering\n[x] Enjoy pure writing\n#offline #notes', isFav: true, isPinned: true, category: 'all', updated: 'Just now' },
+    let notes = JSON.parse(localStorage.getItem('alonote_web_notes')) || [
+      { id: 1, title: 'Welcome to AloNote (আলোনোট) #ideas', body: 'A minimal, distraction-free note app.\n• 100% offline, zero trackers\n[ ] Try drag-and-drop reordering\n[x] Enjoy pure writing\n#offline #notes', isFav: true, isPinned: true, category: 'all', updated: 'Just now' },
       { id: 2, title: 'Weekly Groceries #personal', body: '[x] Almond milk\n[ ] Fresh avocados\n[ ] Whole bean coffee\n[ ] Sourdough bread\n#shopping', isFav: false, isPinned: false, category: 'ideas', updated: 'Today, 2:15 PM' },
-      { id: 3, title: 'Work Tasks #work', body: '• Clean architecture MVVM\n• Jetpack Compose Material 3\n[ ] Release native APK v1.0\n#android #dev', isFav: false, isPinned: false, category: 'work', updated: 'Yesterday' }
+      { id: 3, title: 'Work Tasks #work', body: '• Clean architecture MVVM\n• Jetpack Compose Material 3\n[ ] Release native APK v2.2\n#android #dev', isFav: false, isPinned: false, category: 'work', updated: 'Yesterday' }
     ];
 
     let currentEditingId = null;
@@ -1393,7 +1393,7 @@
       if (recentlyDeletedNote) {
         recentlyDeletedNote.isDeleted = false;
         delete recentlyDeletedNote.deletedAt;
-        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+        localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
         recentlyDeletedNote = null;
         document.getElementById('toast-bar').classList.remove('show');
         renderNotes();
@@ -1611,7 +1611,7 @@
             if (fromIndex !== -1 && toIndex !== -1) {
               const moved = notes.splice(fromIndex, 1)[0];
               notes.splice(toIndex, 0, moved);
-              localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+              localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
               showToast('↕️ Notes reordered');
               renderNotes();
             }
@@ -1646,7 +1646,7 @@
               note.body = note.body.replace(/\[ \]/g, '[x]');
               showToast('All tasks marked done');
             }
-            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
             renderNotes();
           }
         });
@@ -1678,7 +1678,7 @@
           const note = notes.find(n => n.id === id);
           if (note) {
             note.isPinned = !note.isPinned;
-            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
             showToast(note.isPinned ? '📌 Note pinned to top' : 'Note unpinned');
             renderNotes();
           }
@@ -1693,7 +1693,7 @@
           const note = notes.find(n => n.id === id);
           if (note) {
             note.isFav = !note.isFav;
-            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
             showToast(note.isFav ? '⭐ Added to Favorites' : 'Removed from Favorites');
             renderNotes();
           }
@@ -1714,7 +1714,7 @@
               updated: 'Just now'
             };
             notes.unshift(clone);
-            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
             showToast('📋 Note duplicated');
             renderNotes();
           }
@@ -1745,7 +1745,7 @@
             note.isDeleted = true;
             note.deletedAt = Date.now();
             recentlyDeletedNote = note;
-            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
             showToast('🗑️ Note moved to Recycle Bin', true);
             renderNotes();
           }
@@ -1761,7 +1761,7 @@
           if (note) {
             note.isDeleted = false;
             delete note.deletedAt;
-            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
             showToast('Note restored');
             renderNotes();
           }
@@ -1776,7 +1776,7 @@
           const index = notes.findIndex(n => n.id === id);
           if (index !== -1) {
             notes.splice(index, 1);
-            localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+            localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
             showToast('Note permanently deleted');
             renderNotes();
           }
@@ -2230,7 +2230,7 @@
           });
         }
       }
-      localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+      localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
       document.getElementById('editor-status').innerText = 'Saved';
       updateEditorStats();
     }
@@ -2256,7 +2256,7 @@
       if (note) {
         note.isPinned = !note.isPinned;
         updatePinButton(note.isPinned);
-        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+        localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
         showToast(note.isPinned ? '📌 Note pinned to top' : 'Note unpinned');
       }
     });
@@ -2268,7 +2268,7 @@
       if (note) {
         note.isFav = !note.isFav;
         updateFavButton(note.isFav);
-        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+        localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
         showToast(note.isFav ? '⭐ Added to Favorites' : 'Removed from Favorites');
       }
     });
@@ -2303,7 +2303,7 @@
           note.isDeleted = true;
           note.deletedAt = Date.now();
           recentlyDeletedNote = note;
-          localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+          localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
           showToast('🗑️ Note moved to Recycle Bin', true);
         }
       }
@@ -2315,7 +2315,7 @@
     document.getElementById('preview-empty-trash').addEventListener('click', () => {
       if (confirm('Empty Recycle Bin? All deleted notes will be permanently erased.')) {
         notes = notes.filter(n => !n.isDeleted);
-        localStorage.setItem('noto_web_notes', JSON.stringify(notes));
+        localStorage.setItem('alonote_web_notes', JSON.stringify(notes));
         showToast('Recycle Bin emptied');
         renderNotes();
       }
@@ -2354,7 +2354,7 @@
       currentTab = 'notes';
       document.getElementById('bar-notes').classList.add('active');
       document.getElementById('bar-fav').classList.remove('active');
-      document.getElementById('preview-tab-title').innerText = 'Noto';
+      document.getElementById('preview-tab-title').innerText = 'AloNote';
       renderNotes();
     });
 

@@ -457,12 +457,12 @@ fun NoteEditorScreen(
                             }
                         },
                         onExportPdf = {
-                            val sanitizedTitle = (uiState.title.ifBlank { "Noto_Export" })
+                            val sanitizedTitle = (uiState.title.ifBlank { "AloNote_Export" })
                                 .replace(Regex("[^a-zA-Z0-9_-]"), "_")
                             pdfExportLauncher.launch("$sanitizedTitle.pdf")
                         },
                         onExportMarkdown = {
-                            val sanitizedTitle = (uiState.title.ifBlank { "Noto_Export" })
+                            val sanitizedTitle = (uiState.title.ifBlank { "AloNote_Export" })
                                 .replace(Regex("[^a-zA-Z0-9_-]"), "_")
                             mdExportLauncher.launch("$sanitizedTitle.md")
                         }

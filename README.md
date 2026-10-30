@@ -1,15 +1,15 @@
-# Noto — Minimal Offline Notes App
+# AloNote (আলোনোট) — Minimal Offline Notes App
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-black?style=flat-square&logo=android)](https://www.android.com/)
 [![Language](https://img.shields.io/badge/Language-Kotlin%202.3-black?style=flat-square&logo=kotlin)](https://kotlinlang.org/)
 [![UI](https://img.shields.io/badge/UI-Jetpack%20Compose%20%2F%20Material%203-black?style=flat-square)](https://developer.android.com/jetpack/compose)
 [![Storage](https://img.shields.io/badge/Storage-Room%20SQLite%20(100%25%20Offline)-black?style=flat-square)](https://developer.android.com/training/data-storage/room)
-[![Website](https://img.shields.io/badge/Website-note.zihan.xyz-black?style=flat-square)](https://note.zihan.xyz)
+[![Website](https://img.shields.io/badge/Website-alonote.zihan.xyz-black?style=flat-square)](https://alonote.zihan.xyz)
 
-> **Noto** is an extremely simple, lightweight, 100% offline note-taking native Android application inspired by Apple Notes and Google Keep. Built with Jetpack Compose, Material 3, and Room Database.
+> **AloNote (আলোনোট)** is an extremely simple, lightweight, 100% offline note-taking native Android application by **Alokpath (আলোকপথ)**, inspired by Apple Notes and Google Keep. Built with Jetpack Compose, Material 3, and Room Database.
 
-🌐 **Website & Live Demo:** [note.zihan.xyz](https://note.zihan.xyz) (or [note.zihan.uk](https://note.zihan.uk))  
-📦 **Direct APK Download:** [Download Noto v2.2.0 (Alokpath Edition)](https://note.zihan.xyz/downloads/Noto-v2.2.0-Alokpath.apk) (or [Noto v2.1.0 APK](https://note.zihan.xyz/downloads/Noto-v2.1.0-Alokpath.apk))  
+🌐 **Website & Live Demo:** [alonote.zihan.xyz](https://alonote.zihan.xyz) (or [alonote.zihan.uk](https://alonote.zihan.uk))  
+📦 **Direct APK Download:** [Download AloNote v2.2.0 (Alokpath Edition)](https://alonote.zihan.xyz/downloads/AloNote-v2.2.0-Alokpath.apk)  
 🏢 **Ecosystem:** An [Alokpath (আলোকপথ)](https://alokpoth.zihan.xyz) Sovereign Privacy Application
 
 ---

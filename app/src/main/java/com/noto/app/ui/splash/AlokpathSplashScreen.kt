@@ -101,7 +101,7 @@ fun AlokpathSplashScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Noto",
+                text = "AloNote",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
@@ -113,11 +113,11 @@ fun AlokpathSplashScreen(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Offline Notes",
+                text = "আলোনোট • Offline Notes",
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
-                    letterSpacing = 1.5.sp
+                    letterSpacing = 1.sp
                 ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )

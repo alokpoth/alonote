@@ -1,4 +1,5 @@
-# GitLab CI/CD configuration for Noto Landing Page (GitLab Pages)
+image: alpine:latest
+
 pages:
   stage: deploy
   script:

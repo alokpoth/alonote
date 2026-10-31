@@ -1337,6 +1337,10 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span>নোট তালিকা</span>
           </button>
+          <button class="tab-btn" onclick="switchMockTab('splash')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            <span>স্টার্টআপ স্প্ল্যাশ (Meta Style)</span>
+          </button>
           <button class="tab-btn" onclick="switchMockTab('audio')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             <span>ভয়েস নোট</span>
@@ -1513,7 +1517,7 @@
     <!-- Alokpath Manifesto Section -->
     <section class="manifesto-section" id="manifesto">
       <div class="manifesto-box">
-        <img src="./alokpath_logo.svg" alt="Alokpath Emblem" class="alokpath-emblem-large">
+        <img id="manifestoLogo" src="./alokpath_logo_dark.png" alt="Alokpath Logo" style="height: 48px; width: auto; margin: 0 auto 20px; display: block; object-fit: contain;">
         <div class="alok-author">আলোকপথ (Alokpath) দর্শন ও ইস্তেহার</div>
         <div class="manifesto-quote">
           "প্রযুক্তি হওয়া উচিত মানুষের মেধার মুক্তি ও সার্বভৌমত্বের হাতিয়ার—ব্যবসায়িক অ্যালগরিদমের ফাঁদ নয়।"
@@ -1657,7 +1661,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="./alokpath_logo.svg" alt="Alokpath" style="width: 32px; height: 32px;">
+            <img id="footerLogo" src="./alokpath_logo_dark.png" alt="Alokpath" style="height: 28px; width: auto; object-fit: contain;">
             <div style="font-weight: 800; font-size: 1.15rem;">আলোকপথ (Alokpath)</div>
           </div>
           <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 440px;">
@@ -1694,13 +1698,21 @@
     function setTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('alonote_theme', theme);
-      if (theme === 'light') {
+      const isLight = (theme === 'light');
+      if (isLight) {
         sunIcon.style.display = 'none';
         moonIcon.style.display = 'block';
       } else {
         sunIcon.style.display = 'block';
         moonIcon.style.display = 'none';
       }
+      const alokLogo = isLight ? './alokpath_logo_light.png' : './alokpath_logo_dark.png';
+      const manifestoLogo = document.getElementById('manifestoLogo');
+      if (manifestoLogo) manifestoLogo.src = alokLogo;
+      const footerLogo = document.getElementById('footerLogo');
+      if (footerLogo) footerLogo.src = alokLogo;
+      const mockSplashLogo = document.getElementById('mockSplashLogo');
+      if (mockSplashLogo) mockSplashLogo.src = alokLogo;
     }
 
     const savedTheme = localStorage.getItem('alonote_theme') || 'dark';
@@ -1741,6 +1753,21 @@
             <div class="mock-title">বই পড়ার সাপ্তাহিক তালিকা</div>
             <div class="mock-snippet">☑️ ডিজিটাল মিনিমালিজম<br>☑️ সভরেন ইন্ডিভিজুয়াল<br>◻️ বাংলা সাহিত্যের প্রাচীন পথ</div>
             <div class="mock-footer"><span>২৬ অক্টোবর</span><span>চেকলিস্ট</span></div>
+          </div>
+        `;
+      } else if (tab === 'splash') {
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        const alokLogo = isLight ? './alokpath_logo_light.png' : './alokpath_logo_dark.png';
+        content.innerHTML = `
+          <div style="height: 380px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 36px 0 20px;">
+            <div style="height: 10px;"></div>
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+              <img src="./alonote_icon.png" style="width: 76px; height: 76px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12);" alt="AloNote">
+            </div>
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <span style="font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.5px;">from</span>
+              <img id="mockSplashLogo" src="${alokLogo}" style="height: 22px; width: auto; object-fit: contain;" alt="Alokpath">
+            </div>
           </div>
         `;
       } else if (tab === 'audio') {

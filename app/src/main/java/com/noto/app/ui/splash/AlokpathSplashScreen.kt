@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -36,10 +37,9 @@ import com.noto.app.R
 import kotlinx.coroutines.delay
 
 /**
- * Facebook/Meta-style Alokpath startup splash screen.
- * Displays the app's minimalist icon at the center, and "from ALOKPATH (আলোকপথ)"
- * with the official company logo at the bottom.
- * Transitions to the main application after a smooth ~1.3s delay.
+ * Facebook / Meta-style startup splash screen for AloNote.
+ * Displays only the app's clean icon at the dead center (no text clutter),
+ * and "from" + Alokpath's official company branding at the bottom.
  */
 @Composable
 fun AlokpathSplashScreen(
@@ -47,25 +47,24 @@ fun AlokpathSplashScreen(
     modifier: Modifier = Modifier
 ) {
     val alphaAnim = remember { Animatable(0f) }
-    val scaleAnim = remember { Animatable(0.92f) }
+    val scaleAnim = remember { Animatable(0.94f) }
 
     LaunchedEffect(Unit) {
         alphaAnim.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
+            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
         )
     }
 
     LaunchedEffect(Unit) {
         scaleAnim.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 450, easing = FastOutSlowInEasing)
+            animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
         )
     }
 
     LaunchedEffect(Unit) {
-        // Facebook/Meta standard splash duration
-        delay(1300L)
+        delay(1200L)
         onSplashFinished()
     }
 
@@ -74,61 +73,36 @@ fun AlokpathSplashScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(if (isDark) Color(0xFF121214) else Color(0xFFFAFAFA))
     ) {
-        // Center: App Icon and Title
-        Column(
+        // Center: App Icon (Just like Facebook / Instagram centered app logo)
+        Box(
             modifier = Modifier
                 .align(Alignment.Center)
                 .alpha(alphaAnim.value)
                 .scale(scaleAnim.value),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.noto_app_icon),
-                contentDescription = "Noto App Icon",
+                contentDescription = "AloNote App Icon",
                 modifier = Modifier
-                    .size(88.dp)
-                    .clip(RoundedCornerShape(22.dp))
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(20.dp))
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
-                        shape = RoundedCornerShape(22.dp)
+                        color = if (isDark) Color(0x22FFFFFF) else Color(0x15000000),
+                        shape = RoundedCornerShape(20.dp)
                     )
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "AloNote",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    letterSpacing = (-0.5).sp
-                ),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "আলোনোট • Offline Notes",
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 1.sp
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
         }
 
-        // Bottom: "from" + Alokpath official company logo (Facebook/Meta Style)
+        // Bottom: "from" + Alokpath official company logo (Meta-style branding)
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
-                .padding(bottom = 36.dp)
+                .padding(bottom = 44.dp)
                 .alpha(alphaAnim.value),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -138,32 +112,20 @@ fun AlokpathSplashScreen(
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Normal,
-                    letterSpacing = 2.sp
+                    letterSpacing = 0.5.sp
                 ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f)
+                color = if (isDark) Color(0xFF8E8E93) else Color(0xFF8E8E93)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             Image(
                 painter = painterResource(
                     id = if (isDark) R.drawable.alokpath_logo_dark else R.drawable.alokpath_logo_light
                 ),
-                contentDescription = "Alokpath - আলোকপথ",
-                modifier = Modifier.height(28.dp),
+                contentDescription = "Alokpath",
+                modifier = Modifier.height(24.dp),
                 contentScale = ContentScale.Fit
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "আলোকপথ",
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 1.sp
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
             )
         }
     }

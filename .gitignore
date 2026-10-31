@@ -16,4 +16,5 @@ build_out/
 .cxx
 local.properties
 /*.apk
+.netlify/
 

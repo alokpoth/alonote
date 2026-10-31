@@ -822,55 +822,6 @@
       gap: 6px;
     }
 
-    /* Technical Specs & Verification */
-    .specs-section {
-      padding: 50px 0 70px;
-    }
-    .specs-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 26px;
-      padding: 36px;
-    }
-    .specs-meta-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-      font-size: 0.88rem;
-    }
-    .hash-box {
-      background: var(--bg-surface-elevated);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 18px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      font-family: monospace;
-      font-size: 0.82rem;
-      word-break: break-all;
-    }
-    .copy-btn {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.2s;
-      white-space: nowrap;
-    }
-    .copy-btn:hover {
-      background: var(--bg-glass);
-    }
 
     /* FAQ */
     .faq-section {
@@ -1213,25 +1164,6 @@
         padding: 40px 0;
       }
 
-      /* Specs Mobile */
-      .specs-section {
-        padding: 36px 0 50px;
-      }
-      .specs-card {
-        padding: 22px 16px;
-        border-radius: 20px;
-      }
-      .hash-box {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 12px;
-        font-size: 0.74rem;
-      }
-      .copy-btn {
-        width: 100%;
-        justify-content: center;
-        padding: 10px;
-      }
 
       /* FAQ Mobile */
       .faq-section {
@@ -1660,38 +1592,6 @@
       </div>
     </section>
 
-    <!-- Technical Specs & Integrity Verification -->
-    <section class="specs-section">
-      <div class="specs-card">
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px;">
-          <div>
-            <h3 style="font-size: 1.3rem; font-weight: 800;">কারিগরি বিবরণ ও ফাইল ইন্টিগ্রিটি</h3>
-            <p style="color: var(--text-muted); font-size: 0.88rem;">ডাউনলোড করা APK-এর সত্যতা নিশ্চিত করতে নিচের SHA-256 হ্যাশ মিলিয়ে নিন।</p>
-          </div>
-          <span style="padding: 5px 12px; background: rgba(0, 230, 118, 0.12); color: var(--accent-green); border-radius: 999px; font-size: 0.76rem; font-weight: 700;">
-            ✓ অফিশিয়াল সাইনড রিলিজ
-          </span>
-        </div>
-
-        <div class="specs-meta-grid">
-          <div><strong style="color: var(--text-muted);">প্যাকেজ নাম:</strong><br><code>com.noto.app</code></div>
-          <div><strong style="color: var(--text-muted);">সংস্করণ:</strong><br>v2.2.0 (Build 5)</div>
-          <div><strong style="color: var(--text-muted);">ন্যূনতম অ্যান্ড্রয়েড:</strong><br>Android 8.0+ (Oreo)</div>
-          <div><strong style="color: var(--text-muted);">ফাইলের আকার:</strong><br>13,020,288 Bytes (~12.4 MB)</div>
-        </div>
-
-        <div class="hash-box">
-          <div>
-            <span style="color: var(--alok-gold); font-weight: 700;">SHA-256:</span>
-            <span id="sha256Text">1AE08858B5D76546E452CA6174D4CCA2063AC2747C7BDA13D72AE636461A51AC</span>
-          </div>
-          <button class="copy-btn" onclick="copyHash()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            <span>কপি করুন</span>
-          </button>
-        </div>
-      </div>
-    </section>
 
     <!-- FAQ Section -->
     <section class="faq-section">
@@ -1874,13 +1774,6 @@
       }
     }
 
-    // Copy SHA-256 Hash
-    function copyHash() {
-      const hash = document.getElementById('sha256Text').innerText.trim();
-      navigator.clipboard.writeText(hash).then(() => {
-        showToast('SHA-256 হ্যাশ কপি করা হয়েছে!');
-      });
-    }
 
     // Toast helper
     function showToast(msg) {

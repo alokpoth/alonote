@@ -8,6 +8,7 @@ import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -66,6 +67,7 @@ class NoteAudioRecorder(private val context: Context) {
 
         val filename = "voice_${System.currentTimeMillis()}.m4a"
         val file = AudioStorageManager.getAudioFile(context, filename)
+        file.parentFile?.mkdirs()
         currentFile = file
 
         return try {
@@ -232,12 +234,18 @@ class NoteAudioPlayer(private val context: Context) {
 
     fun stop() {
         stopProgressJob()
-        mediaPlayer?.apply {
-            if (isPlaying) {
-                stop()
-            }
-            reset()
-            release()
+        mediaPlayer?.let { player ->
+            try {
+                if (player.isPlaying) {
+                    player.stop()
+                }
+            } catch (ignored: Exception) {}
+            try {
+                player.reset()
+            } catch (ignored: Exception) {}
+            try {
+                player.release()
+            } catch (ignored: Exception) {}
         }
         mediaPlayer = null
         _isPlaying.value = false
@@ -248,14 +256,21 @@ class NoteAudioPlayer(private val context: Context) {
 
     fun release() {
         stop()
+        try {
+            scope.coroutineContext.cancelChildren()
+        } catch (ignored: Exception) {}
     }
 
     private fun startProgressJob() {
         stopProgressJob()
         progressJob = scope.launch {
             while (isActive && _isPlaying.value) {
-                mediaPlayer?.let {
-                    _currentPositionMs.value = it.currentPosition
+                mediaPlayer?.let { player ->
+                    try {
+                        if (player.isPlaying) {
+                            _currentPositionMs.value = player.currentPosition
+                        }
+                    } catch (ignored: Exception) {}
                 }
                 delay(100)
             }

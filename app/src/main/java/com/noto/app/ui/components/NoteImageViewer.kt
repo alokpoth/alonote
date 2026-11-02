@@ -103,9 +103,11 @@ fun rememberNoteBitmap(filename: String, targetMaxDim: Int = 360): Bitmap? {
 
                 val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
                 BitmapFactory.decodeFile(file.absolutePath, bounds)
+                if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return@withContext null
 
+                val effectiveMaxDim = targetMaxDim.coerceAtLeast(64)
                 var sampleSize = 1
-                while ((bounds.outWidth / sampleSize) > targetMaxDim || (bounds.outHeight / sampleSize) > targetMaxDim) {
+                while ((bounds.outWidth / sampleSize) > effectiveMaxDim || (bounds.outHeight / sampleSize) > effectiveMaxDim) {
                     sampleSize *= 2
                 }
 

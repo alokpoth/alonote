@@ -1,6 +1,7 @@
 package com.noto.app.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
@@ -23,6 +24,9 @@ fun NotoNavigation(
     application: NotoApplication,
     initialNoteId: Long = 0L,
     initialNewNote: Boolean = false,
+    targetNoteId: Long = 0L,
+    triggerNewNote: Boolean = false,
+    onIntentHandled: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val backStack = rememberNavBackStack(
@@ -36,6 +40,16 @@ fun NotoNavigation(
         }
     )
     val repository = application.noteRepository
+
+    LaunchedEffect(targetNoteId, triggerNewNote) {
+        if (targetNoteId > 0L) {
+            backStack.add(NoteEditorNavKey(noteId = targetNoteId))
+            onIntentHandled()
+        } else if (triggerNewNote) {
+            backStack.add(NoteEditorNavKey(noteId = 0L, draftKey = System.currentTimeMillis()))
+            onIntentHandled()
+        }
+    }
 
     NavDisplay(
         backStack = backStack,

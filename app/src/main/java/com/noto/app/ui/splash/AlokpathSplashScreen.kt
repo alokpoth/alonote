@@ -47,24 +47,24 @@ fun AlokpathSplashScreen(
     modifier: Modifier = Modifier
 ) {
     val alphaAnim = remember { Animatable(0f) }
-    val scaleAnim = remember { Animatable(0.94f) }
+    val scaleAnim = remember { Animatable(0.92f) }
 
     LaunchedEffect(Unit) {
         alphaAnim.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
+            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
         )
     }
 
     LaunchedEffect(Unit) {
         scaleAnim.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
+            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
         )
     }
 
     LaunchedEffect(Unit) {
-        delay(1200L)
+        delay(950L)
         onSplashFinished()
     }
 
@@ -73,7 +73,7 @@ fun AlokpathSplashScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(if (isDark) Color(0xFF121214) else Color(0xFFFAFAFA))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // Center: App Icon (Just like Facebook / Instagram centered app logo)
         Box(

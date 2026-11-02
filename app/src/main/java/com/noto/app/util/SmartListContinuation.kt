@@ -4,11 +4,13 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 
 /**
- * Intelligent Markdown list and checklist auto-continuation.
+ * Intelligent Markdown list, checklist, and numbered list auto-continuation.
  * When pressing Enter on a checklist or bullet item, automatically continues the prefix on the new line.
  * If Enter is pressed on an empty prefix, cleanly cancels the list item.
  */
 object SmartListContinuation {
+
+    private val NumberedListRegex = Regex("""^(\d+)\.\s""")
 
     fun processChange(
         newValue: TextFieldValue,
@@ -25,20 +27,27 @@ object SmartListContinuation {
                 val prevLineStart = newText.lastIndexOf('\n', prevLineEnd - 1) + 1
                 val prevLine = newText.substring(prevLineStart, prevLineEnd)
 
-                val prefix = when {
-                    prevLine.startsWith("- [ ] ") -> "- [ ] "
-                    prevLine.startsWith("- [x] ") -> "- [ ] "
-                    prevLine.startsWith("[ ] ") -> "[ ] "
-                    prevLine.startsWith("[x] ") -> "[ ] "
-                    prevLine.startsWith("- ") -> "- "
-                    prevLine.startsWith("* ") -> "* "
-                    prevLine.startsWith("• ") -> "• "
-                    else -> null
+                val numMatch = NumberedListRegex.find(prevLine)
+                val (prefix, isEmpty) = when {
+                    prevLine.startsWith("- [ ] ") -> Pair("- [ ] ", prevLine.trim() == "- [ ]")
+                    prevLine.startsWith("- [x] ") -> Pair("- [ ] ", prevLine.trim() == "- [x]")
+                    prevLine.startsWith("[ ] ") -> Pair("[ ] ", prevLine.trim() == "[ ]")
+                    prevLine.startsWith("[x] ") -> Pair("[ ] ", prevLine.trim() == "[ ]")
+                    prevLine.startsWith("- ") -> Pair("- ", prevLine.trim() == "-")
+                    prevLine.startsWith("* ") -> Pair("* ", prevLine.trim() == "*")
+                    prevLine.startsWith("• ") -> Pair("• ", prevLine.trim() == "•")
+                    numMatch != null -> {
+                        val num = numMatch.groupValues[1].toIntOrNull()
+                        if (num != null) {
+                            Pair("${num + 1}. ", prevLine.trim() == "${num}.")
+                        } else null to false
+                    }
+                    else -> null to false
                 }
 
                 if (prefix != null) {
-                    // Empty list item: cancel prefix and insert blank line
-                    if (prevLine.trim() == prefix.trim()) {
+                    if (isEmpty) {
+                        // Empty list item: cancel prefix and insert blank line
                         val updated = newText.substring(0, prevLineStart) + newText.substring(cursor)
                         return TextFieldValue(updated, TextRange(prevLineStart))
                     } else {

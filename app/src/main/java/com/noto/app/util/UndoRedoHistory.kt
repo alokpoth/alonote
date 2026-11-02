@@ -41,6 +41,13 @@ class UndoRedoHistory(
      * Reverts to the previous snapshot.
      */
     fun undo(current: TextFieldValue): TextFieldValue? {
+        if (undoStack.isEmpty()) return null
+        if (undoStack.last().text != current.text) {
+            undoStack.add(current)
+            if (undoStack.size > maxCapacity) {
+                undoStack.removeAt(0)
+            }
+        }
         if (undoStack.size <= 1) return null
         val top = undoStack.removeAt(undoStack.lastIndex)
         redoStack.add(top)

@@ -1333,19 +1333,19 @@
       <div class="phone-showcase-container">
         <!-- Tab selector -->
         <div class="showcase-tabs">
-          <button class="tab-btn active" onclick="switchMockTab('notes')">
+          <button class="tab-btn active" onclick="switchMockTab('notes', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span>নোট তালিকা</span>
           </button>
-          <button class="tab-btn" onclick="switchMockTab('splash')">
+          <button class="tab-btn" onclick="switchMockTab('splash', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             <span>স্টার্টআপ স্প্ল্যাশ (Meta Style)</span>
           </button>
-          <button class="tab-btn" onclick="switchMockTab('audio')">
+          <button class="tab-btn" onclick="switchMockTab('audio', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             <span>ভয়েস নোট</span>
           </button>
-          <button class="tab-btn" onclick="switchMockTab('security')">
+          <button class="tab-btn" onclick="switchMockTab('security', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             <span>বায়োমেট্রিক নিরাপত্তা</span>
           </button>
@@ -1724,9 +1724,13 @@
     });
 
     // Mock Tabs Switcher
-    function switchMockTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+    function switchMockTab(tab, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) {
+        btn.classList.add('active');
+      } else if (window.event && window.event.currentTarget) {
+        window.event.currentTarget.classList.add('active');
+      }
 
       const content = document.getElementById('mockDynamicContent');
       if (tab === 'notes') {

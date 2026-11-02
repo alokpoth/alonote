@@ -505,24 +505,28 @@ private fun highlightQuery(
     highlightColor: androidx.compose.ui.graphics.Color
 ): AnnotatedString {
     val trimmed = query.trim()
-    if (trimmed.isEmpty()) return AnnotatedString(text)
+    if (trimmed.isEmpty() || text.isEmpty()) return AnnotatedString(text)
 
     val builder = AnnotatedString.Builder(text)
     var startIndex = text.indexOf(trimmed, ignoreCase = true)
     var count = 0
-    while (startIndex >= 0 && count < 100) {
+    val textLen = text.length
+    while (startIndex in 0 until textLen && count < 100) {
         count++
-        val endIndex = startIndex + trimmed.length
-        if (endIndex <= startIndex) break
-        builder.addStyle(
-            SpanStyle(
-                background = highlightColor,
-                fontWeight = FontWeight.Bold
-            ),
-            startIndex,
-            endIndex.coerceAtMost(text.length)
-        )
-        startIndex = text.indexOf(trimmed, endIndex, ignoreCase = true)
+        val endIndex = (startIndex + trimmed.length).coerceAtMost(textLen)
+        if (endIndex > startIndex) {
+            builder.addStyle(
+                SpanStyle(
+                    background = highlightColor,
+                    fontWeight = FontWeight.Bold
+                ),
+                startIndex,
+                endIndex
+            )
+        }
+        val nextSearch = if (endIndex > startIndex) endIndex else startIndex + 1
+        if (nextSearch >= textLen) break
+        startIndex = text.indexOf(trimmed, nextSearch, ignoreCase = true)
     }
     return builder.toAnnotatedString()
 }

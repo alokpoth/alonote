@@ -25,17 +25,31 @@ object DateFormatter {
         val now = Calendar.getInstance()
         val target = Calendar.getInstance().apply { timeInMillis = timestamp }
 
+        val todayMidnight = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val targetMidnight = Calendar.getInstance().apply {
+            timeInMillis = timestamp
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val dayDiff = ((todayMidnight.timeInMillis - targetMidnight.timeInMillis) / (1000L * 60 * 60 * 24)).toInt()
         val isSameYear = now.get(Calendar.YEAR) == target.get(Calendar.YEAR)
-        val dayDiff = now.get(Calendar.DAY_OF_YEAR) - target.get(Calendar.DAY_OF_YEAR)
 
         return when {
-            isSameYear && dayDiff == 0 -> {
+            dayDiff == 0 -> {
                 SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp))
             }
-            isSameYear && dayDiff == 1 -> {
+            dayDiff == 1 -> {
                 "Yesterday"
             }
-            isSameYear && dayDiff in 2..6 -> {
+            dayDiff in 2..6 -> {
                 SimpleDateFormat("EEEE", Locale.getDefault()).format(Date(timestamp))
             }
             isSameYear -> {
@@ -57,14 +71,27 @@ object DateFormatter {
         val now = Calendar.getInstance()
         val target = Calendar.getInstance().apply { timeInMillis = timestamp }
 
-        val isSameYear = now.get(Calendar.YEAR) == target.get(Calendar.YEAR)
-        val dayDiff = now.get(Calendar.DAY_OF_YEAR) - target.get(Calendar.DAY_OF_YEAR)
+        val todayMidnight = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val targetMidnight = Calendar.getInstance().apply {
+            timeInMillis = timestamp
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
 
+        val dayDiff = ((todayMidnight.timeInMillis - targetMidnight.timeInMillis) / (1000L * 60 * 60 * 24)).toInt()
+        val isSameYear = now.get(Calendar.YEAR) == target.get(Calendar.YEAR)
         val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp))
 
         return when {
-            isSameYear && dayDiff == 0 -> "Edited today at $timeFormat"
-            isSameYear && dayDiff == 1 -> "Edited yesterday at $timeFormat"
+            dayDiff == 0 -> "Edited today at $timeFormat"
+            dayDiff == 1 -> "Edited yesterday at $timeFormat"
             isSameYear -> {
                 val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault()).format(Date(timestamp))
                 "Edited $dateFormat at $timeFormat"

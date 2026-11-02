@@ -305,7 +305,7 @@ fun NoteEditorScreen(
         "${uiState.title} ${bodyTextFieldValue.text}".trim()
     }
     val wordCount = remember(combinedText) {
-        if (combinedText.isEmpty()) 0 else combinedText.split("\\s+".toRegex()).count { it.isNotBlank() }
+        if (combinedText.isEmpty()) 0 else combinedText.split(WordSplitRegex).count { it.isNotBlank() }
     }
     val charCount = remember(uiState.title, bodyTextFieldValue.text) {
         uiState.title.length + bodyTextFieldValue.text.length
@@ -1100,3 +1100,6 @@ private fun EditorTopBar(
         }
     }
 }
+
+private val WordSplitRegex = Regex("""\s+""")
+

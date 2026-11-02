@@ -385,30 +385,42 @@ private val CodePattern = Regex("""`([^`]+)`""")
 private val TagPattern = Regex("""(?<=^|\s)(#[\p{L}\p{N}_]+)""")
 
 private fun parseInlineMarkdown(text: String): AnnotatedString {
+    if (text.isEmpty()) return AnnotatedString("")
     val builder = AnnotatedString.Builder(text)
+    val len = text.length
+
+    fun addSafeSpan(style: SpanStyle, start: Int, end: Int) {
+        if (start in 0 until len && end in (start + 1)..len) {
+            builder.addStyle(style, start, end)
+        }
+    }
 
     for (match in BoldPattern.findAll(text)) {
-        val range = match.groups[1]!!.range
-        builder.addStyle(SpanStyle(fontWeight = FontWeight.Bold), range.first, range.last + 1)
+        match.groups[1]?.let { group ->
+            addSafeSpan(SpanStyle(fontWeight = FontWeight.Bold), group.range.first, group.range.last + 1)
+        }
     }
 
     for (match in ItalicPattern.findAll(text)) {
-        val range = match.groups[1]!!.range
-        builder.addStyle(SpanStyle(fontStyle = FontStyle.Italic), range.first, range.last + 1)
+        match.groups[1]?.let { group ->
+            addSafeSpan(SpanStyle(fontStyle = FontStyle.Italic), group.range.first, group.range.last + 1)
+        }
     }
 
     for (match in StrikePattern.findAll(text)) {
-        val range = match.groups[1]!!.range
-        builder.addStyle(SpanStyle(textDecoration = TextDecoration.LineThrough), range.first, range.last + 1)
+        match.groups[1]?.let { group ->
+            addSafeSpan(SpanStyle(textDecoration = TextDecoration.LineThrough), group.range.first, group.range.last + 1)
+        }
     }
 
     for (match in CodePattern.findAll(text)) {
-        val range = match.groups[1]!!.range
-        builder.addStyle(SpanStyle(fontFamily = FontFamily.Monospace), range.first, range.last + 1)
+        match.groups[1]?.let { group ->
+            addSafeSpan(SpanStyle(fontFamily = FontFamily.Monospace), group.range.first, group.range.last + 1)
+        }
     }
 
     for (match in TagPattern.findAll(text)) {
-        builder.addStyle(
+        addSafeSpan(
             SpanStyle(color = androidx.compose.ui.graphics.Color(0xFF64748B), fontWeight = FontWeight.SemiBold),
             match.range.first,
             match.range.last + 1

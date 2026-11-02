@@ -1,7 +1,11 @@
 package com.noto.app.data.repository
 
+import android.content.Context
 import com.noto.app.data.local.dao.NoteDao
 import com.noto.app.data.local.entity.Note
+import com.noto.app.util.AudioStorageManager
+import com.noto.app.util.ImageStorageManager
+import com.noto.app.util.ReminderManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -10,11 +14,16 @@ import kotlinx.coroutines.withContext
 
 /**
  * Concrete implementation of NoteRepository executing all Room queries on Dispatchers.IO.
+ * Automatically cleans up attached images, audio memos, and cancels alarms upon permanent deletion.
  */
 class NoteRepositoryImpl(
     private val noteDao: NoteDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val context: Context? = null
 ) : NoteRepository {
+
+    constructor(noteDao: NoteDao, context: Context?, ioDispatcher: CoroutineDispatcher = Dispatchers.IO) :
+        this(noteDao, ioDispatcher, context)
 
     override fun getAllNotes(): Flow<List<Note>> {
         return noteDao.getAllNotes().flowOn(ioDispatcher)
@@ -76,10 +85,24 @@ class NoteRepositoryImpl(
     }
 
     override suspend fun permanentlyDeleteNote(id: Long): Unit = withContext(ioDispatcher) {
+        val note = noteDao.getNoteByIdOnce(id)
+        if (note != null && context != null) {
+            note.images.forEach { ImageStorageManager.deleteImage(context, it) }
+            note.audios.forEach { AudioStorageManager.deleteAudio(context, it) }
+            ReminderManager.cancelReminder(context, id)
+        }
         noteDao.permanentlyDeleteNote(id)
     }
 
     override suspend fun emptyTrash(): Unit = withContext(ioDispatcher) {
+        if (context != null) {
+            val trashNotes = noteDao.getTrashNotesSnapshot()
+            trashNotes.forEach { note ->
+                note.images.forEach { ImageStorageManager.deleteImage(context, it) }
+                note.audios.forEach { AudioStorageManager.deleteAudio(context, it) }
+                ReminderManager.cancelReminder(context, note.id)
+            }
+        }
         noteDao.emptyTrash()
     }
 

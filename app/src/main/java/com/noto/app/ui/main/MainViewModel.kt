@@ -170,6 +170,10 @@ class MainViewModel(
         }
     }
 
+    fun openSearchBar() {
+        _isSearchBarVisible.value = true
+    }
+
     fun toggleViewMode() {
         _isGridView.value = !_isGridView.value
     }
@@ -182,6 +186,7 @@ class MainViewModel(
                 title = if (note.title.isNotBlank()) "${note.title} (Copy)" else "",
                 isDeleted = false,
                 deletedAt = null,
+                reminderTime = null,
                 createdAt = now,
                 updatedAt = now
             )

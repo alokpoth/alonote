@@ -79,6 +79,9 @@ interface NoteDao {
     @Query("DELETE FROM notes WHERE id = :id")
     suspend fun permanentlyDeleteNote(id: Long)
 
+    @Query("SELECT * FROM notes WHERE isDeleted = 1")
+    suspend fun getTrashNotesSnapshot(): List<Note>
+
     @Query("DELETE FROM notes WHERE isDeleted = 1")
     suspend fun emptyTrash()
 

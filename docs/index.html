@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="bn" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>আলোনোট (AloNote) — অখণ্ড গোপনীয়তার শতভাগ অফলাইন নোটবুক | আলোকপথ (Alokpath)</title>
-  <meta name="description" content="আলোনোট (AloNote) — আলোকপথ (Alokpath) নির্মিত সম্পূর্ণ অফলাইন, বিজ্ঞাপনমুক্ত ও ট্র্যাকারহীন দেশীয় অ্যান্ডয়েড নোট অ্যাপ। কোনো ইন্টারনেট পারমিশন নেই, আপনার চিন্তা শুধুই আপনার ফোনে।">
+  <title>AloNote — 100% Offline, Uncompromising Privacy Notes | Alokpath</title>
+  <meta name="description" content="AloNote by Alokpath — A premium, 100% offline, tracker-free Android notes app built with modern Jetpack Compose. Zero internet permissions. Your private thoughts stay on your device.">
   <meta name="theme-color" content="#090a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -34,7 +34,7 @@
       --accent-cyan: #00e5ff;
       --accent-green: #00e676;
       --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-      --font-main: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+      --font-main: 'Plus Jakarta Sans', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     [data-theme="light"] {
@@ -99,21 +99,19 @@
     }
     .glow-sphere-2 {
       position: absolute;
-      top: 25%;
-      right: -100px;
+      top: 200px;
+      right: 5%;
       width: clamp(250px, 40vw, 500px);
       height: clamp(250px, 40vw, 500px);
-      background: radial-gradient(circle, rgba(212, 0, 120, 0.08) 0%, rgba(212, 0, 120, 0) 70%);
-      filter: blur(90px);
+      background: radial-gradient(circle, rgba(212, 0, 120, 0.10) 0%, rgba(212, 0, 120, 0) 70%);
+      filter: blur(80px);
       border-radius: 50%;
     }
 
-    /* Container */
     .container {
-      width: 100%;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 clamp(16px, 4vw, 32px);
       position: relative;
       z-index: 1;
     }
@@ -121,25 +119,22 @@
     /* Navbar */
     .navbar-wrapper {
       position: sticky;
-      top: 14px;
+      top: 0;
       z-index: 100;
-      padding: 0 16px;
-      margin-bottom: 24px;
-    }
-    .navbar {
-      max-width: 1120px;
-      margin: 0 auto;
-      background: var(--bg-glass);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 10px 24px;
+      background-color: var(--bg-glass);
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.3s;
+    }
+    .navbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      transition: all 0.2s;
+      height: 68px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 32px);
     }
     .brand {
       display: flex;
@@ -147,56 +142,46 @@
       gap: 12px;
       text-decoration: none;
       color: var(--text);
-      min-width: 0;
     }
     .brand-logo {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 10px;
-      object-fit: cover;
-      box-shadow: 0 4px 12px var(--alok-glow);
-      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     .brand-text {
       display: flex;
       flex-direction: column;
-      min-width: 0;
     }
     .brand-title {
       font-weight: 800;
       font-size: 1.15rem;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
     }
     .brand-sub {
       font-size: 0.72rem;
       color: var(--text-muted);
-      letter-spacing: 0.3px;
-      white-space: nowrap;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     .alok-badge-mini {
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--alok-gold);
       font-weight: 700;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 28px;
     }
     .nav-link {
       color: var(--text-muted);
-      font-size: 0.92rem;
-      font-weight: 500;
       text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 600;
       transition: color 0.2s;
     }
     .nav-link:hover {
@@ -205,14 +190,34 @@
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+    }
+    .lang-btn {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .lang-btn:hover {
+      border-color: var(--alok-gold);
+      color: var(--alok-gold);
+      transform: scale(1.04);
     }
     .theme-btn {
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border);
       color: var(--text);
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
@@ -222,7 +227,7 @@
       flex-shrink: 0;
     }
     .theme-btn:hover {
-      transform: scale(1.05);
+      transform: scale(1.06);
     }
     .btn-nav-download {
       background: var(--accent-gradient);
@@ -451,8 +456,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
-      width: 100%;
+      gap: 28px;
     }
     .showcase-tabs {
       display: flex;
@@ -466,200 +470,188 @@
       max-width: 100%;
     }
     .tab-btn {
-      padding: 9px 18px;
-      border-radius: 999px;
-      font-size: 0.86rem;
-      font-weight: 600;
       background: transparent;
-      color: var(--text-muted);
       border: none;
+      color: var(--text-muted);
+      padding: 8px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: 999px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
       transition: all 0.2s;
-      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: var(--text);
     }
     .tab-btn.active {
       background: var(--bg-surface-elevated);
-      color: var(--text);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      color: var(--alok-gold);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      border: 1px solid var(--border);
     }
 
-    /* Realistic Modern Phone Frame */
     .phone-mockup-wrapper {
-      width: 100%;
-      max-width: 375px;
+      position: relative;
       display: flex;
       justify-content: center;
+      width: 100%;
+      max-width: 380px;
     }
     .phone-mockup {
       width: 100%;
+      aspect-ratio: 9 / 19.5;
       background: #000000;
-      border: 8px solid #1c1d24;
       border-radius: 46px;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.15);
+      padding: 12px;
+      box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7), inset 0 0 0 2px rgba(255, 255, 255, 0.15);
       position: relative;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 640px;
-      box-sizing: border-box;
     }
     .phone-notch {
       position: absolute;
-      top: 10px;
+      top: 14px;
       left: 50%;
       transform: translateX(-50%);
-      width: 84px;
-      height: 20px;
+      width: 100px;
+      height: 24px;
       background: #000000;
-      border-radius: 20px;
+      border-radius: 14px;
       z-index: 10;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      padding-right: 10px;
+      justify-content: center;
     }
     .camera-lens {
-      width: 8px;
-      height: 8px;
-      background: #111a2e;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      border: 1px solid #1e293b;
+      background: #111;
+      border: 1px solid #222;
     }
     .phone-screen {
-      flex: 1;
-      background: var(--bg-surface);
-      padding: 38px 16px 20px;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      border-radius: 36px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
-      scrollbar-width: none;
-    }
-    .phone-screen::-webkit-scrollbar {
-      display: none;
+      padding: 38px 14px 18px;
+      box-sizing: border-box;
+      position: relative;
     }
 
-    /* Screen UI Components */
+    /* Screen UI elements */
     .app-top-bar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      justify-content: space-between;
+      margin-bottom: 14px;
     }
     .app-brand-pill {
-      font-size: 1.15rem;
+      font-size: 0.85rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
     .app-search-box {
-      background: var(--bg-surface-elevated);
+      background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 9px 12px;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .app-tags-scroll {
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      margin-bottom: 16px;
-      padding-bottom: 4px;
+      padding-bottom: 8px;
       scrollbar-width: none;
     }
-    .app-tags-scroll::-webkit-scrollbar {
-      display: none;
-    }
+    .app-tags-scroll::-webkit-scrollbar { display: none; }
     .tag-chip {
-      background: var(--bg-surface-elevated);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: 999px;
       font-size: 0.72rem;
       font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--bg-surface);
+      color: var(--text-muted);
       white-space: nowrap;
-      flex-shrink: 0;
+      border: 1px solid var(--border);
     }
     .tag-chip.active {
-      background: var(--accent-gradient);
-      color: #fff;
-      border-color: transparent;
+      background: rgba(255, 184, 0, 0.12);
+      color: var(--alok-gold);
+      border-color: rgba(255, 184, 0, 0.3);
     }
 
-    /* Notes in Mockup */
     .mock-card {
-      background: var(--bg-surface-elevated);
+      background: var(--bg-surface);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
+      border-radius: 14px;
+      padding: 12px;
       margin-bottom: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
     .mock-title {
+      font-size: 0.86rem;
       font-weight: 700;
-      font-size: 0.9rem;
       margin-bottom: 4px;
       color: var(--text);
     }
     .mock-snippet {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-      margin-bottom: 8px;
-    }
-    .mock-audio-pill {
-      background: rgba(255, 159, 10, 0.12);
-      border: 1px solid rgba(255, 159, 10, 0.3);
-      padding: 6px 10px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
       font-size: 0.74rem;
-      color: var(--alok-gold);
-      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.4;
       margin-bottom: 8px;
     }
-    .mock-waveform {
-      display: flex;
-      align-items: center;
-      gap: 2.5px;
-    }
-    .wave-bar {
-      width: 2.5px;
-      background: var(--alok-gold);
-      border-radius: 2px;
-      animation: soundwave 1.2s infinite ease-in-out;
-    }
-    .wave-bar:nth-child(1) { height: 7px; animation-delay: 0.1s; }
-    .wave-bar:nth-child(2) { height: 14px; animation-delay: 0.3s; }
-    .wave-bar:nth-child(3) { height: 20px; animation-delay: 0.2s; }
-    .wave-bar:nth-child(4) { height: 11px; animation-delay: 0.4s; }
-    .wave-bar:nth-child(5) { height: 16px; animation-delay: 0.25s; }
-    @keyframes soundwave {
-      0%, 100% { transform: scaleY(0.4); }
-      50% { transform: scaleY(1); }
-    }
-
     .mock-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-dim);
     }
+    .mock-audio-pill {
+      background: rgba(255, 107, 0, 0.12);
+      border: 1px solid rgba(255, 107, 0, 0.25);
+      border-radius: 8px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      color: var(--alok-orange);
+      font-weight: 600;
+    }
+    .mock-waveform {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 12px;
+    }
+    .wave-bar {
+      width: 2px;
+      background: currentColor;
+      border-radius: 1px;
+    }
+    .wave-bar:nth-child(1) { height: 4px; }
+    .wave-bar:nth-child(2) { height: 10px; }
+    .wave-bar:nth-child(3) { height: 7px; }
+    .wave-bar:nth-child(4) { height: 12px; }
+    .wave-bar:nth-child(5) { height: 5px; }
 
-    /* Bento Grid Features */
+    /* Bento Grid Feature Section */
     .bento-section {
       padding: 60px 0;
     }
@@ -671,27 +663,43 @@
     .bento-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
-      border-radius: 26px;
-      padding: 32px;
+      border-radius: 28px;
+      padding: 32px 28px;
       position: relative;
       overflow: hidden;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.25s ease, border-color 0.25s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.25s, border-color 0.25s;
     }
     .bento-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
       border-color: var(--border-focus);
     }
-    .col-8 { grid-column: span 8; }
-    .col-4 { grid-column: span 4; }
+    .bento-card.col-8 { grid-column: span 8; }
+    .bento-card.col-4 { grid-column: span 4; }
+    .bento-card.col-6 { grid-column: span 6; }
+    .bento-card.col-12 { grid-column: span 12; }
 
+    .bento-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 184, 0, 0.12);
+      color: var(--alok-gold);
+      border: 1px solid rgba(255, 184, 0, 0.2);
+      margin-bottom: 16px;
+    }
     .bento-icon-wrapper {
-      width: 50px;
-      height: 50px;
-      border-radius: 14px;
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border);
       display: flex;
@@ -703,66 +711,53 @@
     .bento-title {
       font-size: 1.35rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.4px;
       margin-bottom: 10px;
       line-height: 1.3;
     }
     .bento-desc {
-      color: var(--text-muted);
       font-size: 0.94rem;
+      color: var(--text-muted);
       line-height: 1.6;
     }
-    .bento-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      background: rgba(0, 230, 118, 0.12);
-      color: var(--accent-green);
-      margin-bottom: 12px;
-    }
 
-    /* Alokpath Manifesto Section */
+    /* Manifesto Section */
     .manifesto-section {
       padding: 60px 0;
+      text-align: center;
     }
     .manifesto-box {
-      background: linear-gradient(135deg, rgba(255, 107, 0, 0.08) 0%, rgba(212, 0, 120, 0.05) 100%), var(--bg-surface);
-      border: 1px solid rgba(255, 107, 0, 0.2);
-      border-radius: 32px;
-      padding: 48px 36px;
-      text-align: center;
+      background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
+      border: 1px solid var(--border);
+      border-radius: 36px;
+      padding: 64px 32px;
       position: relative;
-      box-shadow: 0 25px 50px -15px var(--alok-glow);
-    }
-    .alokpath-emblem-large {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 20px;
-      display: block;
+      overflow: hidden;
+      box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.4);
     }
     .manifesto-quote {
-      font-size: clamp(1.25rem, 3.2vw, 2rem);
+      font-size: clamp(1.4rem, 3.5vw, 2.3rem);
       font-weight: 800;
-      line-height: 1.4;
-      letter-spacing: -0.5px;
-      max-width: 860px;
+      letter-spacing: -0.6px;
+      line-height: 1.35;
+      max-width: 820px;
       margin: 0 auto 20px;
+      color: var(--text);
     }
     .manifesto-sub {
-      font-size: clamp(0.92rem, 2vw, 1.05rem);
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
       color: var(--text-muted);
-      max-width: 720px;
-      margin: 0 auto 28px;
+      max-width: 680px;
+      margin: 0 auto 36px;
       line-height: 1.7;
     }
     .alok-author {
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: var(--alok-gold);
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
+      color: var(--alok-gold);
+      margin-bottom: 14px;
     }
 
     /* Comparison Table */
@@ -771,332 +766,285 @@
     }
     .table-scroll-hint {
       display: none;
-      font-size: 0.78rem;
-      color: var(--alok-gold);
-      margin-bottom: 10px;
       text-align: center;
-      font-weight: 600;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+      font-weight: 500;
     }
     .compare-table-wrapper {
+      width: 100%;
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      background: var(--bg-surface);
+      border-radius: 24px;
       border: 1px solid var(--border);
-      border-radius: 22px;
+      background: var(--bg-surface);
       box-shadow: var(--card-shadow);
-      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
     }
     .compare-table {
       width: 100%;
-      min-width: 580px;
+      min-width: 600px;
       border-collapse: collapse;
       text-align: left;
-      font-size: 0.92rem;
     }
     .compare-table th, .compare-table td {
-      padding: 16px 20px;
+      padding: 18px 22px;
       border-bottom: 1px solid var(--border);
+      font-size: 0.94rem;
     }
     .compare-table th {
       background: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .compare-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .compare-table .highlight-col {
+      background: rgba(255, 184, 0, 0.04);
       font-weight: 700;
       color: var(--text);
-    }
-    .highlight-col {
-      background: rgba(255, 107, 0, 0.05);
-      font-weight: 700;
-      color: var(--alok-gold);
+      border-left: 1px solid rgba(255, 184, 0, 0.15);
+      border-right: 1px solid rgba(255, 184, 0, 0.15);
     }
     .check-yes {
       color: var(--accent-green);
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
     .cross-no {
-      color: #ff3b30;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: #ff5252;
     }
 
-
-    /* FAQ */
+    /* FAQ Section */
     .faq-section {
-      padding: 50px 0 80px;
+      padding: 60px 0 100px;
     }
     .faq-grid {
       display: grid;
+      grid-template-columns: 1fr;
       gap: 14px;
-      max-width: 800px;
+      max-width: 820px;
       margin: 0 auto;
     }
     .faq-item {
       background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 20px;
+      padding: 22px 24px;
       cursor: pointer;
-      transition: border-color 0.2s;
+      transition: background-color 0.2s, border-color 0.2s;
     }
     .faq-item:hover {
+      background: var(--bg-surface-elevated);
       border-color: var(--border-focus);
     }
     .faq-q {
-      font-size: 1.02rem;
+      font-size: 1.05rem;
       font-weight: 700;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      line-height: 1.4;
     }
     .faq-a {
       margin-top: 12px;
-      font-size: 0.9rem;
       color: var(--text-muted);
+      font-size: 0.92rem;
       line-height: 1.6;
+      display: none;
+    }
+    .faq-icon {
+      font-size: 1.4rem;
+      color: var(--alok-gold);
+      font-weight: 400;
+      flex-shrink: 0;
     }
 
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
+      padding: 48px 0;
       background: var(--bg-surface);
-      padding: 48px 0 32px;
+      font-size: 0.9rem;
     }
     .footer-content {
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
       gap: 24px;
-      margin-bottom: 32px;
     }
     .footer-brand {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
     .footer-bottom {
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
       gap: 12px;
-      border-top: 1px solid var(--border);
-      padding-top: 20px;
-      font-size: 0.82rem;
       color: var(--text-dim);
+      font-size: 0.8rem;
     }
 
-    /* Floating Sticky Bottom Download Bar for Mobile */
+    /* Mobile Sticky Floating Download Bar */
     .mobile-bottom-bar {
       display: none;
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
+      z-index: 99;
       background: var(--bg-glass);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid var(--border);
-      padding: 10px 16px;
-      z-index: 99;
-      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.2);
+      padding: 10px 16px max(10px, env(safe-area-inset-bottom));
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
     }
     .mobile-bottom-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      max-width: 500px;
+      max-width: 480px;
       margin: 0 auto;
     }
     .bottom-app-info {
       display: flex;
       align-items: center;
       gap: 10px;
-      min-width: 0;
     }
     .bottom-app-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
       flex-shrink: 0;
     }
     .bottom-app-text {
       display: flex;
       flex-direction: column;
-      min-width: 0;
     }
     .bottom-app-name {
-      font-size: 0.9rem;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-weight: 800;
+      font-size: 0.92rem;
+      line-height: 1.2;
     }
     .bottom-app-sub {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
-      white-space: nowrap;
     }
     .bottom-download-btn {
       background: var(--accent-gradient);
       color: #fff;
-      font-size: 0.84rem;
       font-weight: 700;
+      font-size: 0.84rem;
       padding: 9px 18px;
       border-radius: 999px;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      flex-shrink: 0;
       box-shadow: 0 4px 12px var(--alok-glow);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* Toast Notification */
     .toast {
       position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background: #1c1d24;
-      color: #ffffff;
-      border: 1px solid rgba(255,255,255,0.15);
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 20px;
       border-radius: 12px;
-      padding: 10px 18px;
-      font-size: 0.84rem;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
       display: flex;
       align-items: center;
-      gap: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 10px;
       z-index: 1000;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
     }
     .toast.show {
-      transform: translateY(0);
       opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
 
-    /* ============================================================
-       RESPONSIVE BREAKPOINTS (Mobile-First Polish)
-       ============================================================ */
-
-    /* Tablets & Medium Screens (< 900px) */
-    @media (max-width: 900px) {
-      .col-8, .col-4 {
+    /* Responsive Media Queries */
+    @media (max-width: 992px) {
+      .bento-card.col-8, .bento-card.col-4, .bento-card.col-6 {
         grid-column: span 12;
       }
       .metrics-bar {
         grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
-        margin: 36px 0 54px;
-      }
-      .nav-links {
-        display: none; /* Hide top links on mobile/tablet to avoid overflow */
+        gap: 12px;
+        margin: 36px 0 48px;
+        padding: 18px;
       }
     }
 
-    /* Mobile Phones (< 640px) */
-    @media (max-width: 640px) {
-      .container {
-        padding: 0 16px;
-      }
-      .navbar-wrapper {
-        padding: 0 8px;
-        top: 8px;
-        margin-bottom: 16px;
-      }
+    @media (max-width: 768px) {
       .navbar {
-        padding: 8px 14px;
-        border-radius: 20px;
+        height: 60px;
       }
-      .brand-title {
-        font-size: 1.05rem;
+      .nav-links {
+        display: none;
       }
-      .brand-sub {
-        font-size: 0.68rem;
-      }
-      .btn-nav-download span {
-        display: none; /* Only show download icon on mobile header to save space */
-      }
-      .btn-nav-download {
-        padding: 8px 12px;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        justify-content: center;
-      }
-      .theme-btn {
-        width: 36px;
-        height: 36px;
-      }
-
       .hero {
-        padding: 28px 0 44px;
+        padding: 32px 0 40px;
       }
       .alok-top-pill {
         font-size: 0.74rem;
         padding: 5px 12px;
       }
       .hero-title {
-        font-size: clamp(1.7rem, 7.5vw, 2.4rem);
-        letter-spacing: -0.8px;
+        letter-spacing: -0.6px;
+        line-height: 1.25;
       }
       .hero-sub {
-        font-size: 0.95rem;
         margin-bottom: 24px;
-        padding: 0;
       }
-
       .hero-btn-row {
         flex-direction: column;
         width: 100%;
-        gap: 10px;
+        max-width: 360px;
       }
       .btn-primary-large, .btn-secondary-large {
         width: 100%;
-        flex: none;
+        flex: 1 1 auto;
         padding: 14px 20px;
-        border-radius: 14px;
+        font-size: 0.95rem;
       }
-
       .hero-meta-badge {
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
         font-size: 0.78rem;
-      }
-
-      .metrics-bar {
-        grid-template-columns: 1fr 1fr;
-        padding: 16px 12px;
-        border-radius: 18px;
         gap: 10px;
       }
-      .metric-card {
-        padding: 6px;
-      }
-      .metric-val {
-        font-size: 1.55rem;
-      }
-      .metric-label {
-        font-size: 0.74rem;
-      }
 
-      /* Mockup Phone Mobile Size */
+      /* Phone Mockup Mobile */
+      .phone-mockup-wrapper {
+        max-width: 320px;
+      }
       .phone-mockup {
-        height: 520px;
-        border-width: 6px;
-        border-radius: 36px;
+        border-radius: 40px;
+        padding: 10px;
       }
       .phone-notch {
-        width: 70px;
+        width: 80px;
         height: 18px;
         top: 8px;
       }
@@ -1164,7 +1112,6 @@
         padding: 40px 0;
       }
 
-
       /* FAQ Mobile */
       .faq-section {
         padding: 36px 0 60px;
@@ -1226,26 +1173,36 @@
       <a href="#" class="brand">
         <img src="./alonote_icon.png" alt="AloNote Icon" class="brand-logo" onerror="this.src='./logo.svg'">
         <div class="brand-text">
-          <div class="brand-title">আলোনোট <span style="font-weight: 500; font-size: 0.9rem; opacity: 0.85;">(AloNote)</span></div>
-          <div class="brand-sub"><span class="alok-badge-mini">আলোকপথ</span> ইকোসিস্টেম</div>
+          <div class="brand-title">AloNote</div>
+          <div class="brand-sub"><span class="alok-badge-mini">Alokpath</span> Ecosystem</div>
         </div>
       </a>
 
       <div class="nav-links">
-        <a href="#features" class="nav-link">বৈশিষ্ট্যসমূহ</a>
-        <a href="#showcase" class="nav-link">অ্যাপ ডিসপ্লে</a>
-        <a href="#manifesto" class="nav-link">আলোকপথ দর্শন</a>
-        <a href="#comparison" class="nav-link">তুলনা</a>
+        <a href="#features" class="nav-link" data-i18n="nav_features">Features</a>
+        <a href="#showcase" class="nav-link" data-i18n="nav_showcase">Showcase</a>
+        <a href="#manifesto" class="nav-link" data-i18n="nav_manifesto">Manifesto</a>
+        <a href="#comparison" class="nav-link" data-i18n="nav_comparison">Comparison</a>
+        <a href="#faq" class="nav-link" data-i18n="nav_faq">FAQ</a>
       </div>
 
       <div class="nav-actions">
+        <!-- Language Switcher Button (Defaults to English; toggles to Bengali) -->
+        <button class="lang-btn" id="langToggleBtn" onclick="toggleLanguage()" aria-label="Switch Language">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span id="langBtnLabel">বাং</span>
+        </button>
+
+        <!-- Theme Toggle -->
         <button class="theme-btn" id="themeToggleBtn" aria-label="Toggle Theme">
           <svg id="themeIconSun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
           <svg id="themeIconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
+
+        <!-- Download Nav Button -->
         <a href="./downloads/AloNote-v2.2.0-Alokpath.apk" class="btn-nav-download" download aria-label="Download APK">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>ডাউনলোড APK</span>
+          <span data-i18n="nav_download">Download APK</span>
         </a>
       </div>
     </nav>
@@ -1256,17 +1213,17 @@
     <section class="hero">
       <div class="alok-top-pill">
         <span class="pulse-dot"></span>
-        <span>আলোকপথ (Alokpath) এর অফিশিয়াল প্রকাশনা • সংস্করণ ২.২.০</span>
+        <span data-i18n="hero_pill">Official Alokpath Release • Version 2.2.0</span>
       </div>
 
-      <h1 class="hero-title">
-        আপনার চিন্তা, শুধুই আপনার কাছে।<br>
-        <span class="gradient-text">নিখাদ লেখনী • ১০০% অফলাইন।</span>
+      <h1 class="hero-title" data-i18n="hero_title">
+        Your Private Thoughts, Exclusively Yours.<br>
+        <span class="gradient-text">Pure Writing • 100% Offline.</span>
       </h1>
 
-      <p class="hero-sub">
-        কোনো ক্লাউড সার্ভার নেই, কোনো ট্র্যাকিং বা নজরদারি নেই, কোনো বিজ্ঞাপন নেই। 
-        <strong>আলোনোট</strong>—সম্পূর্ণ স্থানীয় স্টোরেজে সুরক্ষিত একটি প্রিমিয়াম দেশীয় নোটবুক।
+      <p class="hero-sub" data-i18n="hero_sub">
+        No cloud servers, no behavioral tracking, zero advertising. 
+        <strong>AloNote</strong> is an uncompromisingly private, offline-first native Android notebook engineered with Jetpack Compose. Your thoughts stay strictly on your phone.
       </p>
 
       <div class="hero-cta-group">
@@ -1274,29 +1231,29 @@
           <a href="./downloads/AloNote-v2.2.0-Alokpath.apk" class="btn-primary-large" download>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             <div>
-              <div style="font-size: 1.1rem; line-height: 1.2;">সরাসরি APK ডাউনলোড করুন</div>
+              <div style="font-size: 1.05rem; line-height: 1.2;" data-i18n="hero_download_btn">Direct Download APK</div>
               <div style="font-size: 0.74rem; font-weight: 500; opacity: 0.85;">v2.2.0 • 13 MB • Android 8.0+</div>
             </div>
           </a>
 
           <a href="https://gitlab.com/zihanfakir/alonote" target="_blank" rel="noopener noreferrer" class="btn-secondary-large">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 5.1 2a.43.43 0 0 1 .4.24l2.58 7.9h7.83l2.58-7.9a.43.43 0 0 1 .4-.24.42.42 0 0 1 .39.19l2.44 7.51 1.22 3.78a.84.84 0 0 1-.29.91z"/></svg>
-            <span>GitLab রিপোজিটরি</span>
+            <span data-i18n="hero_repo_btn">GitLab Repository</span>
           </a>
         </div>
 
         <div class="hero-meta-badge">
           <div class="meta-item">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>জিরো ইন্টারনেট পারমিশন</span>
+            <span data-i18n="meta_permission">Zero Internet Permission</span>
           </div>
           <div class="meta-item">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>120Hz নেটিভ পারফরম্যান্স</span>
+            <span data-i18n="meta_refresh">120Hz Native Performance</span>
           </div>
           <div class="meta-item">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>ওপেন-সোর্স (MIT)</span>
+            <span data-i18n="meta_license">Open-Source (MIT)</span>
           </div>
         </div>
       </div>
@@ -1305,29 +1262,29 @@
     <!-- Metrics Bar -->
     <div class="metrics-bar">
       <div class="metric-card">
-        <div class="metric-val gradient-text">১০০%</div>
-        <div class="metric-label">অফলাইন প্রাইভেসি (Zero Cloud)</div>
+        <div class="metric-val gradient-text">100%</div>
+        <div class="metric-label" data-i18n="metric_1">Offline Privacy (Zero Cloud)</div>
       </div>
       <div class="metric-card">
-        <div class="metric-val" style="color: var(--accent-green);">০ KB</div>
-        <div class="metric-label">সার্ভারে ডাটা ট্রান্সফার</div>
+        <div class="metric-val" style="color: var(--accent-green);">0 KB</div>
+        <div class="metric-label" data-i18n="metric_2">Data Sent to Remote Servers</div>
       </div>
       <div class="metric-card">
         <div class="metric-val" style="color: var(--accent-cyan);">120 FPS</div>
-        <div class="metric-label">মসৃণ ও ঠান্ডা পারফরম্যান্স</div>
+        <div class="metric-label" data-i18n="metric_3">Smooth, Cool Performance</div>
       </div>
       <div class="metric-card">
-        <div class="metric-val" style="color: var(--alok-gold);">১-ক্লিক</div>
-        <div class="metric-label">Markdown ও JSON ব্যাকআপ</div>
+        <div class="metric-val" style="color: var(--alok-gold);">1-Click</div>
+        <div class="metric-label" data-i18n="metric_4">Markdown & JSON Offline Backup</div>
       </div>
     </div>
 
     <!-- Phone Showcase Section -->
     <section class="showcase-section" id="showcase">
       <div class="section-header">
-        <span class="section-tag">ইন্টারেক্টিভ প্রিভিউ</span>
-        <h2 class="section-title">সিম্পল, মার্জিত এবং শক্তিশালী ইন্টারফেস</h2>
-        <p class="section-sub">কোনো জটিলতা নেই। কেবল অ্যাপ ওপেন করুন এবং মনের ভাবনাগুলোকে নিঃসংকোচে সাজিয়ে তুলুন।</p>
+        <span class="section-tag" data-i18n="showcase_tag">Interactive Preview</span>
+        <h2 class="section-title" data-i18n="showcase_title">Simple, Refined & Distraction-Free</h2>
+        <p class="section-sub" data-i18n="showcase_sub">No clutter or corporate surveillance. Open the app and capture your thoughts freely.</p>
       </div>
 
       <div class="phone-showcase-container">
@@ -1335,19 +1292,19 @@
         <div class="showcase-tabs">
           <button class="tab-btn active" onclick="switchMockTab('notes', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span>নোট তালিকা</span>
+            <span data-i18n="tab_notes">Notes List</span>
           </button>
           <button class="tab-btn" onclick="switchMockTab('splash', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            <span>স্টার্টআপ স্প্ল্যাশ (Meta Style)</span>
+            <span data-i18n="tab_splash">Startup Splash (Meta Style)</span>
           </button>
           <button class="tab-btn" onclick="switchMockTab('audio', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-            <span>ভয়েস নোট</span>
+            <span data-i18n="tab_audio">Voice Memos</span>
           </button>
           <button class="tab-btn" onclick="switchMockTab('security', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span>বায়োমেট্রিক নিরাপত্তা</span>
+            <span data-i18n="tab_security">Biometric Security</span>
           </button>
         </div>
 
@@ -1362,7 +1319,7 @@
               <!-- Screen Header -->
               <div class="app-top-bar">
                 <div class="app-brand-pill">
-                  <span style="color: var(--alok-gold);">✦</span> আলোনোট
+                  <span style="color: var(--alok-gold);">✦</span> AloNote
                 </div>
                 <div style="display: flex; gap: 8px;">
                   <span style="font-size: 0.74rem; padding: 3px 8px; background: var(--bg-surface-elevated); border-radius: 6px; border: 1px solid var(--border);">v2.2.0</span>
@@ -1372,32 +1329,32 @@
               <!-- Search box -->
               <div class="app-search-box">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <span>নোট খুঁজুন... (কোরআন, কোড, ডায়েরি)</span>
+                <span data-i18n="mock_search_ph">Search notes... (ideas, books, journals)</span>
               </div>
 
               <!-- Tags -->
               <div class="app-tags-scroll">
-                <div class="tag-chip active">সব নোট (১২)</div>
-                <div class="tag-chip">#আলোকপথ</div>
-                <div class="tag-chip">#দর্শন</div>
-                <div class="tag-chip">#গোপনীয়</div>
+                <div class="tag-chip active" data-i18n="mock_tag_all">All Notes (12)</div>
+                <div class="tag-chip">#Alokpath</div>
+                <div class="tag-chip">#Philosophy</div>
+                <div class="tag-chip">#Private</div>
               </div>
 
               <!-- Dynamic Content Area -->
               <div id="mockDynamicContent">
                 <!-- Mock Note 1 -->
                 <div class="mock-card">
-                  <div class="mock-title">আলোকপথের ডিজিটাল ম্যানিফেস্টো</div>
-                  <div class="mock-snippet">প্রযুক্তি হওয়া উচিত মানুষের দাস, মানুষের মনের নজরদারি নয়। আমাদের নিজস্ব স্বাধীনতা ও সার্বভৌম চিন্তা ধরে রাখতে হবে...</div>
+                  <div class="mock-title">The Alokpath Digital Manifesto</div>
+                  <div class="mock-snippet">Technology should be an instrument of intellectual freedom and human empowerment, not commercial surveillance. We must preserve our cognitive sovereignty...</div>
                   <div class="mock-footer">
-                    <span>আজ, সকাল ১০:১৫</span>
-                    <span style="color: var(--alok-gold);">#আলোকপথ</span>
+                    <span>Today, 10:15 AM</span>
+                    <span style="color: var(--alok-gold);">#Alokpath</span>
                   </div>
                 </div>
 
                 <!-- Mock Note 2 (With Audio) -->
                 <div class="mock-card">
-                  <div class="mock-title">জরুরি গবেষণা অডিও রেকর্ডিং</div>
+                  <div class="mock-title">Research Voice Memo Recording</div>
                   <div class="mock-audio-pill">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                     <div class="mock-waveform">
@@ -1407,26 +1364,26 @@
                       <div class="wave-bar"></div>
                       <div class="wave-bar"></div>
                     </div>
-                    <span>রেকর্ডিং ০১:৪৫ মিনিট</span>
+                    <span>Recording 01:45 min</span>
                   </div>
-                  <div class="mock-snippet">অফলাইন অ্যালগরিদম ও মেমোরি ক্যাশিং সংক্রান্ত চিন্তার অডিও নোট।</div>
+                  <div class="mock-snippet">Offline algorithm & local caching architecture voice memo.</div>
                   <div class="mock-footer">
-                    <span>গতকাল, বিকাল ৫:৪০</span>
-                    <span>অডিও ফাইল</span>
+                    <span>Yesterday, 5:40 PM</span>
+                    <span>Audio File</span>
                   </div>
                 </div>
 
                 <!-- Mock Note 3 -->
                 <div class="mock-card">
-                  <div class="mock-title">বই পড়ার সাপ্তাহিক তালিকা</div>
+                  <div class="mock-title">Weekly Reading Checklist</div>
                   <div class="mock-snippet">
-                    ☑️ ডিজিটাল মিনিমালিজম — ক্যাল নিউপোর্ট<br>
-                    ☑️ সভরেন ইন্ডিভিজুয়াল<br>
-                    ◻️ বাংলা সাহিত্যের প্রাচীন পথ
+                    ☑️ Digital Minimalism — Cal Newport<br>
+                    ☑️ The Sovereign Individual<br>
+                    ◻️ Classical Literature & Philosophy
                   </div>
                   <div class="mock-footer">
-                    <span>২৬ অক্টোবর</span>
-                    <span>চেকলিস্ট</span>
+                    <span>Oct 26</span>
+                    <span>Checklist</span>
                   </div>
                 </div>
               </div>
@@ -1439,23 +1396,23 @@
     <!-- Bento Grid Features Section -->
     <section class="bento-section" id="features">
       <div class="section-header">
-        <span class="section-tag">প্রযুক্তিগত অনন্যতা</span>
-        <h2 class="section-title">কেন আলোনোট অন্যদের চেয়ে আলাদা?</h2>
-        <p class="section-sub">আধুনিক বিশ্বে আপনার ব্যক্তিগত নোটের নিরাপত্তা ও স্বাচ্ছন্দ্য বজায় রাখতে সর্বোচ্চ প্রকৌশল মান।</p>
+        <span class="section-tag" data-i18n="bento_tag">Technical Excellence</span>
+        <h2 class="section-title" data-i18n="bento_title">Why AloNote Stands Apart</h2>
+        <p class="section-sub" data-i18n="bento_sub">Engineered to the highest standards for personal security, responsiveness, and peace of mind.</p>
       </div>
 
       <div class="bento-grid">
         <!-- 1. Zero Network Sovereignty -->
         <div class="bento-card col-8">
           <div>
-            <span class="bento-badge">সম্পূর্ণ অফলাইন</span>
+            <span class="bento-badge" data-i18n="bento_1_badge">100% Offline by Design</span>
             <div class="bento-icon-wrapper">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
             </div>
-            <h3 class="bento-title">ইন্টারনেট পারমিশনহীন শতভাগ সার্বভৌমত্ব</h3>
-            <p class="bento-desc">
-              আলোনোটের সোর্স কোডে বা <code>AndroidManifest.xml</code>-এ কোনো <code>INTERNET</code> পারমিশনই নেই! 
-              অ্যাপ চাইলেও কোনো দূরবর্তী সার্ভারে আপনার তথ্য পাঠানোর সুযোগই নেই।
+            <h3 class="bento-title" data-i18n="bento_1_title">True Network Sovereignty (Zero Cloud)</h3>
+            <p class="bento-desc" data-i18n="bento_1_desc">
+              AloNote has zero <code>INTERNET</code> permission in its source code and <code>AndroidManifest.xml</code>. 
+              Even if the app wanted to, it cannot physically transmit any data across the network.
             </p>
           </div>
         </div>
@@ -1466,9 +1423,9 @@
             <div class="bento-icon-wrapper" style="color: var(--alok-orange);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             </div>
-            <h3 class="bento-title">স্টুডিও অডিও রেকর্ডার</h3>
-            <p class="bento-desc">
-              নোটের সাথে সরাসরি ভয়েস রেকর্ড করুন। ক্লাসের লেকচার বা তাত্ক্ষণিক চিন্তা সেভ রাখুন ব্যাকগ্রাউন্ড রিপ্লে সহ।
+            <h3 class="bento-title" data-i18n="bento_2_title">Studio Voice Memos</h3>
+            <p class="bento-desc" data-i18n="bento_2_desc">
+              Record compressed audio memos directly inside your notes. Keep class lectures or fleeting ideas preserved with background replay and seek control.
             </p>
           </div>
         </div>
@@ -1479,35 +1436,35 @@
             <div class="bento-icon-wrapper" style="color: var(--accent-green);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             </div>
-            <h3 class="bento-title">ব্যাটারি ও থার্মাল কুলিং</h3>
-            <p class="bento-desc">
-              v2.2.0 আপডেটে মেমোরি ৮৫% কমানো হয়েছে। দীর্ঘক্ষণ লিখলেও ফোন একটুও গরম হবে না, ব্যাটারি দীর্ঘস্থায়ী হবে।
+            <h3 class="bento-title" data-i18n="bento_3_title">Battery & Thermal Efficiency</h3>
+            <p class="bento-desc" data-i18n="bento_3_desc">
+              Memory footprint reduced by 85% in v2.2.0. Write and brainstorm for hours without heating up your device or draining your battery.
             </p>
           </div>
         </div>
 
-        <!-- 4. Markdown & Canvas -->
+        <!-- 4. Markdown & Visual Styling -->
         <div class="bento-card col-4">
           <div>
             <div class="bento-icon-wrapper" style="color: var(--accent-cyan);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </div>
-            <h3 class="bento-title">মার্কডাউন ও ড্রয়িং আর্ট</h3>
-            <p class="bento-desc">
-              হেডার, বোল্ড, ইটালিক, চেকলিস্ট, কোড ব্লক এবং ফ্রি-হ্যান্ড ড্রয়িং ক্যানভাস দিয়ে সাজিয়ে তুলুন প্রতিটি নোট।
+            <h3 class="bento-title" data-i18n="bento_4_title">Live Visual Markdown</h3>
+            <p class="bento-desc" data-i18n="bento_4_desc">
+              Format headings, bold, italics, checklists, code blocks, and hashtags in real-time with zero typing latency and 1:1 cursor sync.
             </p>
           </div>
         </div>
 
-        <!-- 5. 1-Click Markdown Export -->
+        <!-- 5. 1-Click Offline Exports -->
         <div class="bento-card col-4">
           <div>
             <div class="bento-icon-wrapper" style="color: var(--alok-gold);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             </div>
-            <h3 class="bento-title">১-ক্লিক .md ও JSON এক্সপোর্ট</h3>
-            <p class="bento-desc">
-              যেকোনো নোট মুহূর্তেই স্ট্যান্ডার্ড <code>.md</code> ফাইলে রূপান্তর করুন এবং পুরো ডাটাবেজ অফলাইনে ব্যাকআপ রাখুন।
+            <h3 class="bento-title" data-i18n="bento_5_title">1-Click Offline Backups</h3>
+            <p class="bento-desc" data-i18n="bento_5_desc">
+              Export individual notes to standard .md or multi-page PDF, and backup your complete Room database into portable JSON with one tap.
             </p>
           </div>
         </div>
@@ -1518,18 +1475,18 @@
     <section class="manifesto-section" id="manifesto">
       <div class="manifesto-box">
         <img id="manifestoLogo" src="./alokpath_logo_dark.png" alt="Alokpath Logo" style="height: 48px; width: auto; margin: 0 auto 20px; display: block; object-fit: contain;">
-        <div class="alok-author">আলোকপথ (Alokpath) দর্শন ও ইস্তেহার</div>
-        <div class="manifesto-quote">
-          "প্রযুক্তি হওয়া উচিত মানুষের মেধার মুক্তি ও সার্বভৌমত্বের হাতিয়ার—ব্যবসায়িক অ্যালগরিদমের ফাঁদ নয়।"
+        <div class="alok-author" data-i18n="manifesto_author">Alokpath Philosophy & Declaration</div>
+        <div class="manifesto-quote" data-i18n="manifesto_quote">
+          "Technology should be an instrument of intellectual freedom and human empowerment—not a commercial trap for attention."
         </div>
-        <p class="manifesto-sub">
-          বর্তমান ইন্টারনেট ব্যবস্থা মানুষকে বিজ্ঞাপনের পণ্য এবং তথ্যের বন্দীতে পরিণত করেছে। 
-          <strong>আলোকপথ</strong> বিশ্বাস করে আপনার চিন্তা, সৃষ্টি এবং গোপনীয়তা পবিত্র। সেই বিশ্বাস থেকেই জন্ম নিয়েছে 
-          <strong>আলোনোট (AloNote)</strong>—সম্পূর্ণ স্থানীয়, সৎ এবং খাঁটি দেশীয় প্রযুক্তি।
+        <p class="manifesto-sub" data-i18n="manifesto_sub">
+          The modern internet treats users as advertising products and captive telemetry. 
+          <strong>Alokpath</strong> believes your inner thoughts, creative writing, and privacy are sacred. That conviction inspired 
+          <strong>AloNote</strong>—honest, local, and truly sovereign software.
         </p>
         <a href="./downloads/AloNote-v2.2.0-Alokpath.apk" class="btn-primary-large" download style="margin: 0 auto; display: inline-flex; max-width: 320px;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
-          <span>আলোনোট ইনস্টল করুন (v2.2.0)</span>
+          <span data-i18n="manifesto_cta">Install AloNote (v2.2.0)</span>
         </a>
       </div>
     </section>
@@ -1537,101 +1494,100 @@
     <!-- Comparison Table Section -->
     <section class="compare-section" id="comparison">
       <div class="section-header">
-        <span class="section-tag">সরাসরি তুলনা</span>
-        <h2 class="section-title">আলোনোট বনাম সাধারণ ক্লাউড নোট অ্যাপ</h2>
-        <p class="section-sub">দেখে নিন কেন সচেতন মানুষ ক্লাউড ছেড়ে স্বত্বাধিকারী প্রযুক্তিতে ফিরে আসছেন।</p>
+        <span class="section-tag" data-i18n="compare_tag">Direct Comparison</span>
+        <h2 class="section-title" data-i18n="compare_title">AloNote vs Traditional Cloud Note Apps</h2>
+        <p class="section-sub" data-i18n="compare_sub">See why privacy-conscious thinkers are moving away from cloud lock-in.</p>
       </div>
 
-      <div class="table-scroll-hint">👉 সম্পূর্ণ চার্ট দেখতে ডানে-বামে স্ক্রোল করুন</div>
+      <div class="table-scroll-hint" data-i18n="table_scroll_hint">👉 Scroll horizontally to view the full comparison chart</div>
 
       <div class="compare-table-wrapper">
         <table class="compare-table">
           <thead>
             <tr>
-              <th>বৈশিষ্ট্য</th>
-              <th class="highlight-col">আলোনোট (AloNote)</th>
+              <th data-i18n="th_feature">Feature</th>
+              <th class="highlight-col">AloNote</th>
               <th>Google Keep</th>
               <th>Notion / Evernote</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>ইন্টারনেট ছাড়াও কাজ করে?</strong></td>
-              <td class="highlight-col check-yes">✓ শতভাগ অফলাইন</td>
-              <td>আংশিক (সিঙ্ক নির্ভর)</td>
-              <td class="cross-no">✗ ইন্টারনেট বাধ্যতামূলক</td>
+              <td><strong data-i18n="tr_offline">Works 100% Offline?</strong></td>
+              <td class="highlight-col check-yes" data-i18n="tr_offline_alonote">✓ 100% Offline (Zero Cloud)</td>
+              <td data-i18n="tr_offline_keep">Partial (Sync-dependent)</td>
+              <td class="cross-no" data-i18n="tr_offline_notion">✗ Internet Required</td>
             </tr>
             <tr>
-              <td><strong>সার্ভারে তথ্য লিক হওয়ার ঝুঁকি?</strong></td>
-              <td class="highlight-col check-yes">✓ ০% ঝুঁকি (কোনো সার্ভার নেই)</td>
-              <td class="cross-no">✗ ক্লাউডে সংরক্ষিত</td>
-              <td class="cross-no">✗ ক্লাউডে সংরক্ষিত</td>
+              <td><strong data-i18n="tr_leak">Risk of Server Data Leaks?</strong></td>
+              <td class="highlight-col check-yes" data-i18n="tr_leak_alonote">✓ 0% Risk (No Server Exists)</td>
+              <td class="cross-no" data-i18n="tr_leak_cloud">✗ Stored on Cloud</td>
+              <td class="cross-no" data-i18n="tr_leak_cloud">✗ Stored on Cloud</td>
             </tr>
             <tr>
-              <td><strong>অ্যাকাউন্ট বা সাইন-ইন দরকার?</strong></td>
-              <td class="highlight-col check-yes">✓ কোনো সাইন-ইন নেই</td>
-              <td class="cross-no">✗ জিমেইল আবশ্যক</td>
-              <td class="cross-no">✗ একাউন্ট আবশ্যক</td>
+              <td><strong data-i18n="tr_auth">Account or Sign-In Required?</strong></td>
+              <td class="highlight-col check-yes" data-i18n="tr_auth_alonote">✓ No Account Needed</td>
+              <td class="cross-no" data-i18n="tr_auth_keep">✗ Google Account Mandatory</td>
+              <td class="cross-no" data-i18n="tr_auth_notion">✗ Account Mandatory</td>
             </tr>
             <tr>
-              <td><strong>বিজ্ঞাপন বা ট্র্যাকিং অ্যালগরিদম?</strong></td>
-              <td class="highlight-col check-yes">✓ শূন্য (জিরো ট্র্যাকার)</td>
-              <td class="cross-no">✗ ট্র্যাকিং বিদ্যমান</td>
-              <td class="cross-no">✗ ডাটা অ্যানালিটিক্স</td>
+              <td><strong data-i18n="tr_ads">Ad Tracking & Telemetry?</strong></td>
+              <td class="highlight-col check-yes" data-i18n="tr_ads_alonote">✓ Zero (Zero Trackers)</td>
+              <td class="cross-no" data-i18n="tr_ads_keep">✗ Telemetry Active</td>
+              <td class="cross-no" data-i18n="tr_ads_notion">✗ User Analytics Active</td>
             </tr>
             <tr>
-              <td><strong>স্ট্যান্ডার্ড Markdown (.md) এক্সপোর্ট?</strong></td>
-              <td class="highlight-col check-yes">✓ সরাসরি ১-ক্লিকে</td>
-              <td class="cross-no">✗ নেই</td>
-              <td>জটিল এক্সপোর্ট</td>
+              <td><strong data-i18n="tr_export">Standard Markdown (.md) Export?</strong></td>
+              <td class="highlight-col check-yes" data-i18n="tr_export_alonote">✓ 1-Click Instant</td>
+              <td class="cross-no" data-i18n="tr_export_keep">✗ None</td>
+              <td data-i18n="tr_export_notion">Complex / Proprietary</td>
             </tr>
             <tr>
-              <td><strong>স্ক্রোলিং গতি ও রেসপন্স?</strong></td>
-              <td class="highlight-col check-yes">✓ 120Hz নেটিভ জেটপ্যাক কম্পোজ</td>
-              <td>সাধারণ</td>
-              <td class="cross-no">✗ ভারী ওয়েবভিউ ল্যাগ</td>
+              <td><strong data-i18n="tr_speed">UI Smoothness & Refresh Rate?</strong></td>
+              <td class="highlight-col check-yes" data-i18n="tr_speed_alonote">✓ 120Hz Native Jetpack Compose</td>
+              <td data-i18n="tr_speed_keep">Standard</td>
+              <td class="cross-no" data-i18n="tr_speed_notion">✗ Heavy WebView Lag</td>
             </tr>
           </tbody>
         </table>
       </div>
     </section>
 
-
     <!-- FAQ Section -->
-    <section class="faq-section">
+    <section class="faq-section" id="faq">
       <div class="section-header">
-        <span class="section-tag">প্রশ্নোত্তর</span>
-        <h2 class="section-title">সাধারণ কিছু জিজ্ঞাসা</h2>
+        <span class="section-tag" data-i18n="faq_tag">FAQ</span>
+        <h2 class="section-title" data-i18n="faq_title">Frequently Asked Questions</h2>
       </div>
 
       <div class="faq-grid">
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">
-            <span>আমার নোটগুলো কোথায় সংরক্ষিত থাকে?</span>
+            <span data-i18n="faq_1_q">Where are my notes stored?</span>
             <span class="faq-icon">+</span>
           </div>
-          <div class="faq-a">
-            আপনার নোটগুলো আপনার ডিভাইসের ইন্টারনাল স্যান্ডবক্সড Room SQLite ডাটাবেজে সংরক্ষিত থাকে। কোনো দূরবর্তী সার্ভারে এগুলো কখনো পৌঁছায় না।
+          <div class="faq-a" data-i18n="faq_1_a">
+            All your notes, photos, and voice recordings are stored exclusively inside your device's private sandboxed SQLite database and local files. No remote server ever receives your data.
           </div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">
-            <span>ফোন পরিবর্তন করলে আমি কীভাবে ব্যাকআপ নিব?</span>
+            <span data-i18n="faq_2_q">How do I backup or transfer my notes?</span>
             <span class="faq-icon">+</span>
           </div>
-          <div class="faq-a">
-            অ্যাপের সেটিংস থেকে ১-ক্লিকে "JSON Backup" অথবা যেকোনো নোটের এডিটর থেকে সরাসরি Markdown (.md) ফাইলে এক্সপোর্ট করে গুগল ড্রাইভ, পেনড্রাইভ বা মেমোরি কার্ডে রেখে দিতে পারেন। নতুন ফোনে গিয়ে "Restore Backup" চাপলেই সব ফেরত আসবে।
+          <div class="faq-a" data-i18n="faq_2_a">
+            From Settings > Backup & Restore, tap "Export Backup" to generate a complete JSON file, or export individual notes to PDF or Markdown (.md). You can save it to a USB drive, computer, or personal storage.
           </div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">
-            <span>এটি কি সত্যি সম্পূর্ণ বিনামূল্যে ও বিজ্ঞাপনহীন?</span>
+            <span data-i18n="faq_3_q">Is AloNote truly free and ad-free?</span>
             <span class="faq-icon">+</span>
           </div>
-          <div class="faq-a">
-            হ্যাঁ, সম্পূর্ণ সত্য। আলোকপথ (Alokpath) একটি স্বাধীন উদ্যোগ। আলোনোট চিরকাল বিজ্ঞাপনহীন, ট্র্যাকারহীন এবং ওপেন-সোর্স থাকবে।
+          <div class="faq-a" data-i18n="faq_3_a">
+            Yes. AloNote is an independent initiative by Alokpath. It is and will always remain free, open-source under the MIT license, and completely tracker-free.
           </div>
         </div>
       </div>
@@ -1644,13 +1600,13 @@
       <div class="bottom-app-info">
         <img src="./alonote_icon.png" alt="AloNote" class="bottom-app-icon" onerror="this.src='./logo.svg'">
         <div class="bottom-app-text">
-          <div class="bottom-app-name">আলোনোট (AloNote)</div>
-          <div class="bottom-app-sub">v2.2.0 • 100% অফলাইন • 13 MB</div>
+          <div class="bottom-app-name">AloNote</div>
+          <div class="bottom-app-sub">v2.2.0 • 100% Offline • 13 MB</div>
         </div>
       </div>
       <a href="./downloads/AloNote-v2.2.0-Alokpath.apk" class="bottom-download-btn" download>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span>ডাউনলোড</span>
+        <span data-i18n="btn_download">Download</span>
       </a>
     </div>
   </div>
@@ -1662,23 +1618,23 @@
         <div class="footer-brand">
           <div style="display: flex; align-items: center; gap: 10px;">
             <img id="footerLogo" src="./alokpath_logo_dark.png" alt="Alokpath" style="height: 28px; width: auto; object-fit: contain;">
-            <div style="font-weight: 800; font-size: 1.15rem;">আলোকপথ (Alokpath)</div>
+            <div style="font-weight: 800; font-size: 1.15rem;">Alokpath (আলোকপথ)</div>
           </div>
-          <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 440px;">
-            ডিজিটাল সার্বভৌমত্ব, মানবিক মূল্যবোধ ও খাঁটি প্রযুক্তি নির্মাণের একটি অগ্রগামী দেশীয় আন্দোলন।
+          <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 440px;" data-i18n="footer_desc">
+            A pioneering movement for digital sovereignty, human values, and genuine sovereign software.
           </p>
         </div>
 
         <div style="display: flex; flex-wrap: wrap; gap: 24px; font-size: 0.88rem;">
-          <a href="https://gitlab.com/zihanfakir/alonote" target="_blank" rel="noopener noreferrer" style="color: var(--text-muted); text-decoration: none;">গিটল্যাব রিপো</a>
-          <a href="./downloads/AloNote-v2.2.0-Alokpath.apk" download style="color: var(--alok-gold); font-weight: 600; text-decoration: none;">APK ডাউনলোড</a>
+          <a href="https://gitlab.com/zihanfakir/alonote" target="_blank" rel="noopener noreferrer" style="color: var(--text-muted); text-decoration: none;" data-i18n="footer_repo">GitLab Repo</a>
+          <a href="./downloads/AloNote-v2.2.0-Alokpath.apk" download style="color: var(--alok-gold); font-weight: 600; text-decoration: none;" data-i18n="footer_apk">APK Download</a>
           <a href="https://zihan.xyz" target="_blank" rel="noopener noreferrer" style="color: var(--text-muted); text-decoration: none;">zihan.xyz</a>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <div>© 2026 Alokpath (আলোকপথ) • সর্বস্বত্ব সংরক্ষিত।</div>
-        <div>ওপেন সোর্স সফটওয়্যার • MIT লাইসেন্স</div>
+        <div data-i18n="footer_copyright">© 2026 Alokpath • All rights reserved.</div>
+        <div data-i18n="footer_license">Open Source Software • MIT License</div>
       </div>
     </div>
   </footer>
@@ -1686,10 +1642,215 @@
   <!-- Toast Element -->
   <div class="toast" id="toast">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-    <span id="toastMsg">কপি করা হয়েছে!</span>
+    <span id="toastMsg">Copied!</span>
   </div>
 
   <script>
+    // Bilingual Dictionary (English default, Bengali optional)
+    const translations = {
+      en: {
+        nav_features: "Features",
+        nav_showcase: "Showcase",
+        nav_manifesto: "Manifesto",
+        nav_comparison: "Comparison",
+        nav_faq: "FAQ",
+        nav_download: "Download APK",
+        hero_pill: "Official Alokpath Release • Version 2.2.0",
+        hero_title: "Your Private Thoughts, Exclusively Yours.<br><span class=\"gradient-text\">Pure Writing • 100% Offline.</span>",
+        hero_sub: "No cloud servers, no behavioral tracking, zero advertising. <strong>AloNote</strong> is an uncompromisingly private, offline-first native Android notebook engineered with Jetpack Compose. Your thoughts stay strictly on your phone.",
+        hero_download_btn: "Direct Download APK",
+        hero_repo_btn: "GitLab Repository",
+        meta_permission: "Zero Internet Permission",
+        meta_refresh: "120Hz Native Performance",
+        meta_license: "Open-Source (MIT)",
+        metric_1: "Offline Privacy (Zero Cloud)",
+        metric_2: "Data Sent to Remote Servers",
+        metric_3: "Smooth, Cool Performance",
+        metric_4: "Markdown & JSON Offline Backup",
+        showcase_tag: "Interactive Preview",
+        showcase_title: "Simple, Refined & Distraction-Free",
+        showcase_sub: "No clutter or corporate surveillance. Open the app and capture your thoughts freely.",
+        tab_notes: "Notes List",
+        tab_splash: "Startup Splash (Meta Style)",
+        tab_audio: "Voice Memos",
+        tab_security: "Biometric Security",
+        mock_search_ph: "Search notes... (ideas, books, journals)",
+        mock_tag_all: "All Notes (12)",
+        bento_tag: "Technical Excellence",
+        bento_title: "Why AloNote Stands Apart",
+        bento_sub: "Engineered to the highest standards for personal security, responsiveness, and peace of mind.",
+        bento_1_badge: "100% Offline by Design",
+        bento_1_title: "True Network Sovereignty (Zero Cloud)",
+        bento_1_desc: "AloNote has zero <code>INTERNET</code> permission in its source code and <code>AndroidManifest.xml</code>. Even if the app wanted to, it cannot physically transmit any data across the network.",
+        bento_2_title: "Studio Voice Memos",
+        bento_2_desc: "Record compressed audio memos directly inside your notes. Keep class lectures or fleeting ideas preserved with background replay and seek control.",
+        bento_3_title: "Battery & Thermal Efficiency",
+        bento_3_desc: "Memory footprint reduced by 85% in v2.2.0. Write and brainstorm for hours without heating up your device or draining your battery.",
+        bento_4_title: "Live Visual Markdown",
+        bento_4_desc: "Format headings, bold, italics, checklists, code blocks, and hashtags in real-time with zero typing latency and 1:1 cursor sync.",
+        bento_5_title: "1-Click Offline Backups",
+        bento_5_desc: "Export individual notes to standard .md or multi-page PDF, and backup your complete Room database into portable JSON with one tap.",
+        manifesto_author: "Alokpath Philosophy & Declaration",
+        manifesto_quote: "\"Technology should be an instrument of intellectual freedom and human empowerment—not a commercial trap for attention.\"",
+        manifesto_sub: "The modern internet treats users as advertising products and captive telemetry. <strong>Alokpath</strong> believes your inner thoughts, creative writing, and privacy are sacred. That conviction inspired <strong>AloNote</strong>—honest, local, and truly sovereign software.",
+        manifesto_cta: "Install AloNote (v2.2.0)",
+        compare_tag: "Direct Comparison",
+        compare_title: "AloNote vs Traditional Cloud Note Apps",
+        compare_sub: "See why privacy-conscious thinkers are moving away from cloud lock-in.",
+        table_scroll_hint: "👉 Scroll horizontally to view the full comparison chart",
+        th_feature: "Feature",
+        tr_offline: "Works 100% Offline?",
+        tr_offline_alonote: "✓ 100% Offline (Zero Cloud)",
+        tr_offline_keep: "Partial (Sync-dependent)",
+        tr_offline_notion: "✗ Internet Required",
+        tr_leak: "Risk of Server Data Leaks?",
+        tr_leak_alonote: "✓ 0% Risk (No Server Exists)",
+        tr_leak_cloud: "✗ Stored on Cloud",
+        tr_auth: "Account or Sign-In Required?",
+        tr_auth_alonote: "✓ No Account Needed",
+        tr_auth_keep: "✗ Google Account Mandatory",
+        tr_auth_notion: "✗ Account Mandatory",
+        tr_ads: "Ad Tracking & Telemetry?",
+        tr_ads_alonote: "✓ Zero (Zero Trackers)",
+        tr_ads_keep: "✗ Telemetry Active",
+        tr_ads_notion: "✗ User Analytics Active",
+        tr_export: "Standard Markdown (.md) Export?",
+        tr_export_alonote: "✓ 1-Click Instant",
+        tr_export_keep: "✗ None",
+        tr_export_notion: "Complex / Proprietary",
+        tr_speed: "UI Smoothness & Refresh Rate?",
+        tr_speed_alonote: "✓ 120Hz Native Jetpack Compose",
+        tr_speed_keep: "Standard",
+        tr_speed_notion: "✗ Heavy WebView Lag",
+        faq_tag: "FAQ",
+        faq_title: "Frequently Asked Questions",
+        faq_1_q: "Where are my notes stored?",
+        faq_1_a: "All your notes, photos, and voice recordings are stored exclusively inside your device's private sandboxed SQLite database and local files. No remote server ever receives your data.",
+        faq_2_q: "How do I backup or transfer my notes?",
+        faq_2_a: "From Settings > Backup & Restore, tap \"Export Backup\" to generate a complete JSON file, or export individual notes to PDF or Markdown (.md). You can save it to a USB drive, computer, or personal storage.",
+        faq_3_q: "Is AloNote truly free and ad-free?",
+        faq_3_a: "Yes. AloNote is an independent initiative by Alokpath. It is and will always remain free, open-source under the MIT license, and completely tracker-free.",
+        btn_download: "Download",
+        footer_desc: "A pioneering movement for digital sovereignty, human values, and genuine sovereign software.",
+        footer_repo: "GitLab Repo",
+        footer_apk: "APK Download",
+        footer_copyright: "© 2026 Alokpath • All rights reserved.",
+        footer_license: "Open Source Software • MIT License"
+      },
+      bn: {
+        nav_features: "বৈশিষ্ট্যসমূহ",
+        nav_showcase: "অ্যাপ ডিসপ্লে",
+        nav_manifesto: "আলোকপথ দর্শন",
+        nav_comparison: "তুলনা",
+        nav_faq: "প্রশ্নোত্তর",
+        nav_download: "ডাউনলোড APK",
+        hero_pill: "আলোকপথ (Alokpath) এর অফিশিয়াল প্রকাশনা • সংস্করণ ২.২.০",
+        hero_title: "আপনার চিন্তা, শুধুই আপনার কাছে।<br><span class=\"gradient-text\">নিখাদ লেখনী • ১০০% অফলাইন।</span>",
+        hero_sub: "কোনো ক্লাউড সার্ভার নেই, কোনো ট্র্যাকিং বা নজরদারি নেই, কোনো বিজ্ঞাপন নেই। <strong>আলোনোট</strong>—সম্পূর্ণ স্থানীয় স্টোরেজে সুরক্ষিত একটি প্রিমিয়াম দেশীয় নোটবুক।",
+        hero_download_btn: "সরাসরি APK ডাউনলোড করুন",
+        hero_repo_btn: "GitLab রিপোজিটরি",
+        meta_permission: "জিরো ইন্টারনেট পারমিশন",
+        meta_refresh: "120Hz নেটিভ পারফরম্যান্স",
+        meta_license: "ওপেন-সোর্স (MIT)",
+        metric_1: "অফলাইন প্রাইভেসি (Zero Cloud)",
+        metric_2: "সার্ভারে ডাটা ট্রান্সফার",
+        metric_3: "মসৃণ ও ঠান্ডা পারফরম্যান্স",
+        metric_4: "Markdown ও JSON ব্যাকআপ",
+        showcase_tag: "ইন্টারেক্টিভ প্রিভিউ",
+        showcase_title: "সিম্পল, মার্জিত এবং শক্তিশালী ইন্টারফেস",
+        showcase_sub: "কোনো জটিলতা নেই। কেবল অ্যাপ ওপেন করুন এবং মনের ভাবনাগুলোকে নিঃসংকোচে সাজিয়ে তুলুন।",
+        tab_notes: "নোট তালিকা",
+        tab_splash: "স্টার্টআপ স্প্ল্যাশ (Meta Style)",
+        tab_audio: "ভয়েস নোট",
+        tab_security: "বায়োমেট্রিক নিরাপত্তা",
+        mock_search_ph: "নোট খুঁজুন... (কোরআন, কোড, ডায়েরি)",
+        mock_tag_all: "সব নোট (১২)",
+        bento_tag: "প্রযুক্তিগত অনন্যতা",
+        bento_title: "কেন আলোনোট অন্যদের চেয়ে আলাদা?",
+        bento_sub: "আধুনিক বিশ্বে আপনার ব্যক্তিগত নোটের নিরাপত্তা ও স্বাচ্ছন্দ্য বজায় রাখতে সর্বোচ্চ প্রকৌশল মান।",
+        bento_1_badge: "সম্পূর্ণ অফলাইন",
+        bento_1_title: "ইন্টারনেট পারমিশনহীন শতভাগ সার্বভৌমত্ব",
+        bento_1_desc: "আলোনোটের সোর্স কোডে বা <code>AndroidManifest.xml</code>-এ কোনো <code>INTERNET</code> পারমিশনই নেই! অ্যাপ চাইলেও কোনো দূরবর্তী সার্ভারে আপনার তথ্য পাঠানোর সুযোগ নেই।",
+        bento_2_title: "স্টুডিও অডিও রেকর্ডার",
+        bento_2_desc: "নোটের সাথে সরাসরি ভয়েস রেকর্ড করুন। ক্লাসের লেকচার বা তাত্ক্ষণিক চিন্তা সেভ রাখুন ব্যাকগ্রাউন্ড রিপ্লে সহ।",
+        bento_3_title: "ব্যাটারি ও থার্মাল কুলিং",
+        bento_3_desc: "v2.2.0 আপডেটে মেমোরি ৮৫% কমানো হয়েছে। দীর্ঘক্ষণ লিখলেও ফোন একটুও গরম হবে না, ব্যাটারি দীর্ঘস্থায়ী হবে।",
+        bento_4_title: "মার্কডাউন ও ড্রয়িং আর্ট",
+        bento_4_desc: "হেডার, বোল্ড, ইটালিক, চেকলিস্ট, কোড ব্লক দিয়ে সাজিয়ে তুলুন প্রতিটি নোট শূন্য টাইপিং ল্যাগে।",
+        bento_5_title: "১-ক্লিক .md ও JSON এক্সপোর্ট",
+        bento_5_desc: "যেকোনো নোট মুহূর্তেই স্ট্যান্ডার্ড <code>.md</code> বা PDF ফাইলে রূপান্তর করুন এবং পুরো ডাটাবেজ অফলাইনে ব্যাকআপ রাখুন।",
+        manifesto_author: "আলোকপথ (Alokpath) দর্শন ও ইস্তেহার",
+        manifesto_quote: "\"প্রযুক্তি হওয়া উচিত মানুষের মেধার মুক্তি ও সার্বভৌমত্বের হাতিয়ার—ব্যবসায়িক অ্যালগরিদমের ফাঁদ নয়।\"",
+        manifesto_sub: "বর্তমান ইন্টারনেট ব্যবস্থা মানুষকে বিজ্ঞাপনের পণ্য এবং তথ্যের বন্দীতে পরিণত করেছে। <strong>আলোকপথ</strong> বিশ্বাস করে আপনার চিন্তা, সৃষ্টি এবং গোপনীয়তা পবিত্র। সেই বিশ্বাস থেকেই জন্ম আলোনোটের।",
+        manifesto_cta: "আলোনোট ইনস্টল করুন (v2.2.0)",
+        compare_tag: "সরাসরি তুলনা",
+        compare_title: "আলোনোট বনাম সাধারণ ক্লাউড নোট অ্যাপ",
+        compare_sub: "দেখে নিন কেন সচেতন মানুষ ক্লাউড ছেড়ে স্বত্বাধিকারী প্রযুক্তিতে ফিরে আসছেন।",
+        table_scroll_hint: "👉 সম্পূর্ণ চার্ট দেখতে ডানে-বামে স্ক্রোল করুন",
+        th_feature: "বৈশিষ্ট্য",
+        tr_offline: "ইন্টারনেট ছাড়াও কাজ করে?",
+        tr_offline_alonote: "✓ শতভাগ অফলাইন",
+        tr_offline_keep: "আংশিক (সিঙ্ক নির্ভর)",
+        tr_offline_notion: "✗ ইন্টারনেট বাধ্যতামূলক",
+        tr_leak: "সার্ভারে তথ্য লিক হওয়ার ঝুঁকি?",
+        tr_leak_alonote: "✓ ০% ঝুঁকি (কোনো সার্ভার নেই)",
+        tr_leak_cloud: "✗ ক্লাউডে সংরক্ষিত",
+        tr_auth: "অ্যাকাউন্ট বা সাইন-ইন দরকার?",
+        tr_auth_alonote: "✓ কোনো সাইন-ইন নেই",
+        tr_auth_keep: "✗ জিমেইল আবশ্যক",
+        tr_auth_notion: "✗ একাউন্ট আবশ্যক",
+        tr_ads: "বিজ্ঞাপন বা ট্র্যাকিং অ্যালগরিদম?",
+        tr_ads_alonote: "✓ শূন্য (জিরো ট্র্যাকার)",
+        tr_ads_keep: "✗ ট্র্যাকিং বিদ্যমান",
+        tr_ads_notion: "✗ ডাটা অ্যানালিটিক্স",
+        tr_export: "স্ট্যান্ডার্ড Markdown (.md) এক্সপোর্ট?",
+        tr_export_alonote: "✓ সরাসরি ১-ক্লিকে",
+        tr_export_keep: "✗ নেই",
+        tr_export_notion: "জটিল এক্সপোর্ট",
+        tr_speed: "স্ক্রোলিং গতি ও রেসপন্স?",
+        tr_speed_alonote: "✓ 120Hz নেটিভ জেটপ্যাক কম্পোজ",
+        tr_speed_keep: "সাধারণ",
+        tr_speed_notion: "✗ ভারী ওয়েবভিউ ল্যাগ",
+        faq_tag: "প্রশ্নোত্তর",
+        faq_title: "সাধারণ কিছু জিজ্ঞাসা",
+        faq_1_q: "আমার নোটগুলো কোথায় সংরক্ষিত থাকে?",
+        faq_1_a: "আপনার নোটগুলো আপনার ডিভাইসের ইন্টারনাল স্যান্ডবক্সড Room SQLite ডাটাবেজে সংরক্ষিত থাকে। কোনো দূরবর্তী সার্ভারে এগুলো কখনো পৌঁছায় না।",
+        faq_2_q: "ফোন পরিবর্তন করলে আমি কীভাবে ব্যাকআপ নিব?",
+        faq_2_a: "অ্যাপের সেটিংস থেকে ১-ক্লিকে \"JSON Backup\" অথবা যেকোনো নোট থেকে সরাসরি Markdown (.md) ফাইলে এক্সপোর্ট করে রেখে দিতে পারেন। নতুন ফোনে গিয়ে Restore Backup চাপলেই সব ফেরত আসবে।",
+        faq_3_q: "এটি কি সত্যি সম্পূর্ণ বিনামূল্যে ও বিজ্ঞাপনহীন?",
+        faq_3_a: "হ্যাঁ, সম্পূর্ণ সত্য। আলোকপথ (Alokpath) একটি স্বাধীন উদ্যোগ। আলোনোট চিরকাল বিজ্ঞাপনহীন, ট্র্যাকারহীন এবং ওপেন-সোর্স থাকবে।",
+        btn_download: "ডাউনলোড",
+        footer_desc: "ডিজিটাল সার্বভৌমত্ব, মানবিক মূল্যবোধ ও খাঁটি প্রযুক্তি নির্মাণের একটি অগ্রগামী দেশীয় আন্দোলন।",
+        footer_repo: "গিটল্যাব রিপো",
+        footer_apk: "APK ডাউনলোড",
+        footer_copyright: "© ২০২৬ Alokpath (আলোকপথ) • সর্বস্বত্ব সংরক্ষিত।",
+        footer_license: "ওপেন সোর্স সফটওয়্যার • MIT লাইসেন্স"
+      }
+    };
+
+    let currentLang = localStorage.getItem('alonote_lang') || 'en';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('alonote_lang', lang);
+      document.documentElement.setAttribute('lang', lang);
+      document.getElementById('langBtnLabel').innerText = lang === 'en' ? 'বাং' : 'EN';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.innerHTML = translations[lang][key];
+        }
+      });
+    }
+
+    function toggleLanguage() {
+      setLanguage(currentLang === 'en' ? 'bn' : 'en');
+    }
+
+    // Set English as default on load
+    setLanguage(currentLang);
+
     // Theme Toggle Functionality
     const themeBtn = document.getElementById('themeToggleBtn');
     const sunIcon = document.getElementById('themeIconSun');
@@ -1734,29 +1895,30 @@
 
       const content = document.getElementById('mockDynamicContent');
       if (tab === 'notes') {
+        const isBn = currentLang === 'bn';
         content.innerHTML = `
           <div class="mock-card">
-            <div class="mock-title">আলোকপথের ডিজিটাল ম্যানিফেস্টো</div>
-            <div class="mock-snippet">প্রযুক্তি হওয়া উচিত মানুষের দাস, মানুষের মনের নজরদারি নয়। আমাদের নিজস্ব স্বাধীনতা ও সার্বভৌম চিন্তা ধরে রাখতে হবে...</div>
+            <div class="mock-title">${isBn ? "আলোকপথের ডিজিটাল ম্যানিফেস্টো" : "The Alokpath Digital Manifesto"}</div>
+            <div class="mock-snippet">${isBn ? "প্রযুক্তি হওয়া উচিত মানুষের দাস, মানুষের মনের নজরদারি নয়। আমাদের নিজস্ব স্বাধীনতা ও সার্বভৌম চিন্তা ধরে রাখতে হবে..." : "Technology should be an instrument of intellectual freedom and human empowerment, not commercial surveillance. We must preserve our cognitive sovereignty..."}</div>
             <div class="mock-footer">
-              <span>আজ, সকাল ১০:১৫</span>
-              <span style="color: var(--alok-gold);">#আলোকপথ</span>
+              <span>${isBn ? "আজ, সকাল ১০:১৫" : "Today, 10:15 AM"}</span>
+              <span style="color: var(--alok-gold);">#Alokpath</span>
             </div>
           </div>
           <div class="mock-card">
-            <div class="mock-title">জরুরি গবেষণা অডিও রেকর্ডিং</div>
+            <div class="mock-title">${isBn ? "জরুরি গবেষণা অডিও রেকর্ডিং" : "Research Voice Memo Recording"}</div>
             <div class="mock-audio-pill">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
               <div class="mock-waveform"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>
-              <span>রেকর্ডিং ০১:৪৫ মিনিট</span>
+              <span>${isBn ? "রেকর্ডিং ০১:৪৫ মিনিট" : "Recording 01:45 min"}</span>
             </div>
-            <div class="mock-snippet">অফলাইন অ্যালগরিদম ও মেমোরি ক্যাশিং সংক্রান্ত চিন্তার অডিও নোট।</div>
-            <div class="mock-footer"><span>গতকাল</span><span>অডিও ফাইল</span></div>
+            <div class="mock-snippet">${isBn ? "অফলাইন অ্যালগরিদম ও মেমোরি ক্যাশিং সংক্রান্ত চিন্তার অডিও নোট।" : "Offline algorithm & local caching architecture voice memo."}</div>
+            <div class="mock-footer"><span>${isBn ? "গতকাল" : "Yesterday"}</span><span>${isBn ? "অডিও ফাইল" : "Audio File"}</span></div>
           </div>
           <div class="mock-card">
-            <div class="mock-title">বই পড়ার সাপ্তাহিক তালিকা</div>
-            <div class="mock-snippet">☑️ ডিজিটাল মিনিমালিজম<br>☑️ সভরেন ইন্ডিভিজুয়াল<br>◻️ বাংলা সাহিত্যের প্রাচীন পথ</div>
-            <div class="mock-footer"><span>২৬ অক্টোবর</span><span>চেকলিস্ট</span></div>
+            <div class="mock-title">${isBn ? "বই পড়ার সাপ্তাহিক তালিকা" : "Weekly Reading Checklist"}</div>
+            <div class="mock-snippet">${isBn ? "☑️ ডিজিটাল মিনিমালিজম<br>☑️ সভরেন ইন্ডিভিজুয়াল<br>◻️ ক্লাসিক্যাল সাহিত্য" : "☑️ Digital Minimalism — Cal Newport<br>☑️ The Sovereign Individual<br>◻️ Classical Literature & Philosophy"}</div>
+            <div class="mock-footer"><span>Oct 26</span><span>Checklist</span></div>
           </div>
         `;
       } else if (tab === 'splash') {
@@ -1775,36 +1937,37 @@
           </div>
         `;
       } else if (tab === 'audio') {
+        const isBn = currentLang === 'bn';
         content.innerHTML = `
           <div class="mock-card" style="text-align: center; padding: 24px 14px;">
             <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(255,107,0,0.15); color: var(--alok-orange); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
             </div>
-            <div class="mock-title" style="font-size: 1rem;">ভয়েস নোট স্টুডিও</div>
-            <div class="mock-snippet" style="margin-bottom: 16px;">১০০% অফলাইনে সরাসরি আপনার নোটের ভেতরে অডিও রেকর্ড করুন। কোনো ক্লাউড প্রসেসিং নেই।</div>
+            <div class="mock-title" style="font-size: 1rem;">${isBn ? "ভয়েস নোট স্টুডিও" : "Voice Memo Studio"}</div>
+            <div class="mock-snippet" style="margin-bottom: 16px;">${isBn ? "১০০% অফলাইনে সরাসরি আপনার নোটের ভেতরে অডিও রেকর্ড করুন। কোনো ক্লাউড প্রসেসিং নেই।" : "Record compressed audio voice notes directly inside your notes 100% offline. No cloud latency or processing."}</div>
             <div class="mock-audio-pill" style="justify-content: center; padding: 8px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
               <div class="mock-waveform"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>
-              <span>প্লেব্যাক চলছে • ০৩:২৪</span>
+              <span>${isBn ? "প্লেব্যাক চলছে • ০৩:২৪" : "Playing • 03:24"}</span>
             </div>
           </div>
         `;
       } else if (tab === 'security') {
+        const isBn = currentLang === 'bn';
         content.innerHTML = `
           <div class="mock-card" style="text-align: center; padding: 24px 14px;">
             <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(0,230,118,0.15); color: var(--accent-green); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
-            <div class="mock-title" style="font-size: 1rem;">ফিঙ্গারপ্রিন্ট ও বায়োমেট্রিক লক</div>
-            <div class="mock-snippet">আপনার সংবেদনশীল ডায়রি ও ব্যক্তিগত হিসাব-নিকাশ সুরক্ষিত রাখতে বায়োমেট্রিক লক চালু রাখুন। ফোন অন্য কারো হাতে গেলেও ডাটা থাকবে নিরাপদ।</div>
+            <div class="mock-title" style="font-size: 1rem;">${isBn ? "ফিঙ্গারপ্রিন্ট ও বায়োমেট্রিক লক" : "Biometric & Fingerprint Lock"}</div>
+            <div class="mock-snippet">${isBn ? "আপনার সংবেদনশীল ডায়রি ও ব্যক্তিগত হিসাব-নিকাশ সুরক্ষিত রাখতে বায়োমেট্রিক লক চালু রাখুন।" : "Keep your personal journal and sensitive thoughts secure with hardware-backed biometric authentication."}</div>
             <div style="display: inline-block; padding: 5px 14px; background: rgba(0,230,118,0.15); color: var(--accent-green); border-radius: 999px; font-size: 0.74rem; font-weight: 700;">
-              ✓ বায়োমেট্রিক সক্রিয়
+              ✓ ${isBn ? "বায়োমেট্রিক সক্রিয়" : "Biometrics Active"}
             </div>
           </div>
         `;
       }
     }
-
 
     // Toast helper
     function showToast(msg) {

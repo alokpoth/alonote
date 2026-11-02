@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
 
     private var targetNoteId by mutableStateOf(0L)
     private var triggerNewNote by mutableStateOf(false)
+    private var triggerSearch by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +65,11 @@ class MainActivity : ComponentActivity() {
                             application = notoApplication,
                             targetNoteId = targetNoteId,
                             triggerNewNote = triggerNewNote,
+                            triggerSearch = triggerSearch,
                             onIntentHandled = {
                                 targetNoteId = 0L
                                 triggerNewNote = false
+                                triggerSearch = false
                             }
                         )
 
@@ -106,6 +109,9 @@ class MainActivity : ComponentActivity() {
         }
         if (isNewNote) {
             triggerNewNote = true
+        }
+        if (widgetAction == NotoQuickWidgetProvider.ACTION_SEARCH) {
+            triggerSearch = true
         }
     }
 }

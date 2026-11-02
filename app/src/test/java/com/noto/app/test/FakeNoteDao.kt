@@ -110,6 +110,10 @@ class FakeNoteDao : NoteDao {
         notesFlow.value = notesFlow.value - id
     }
 
+    override suspend fun getTrashNotesSnapshot(): List<Note> {
+        return notesFlow.value.values.filter { it.isDeleted }.sortedWith(::compareTrashNotes)
+    }
+
     override suspend fun emptyTrash() {
         notesFlow.value = notesFlow.value.filterValues { !it.isDeleted }
     }

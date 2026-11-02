@@ -307,7 +307,7 @@ fun NoteActionBottomSheet(
                                 action = Intent.ACTION_SEND
                                 putExtra(Intent.EXTRA_TEXT, fullMarkdown)
                                 putExtra(Intent.EXTRA_TITLE, "${note.displayTitle}.md")
-                                type = "text/markdown"
+                                type = "text/plain"
                             }
                             context.startActivity(Intent.createChooser(sendIntent, "Export note as Markdown"))
                             onDismiss()

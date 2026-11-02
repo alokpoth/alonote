@@ -21,8 +21,8 @@ object PdfExporter {
 
     fun exportNoteToPdf(note: Note, outputStream: OutputStream) {
         val document = PdfDocument()
-
-        val titlePaint = Paint().apply {
+        try {
+            val titlePaint = Paint().apply {
             color = Color.BLACK
             textSize = 20f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
@@ -98,7 +98,9 @@ object PdfExporter {
 
         document.finishPage(page)
         document.writeTo(outputStream)
-        document.close()
+        } finally {
+            document.close()
+        }
     }
 
     private fun wrapText(text: String, paint: Paint, maxWidth: Float): List<String> {

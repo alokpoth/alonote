@@ -26,6 +26,7 @@ fun NotoNavigation(
     initialNewNote: Boolean = false,
     targetNoteId: Long = 0L,
     triggerNewNote: Boolean = false,
+    triggerSearch: Boolean = false,
     onIntentHandled: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -60,6 +61,12 @@ fun NotoNavigation(
                 val mainViewModel: MainViewModel = viewModel(
                     factory = MainViewModel.Factory(repository, application.themeRepository)
                 )
+                LaunchedEffect(triggerSearch) {
+                    if (triggerSearch) {
+                        mainViewModel.openSearchBar()
+                        onIntentHandled()
+                    }
+                }
                 MainScreen(
                     viewModel = mainViewModel,
                     onNoteClick = { noteId ->

@@ -77,7 +77,7 @@ data class Note(
     val wordCount: Int
         get() {
             val content = "$title $body".trim()
-            return if (content.isEmpty()) 0 else content.split("\\s+".toRegex()).count { it.isNotBlank() }
+            return if (content.isEmpty()) 0 else content.split(WhitespaceRegex).count { it.isNotBlank() }
         }
 
     /**
@@ -172,4 +172,5 @@ private val StrikeStripRegex = Regex("""~~(.*?)~~""")
 private val HeadingStripRegex = Regex("""^#{1,6}\s+""")
 private val CodeStripRegex = Regex("""`([^`]+)`""")
 private val TagRegex = Regex("""#([\p{L}\p{N}_]+)""")
+private val WhitespaceRegex = Regex("""\s+""")
 

@@ -23,7 +23,7 @@ class NotoApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         database = NotoDatabase.getInstance(this)
-        noteRepository = NoteRepositoryImpl(database.noteDao())
+        noteRepository = NoteRepositoryImpl(database.noteDao(), this)
         themeRepository = com.noto.app.data.repository.ThemeRepository(this)
     }
 }

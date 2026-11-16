@@ -56,7 +56,7 @@ object PdfExporter {
         var yCursor = MARGIN + 20f
 
         // Draw Title
-        val titleText = if (note.title.isNotBlank()) note.title else "Untitled Note"
+        val titleText = if (note.title.isNotBlank()) MarkdownFormatter.stripMarkdown(note.title) else "Untitled Note"
         val wrappedTitle = wrapText(titleText, titlePaint, CONTENT_WIDTH)
         for (line in wrappedTitle) {
             canvas.drawText(line, MARGIN, yCursor, titlePaint)
@@ -66,7 +66,7 @@ object PdfExporter {
         yCursor += 4f
 
         // Draw Meta (Date & Word Count)
-        val metaText = "Noto • ${DateFormatter.formatEditor(note.updatedAt)} • ${note.wordCount} words • ${note.charCount} chars"
+        val metaText = "AloNote • ${DateFormatter.formatEditor(note.updatedAt)} • ${note.wordCount} words • ${note.charCount} chars"
         canvas.drawText(metaText, MARGIN, yCursor, metaPaint)
         yCursor += 14f
 
@@ -77,7 +77,8 @@ object PdfExporter {
         // Draw Body Text (with auto line wrap and multi-page break)
         val rawLines = note.body.lines()
         for (rawLine in rawLines) {
-            val wrappedLines = if (rawLine.isBlank()) listOf("") else wrapText(rawLine, bodyPaint, CONTENT_WIDTH)
+            val cleanLine = MarkdownFormatter.stripMarkdown(rawLine)
+            val wrappedLines = if (cleanLine.isBlank()) listOf("") else wrapText(cleanLine, bodyPaint, CONTENT_WIDTH)
             for (line in wrappedLines) {
                 if (yCursor + lineHeight > PAGE_HEIGHT - MARGIN) {
                     // Page full -> start new page

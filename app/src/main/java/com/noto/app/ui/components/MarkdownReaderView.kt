@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.noto.app.util.MarkdownFormatter
 
 /**
  * Distraction-free, rendered Markdown Reader / Focus Mode.
@@ -135,7 +136,7 @@ fun MarkdownReaderView(
         // Render Title
         if (title.isNotBlank()) {
             Text(
-                text = title,
+                text = parseInlineMarkdown(title),
                 style = MaterialTheme.typography.displayLarge.copy(
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
@@ -376,56 +377,9 @@ private fun CodeBlockCard(
 }
 
 /**
- * Pre-compiled regex and inline Markdown parser for Bold (**), Italic (*), Strike (~~), Code (`), and Tags (#)
+ * Inline Markdown parser for Bold (**), Italic (* or _), Strike (~~), Code (`), and Tags (#).
+ * Strips delimiter markers for a clean reader presentation.
  */
-private val BoldPattern = Regex("""\*\*([^*]+)\*\*""")
-private val ItalicPattern = Regex("""(?<!\*)\*([^*]+)\*(?!\*)""")
-private val StrikePattern = Regex("""~~([^~]+)~~""")
-private val CodePattern = Regex("""`([^`]+)`""")
-private val TagPattern = Regex("""(?<=^|\s)(#[\p{L}\p{N}_]+)""")
-
 private fun parseInlineMarkdown(text: String): AnnotatedString {
-    if (text.isEmpty()) return AnnotatedString("")
-    val builder = AnnotatedString.Builder(text)
-    val len = text.length
-
-    fun addSafeSpan(style: SpanStyle, start: Int, end: Int) {
-        if (start in 0 until len && end in (start + 1)..len) {
-            builder.addStyle(style, start, end)
-        }
-    }
-
-    for (match in BoldPattern.findAll(text)) {
-        match.groups[1]?.let { group ->
-            addSafeSpan(SpanStyle(fontWeight = FontWeight.Bold), group.range.first, group.range.last + 1)
-        }
-    }
-
-    for (match in ItalicPattern.findAll(text)) {
-        match.groups[1]?.let { group ->
-            addSafeSpan(SpanStyle(fontStyle = FontStyle.Italic), group.range.first, group.range.last + 1)
-        }
-    }
-
-    for (match in StrikePattern.findAll(text)) {
-        match.groups[1]?.let { group ->
-            addSafeSpan(SpanStyle(textDecoration = TextDecoration.LineThrough), group.range.first, group.range.last + 1)
-        }
-    }
-
-    for (match in CodePattern.findAll(text)) {
-        match.groups[1]?.let { group ->
-            addSafeSpan(SpanStyle(fontFamily = FontFamily.Monospace), group.range.first, group.range.last + 1)
-        }
-    }
-
-    for (match in TagPattern.findAll(text)) {
-        addSafeSpan(
-            SpanStyle(color = androidx.compose.ui.graphics.Color(0xFF64748B), fontWeight = FontWeight.SemiBold),
-            match.range.first,
-            match.range.last + 1
-        )
-    }
-
-    return builder.toAnnotatedString()
+    return MarkdownFormatter.parseInlineMarkdown(text)
 }

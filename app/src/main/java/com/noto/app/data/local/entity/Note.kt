@@ -3,6 +3,7 @@ package com.noto.app.data.local.entity
 import androidx.compose.runtime.Immutable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.noto.app.util.MarkdownFormatter
 import kotlin.math.ceil
 
 /**
@@ -122,13 +123,15 @@ data class Note(
     /**
      * Resolves the primary title to display in note lists.
      * Falls back to the first non-empty line of the body, or "Untitled Note".
+     * Strips Markdown formatting symbols for a clean card presentation.
      */
     val displayTitle: String
         get() {
-            if (title.isNotBlank()) return title.trim()
+            if (title.isNotBlank()) return MarkdownFormatter.stripMarkdown(title.trim())
             val firstLine = body.lines().firstOrNull { it.isNotBlank() }?.trim()
             return if (!firstLine.isNullOrBlank()) {
-                if (firstLine.length > 50) firstLine.take(50) + "..." else firstLine
+                val cleaned = MarkdownFormatter.stripMarkdown(firstLine)
+                if (cleaned.length > 50) cleaned.take(50) + "..." else cleaned.ifBlank { "Untitled Note" }
             } else {
                 "Untitled Note"
             }
@@ -150,16 +153,9 @@ data class Note(
                     "No additional text"
                 }
             }
-            return raw
-                .replace("[ ] ", "☐ ")
-                .replace("[x] ", "☑ ")
-                .replace("- [ ] ", "☐ ")
-                .replace("- [x] ", "☑ ")
-                .replace(BoldStripRegex, "$1")
-                .replace(ItalicStripRegex, "$1")
-                .replace(StrikeStripRegex, "$1")
-                .replace(HeadingStripRegex, "")
-                .replace(CodeStripRegex, "$1")
+            if (raw == "No additional text") return raw
+            val cleaned = MarkdownFormatter.stripMarkdown(raw)
+            return cleaned.ifBlank { "No additional text" }
         }
 }
 

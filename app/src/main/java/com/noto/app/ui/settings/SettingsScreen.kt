@@ -479,7 +479,7 @@ fun SettingsScreen(
                 AboutInfoRow(title = "Architecture", subtitle = "100% Offline • Zero Analytics • Zero Cloud Sync")
                 AboutInfoRow(title = "Display Engine", subtitle = "120Hz ProMotion & Low-End GPU Optimized")
                 AboutInfoRow(title = "Parent Company", subtitle = "Alokpath Foundation (আলোকপথ)")
-                AboutInfoRow(title = "App Version", subtitle = "AloNote v2.2.0 (Alokpath Edition)")
+                AboutInfoRow(title = "App Version", subtitle = "AloNote v2.2.0.1 (Alokpath Edition)")
             }
 
             Spacer(modifier = Modifier.height(30.dp))

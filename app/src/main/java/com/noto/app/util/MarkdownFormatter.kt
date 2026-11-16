@@ -1,7 +1,14 @@
 package com.noto.app.util
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextDecoration
 
 /**
  * Line-level transformation actions for Markdown formatting.
@@ -13,9 +20,126 @@ enum class LineFormatAction {
 }
 
 /**
- * Utility functions for applying markdown formatting to Compose TextFieldValue.
+ * Utility functions for applying markdown formatting to Compose TextFieldValue,
+ * live parsing inline Markdown, and stripping Markdown symbols.
  */
 object MarkdownFormatter {
+
+    /**
+     * Unified inline markdown pattern for Bold (**), Italic (* or _), Strike (~~), Code (`), and Tag (#)
+     */
+    val InlineMarkdownRegex = Regex(
+        """(\*\*([^*\n]+)\*\*)|""" +
+        """((?<!\*)\*([^*\n]+)\*(?!\*)|(?<!_)_([^_\n]+)_(?!_))|""" +
+        """(~~([^~\n]+)~~)|""" +
+        """(`([^`\n]+)`)|""" +
+        """((?<=^|\s)#[\p{L}\p{N}_]+)"""
+    )
+
+    private val HeadingStripPattern = Regex("""^#{1,6}\s+""", RegexOption.MULTILINE)
+    private val ChecklistPrefixPattern = Regex("""^\s*(?:-\s+)?\[[ xX]\]\s+""", RegexOption.MULTILINE)
+    private val BulletPrefixPattern = Regex("""^\s*[-*•]\s+""", RegexOption.MULTILINE)
+
+    /**
+     * Parses inline Markdown, stripping delimiter syntax symbols (**, *, _, ~~, `)
+     * and applying styled SpanStyles for bold, italic, strikethrough, monospace code, and hashtags.
+     */
+    fun parseInlineMarkdown(
+        text: String,
+        codeBackground: Color = Color(0x1F888888),
+        tagColor: Color = Color(0xFF64748B)
+    ): AnnotatedString {
+        if (text.isEmpty()) return AnnotatedString("")
+
+        val builder = AnnotatedString.Builder()
+        var lastIndex = 0
+
+        for (match in InlineMarkdownRegex.findAll(text)) {
+            if (match.range.first > lastIndex) {
+                builder.append(text.substring(lastIndex, match.range.first))
+            }
+
+            val boldContent = match.groups[2]?.value
+            val italic1Content = match.groups[4]?.value
+            val italic2Content = match.groups[5]?.value
+            val strikeContent = match.groups[7]?.value
+            val codeContent = match.groups[9]?.value
+            val tagContent = match.groups[10]?.value
+
+            when {
+                boldContent != null -> {
+                    val start = builder.length
+                    builder.append(boldContent)
+                    builder.addStyle(SpanStyle(fontWeight = FontWeight.Bold), start, builder.length)
+                }
+                italic1Content != null -> {
+                    val start = builder.length
+                    builder.append(italic1Content)
+                    builder.addStyle(SpanStyle(fontStyle = FontStyle.Italic), start, builder.length)
+                }
+                italic2Content != null -> {
+                    val start = builder.length
+                    builder.append(italic2Content)
+                    builder.addStyle(SpanStyle(fontStyle = FontStyle.Italic), start, builder.length)
+                }
+                strikeContent != null -> {
+                    val start = builder.length
+                    builder.append(strikeContent)
+                    builder.addStyle(SpanStyle(textDecoration = TextDecoration.LineThrough), start, builder.length)
+                }
+                codeContent != null -> {
+                    val start = builder.length
+                    builder.append(codeContent)
+                    builder.addStyle(
+                        SpanStyle(fontFamily = FontFamily.Monospace, background = codeBackground),
+                        start,
+                        builder.length
+                    )
+                }
+                tagContent != null -> {
+                    val start = builder.length
+                    builder.append(tagContent)
+                    builder.addStyle(
+                        SpanStyle(color = tagColor, fontWeight = FontWeight.SemiBold),
+                        start,
+                        builder.length
+                    )
+                }
+                else -> {
+                    builder.append(match.value)
+                }
+            }
+            lastIndex = match.range.last + 1
+        }
+
+        if (lastIndex < text.length) {
+            builder.append(text.substring(lastIndex))
+        }
+
+        return builder.toAnnotatedString()
+    }
+
+    /**
+     * Strips all Markdown formatting delimiters (bold, italic, strikethrough, code, headings, checkboxes)
+     * leaving clean plain text for titles, list previews, search, and PDF exports.
+     */
+    fun stripMarkdown(text: String): String {
+        if (text.isEmpty()) return ""
+        return text
+            .replace(HeadingStripPattern, "")
+            .replace(ChecklistPrefixPattern, "")
+            .replace(BulletPrefixPattern, "")
+            .replace(InlineMarkdownRegex) { matchResult ->
+                matchResult.groups[2]?.value
+                    ?: matchResult.groups[4]?.value
+                    ?: matchResult.groups[5]?.value
+                    ?: matchResult.groups[7]?.value
+                    ?: matchResult.groups[9]?.value
+                    ?: matchResult.groups[10]?.value
+                    ?: matchResult.value
+            }
+            .trim()
+    }
 
     /**
      * Inlines markdown delimiters (e.g. Bold "**", Italic "*", Strikethrough "~~").

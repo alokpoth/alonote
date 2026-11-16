@@ -9,7 +9,7 @@
 > **AloNote (আলোনোট)** is an extremely simple, lightweight, 100% offline note-taking native Android application by **Alokpath (আলোকপথ)**, inspired by Apple Notes and Google Keep. Built with Jetpack Compose, Material 3, and Room Database.
 
 🌐 **Website & Live Demo:** [alonote.zihan.xyz](https://alonote.zihan.xyz) (or [alonote.zihan.uk](https://alonote.zihan.uk))  
-📦 **Direct APK Download:** [Download AloNote v2.2.0 (Alokpath Edition)](https://alonote.zihan.xyz/downloads/AloNote-v2.2.0-Alokpath.apk)  
+📦 **Direct APK Download:** [Download AloNote v2.2.0.1 (Alokpath Edition)](https://alonote.zihan.xyz/downloads/AloNote-v2.2.0.1-Alokpath.apk)  
 🏢 **Ecosystem:** An [Alokpath (আলোকপথ)](https://alokpoth.zihan.xyz) Sovereign Privacy Application
 
 ---

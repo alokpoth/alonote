@@ -15,9 +15,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 
 /**
- * High-performance, zero-lag visual transformation for live Markdown styling in Jetpack Compose.
- * Uses OffsetMapping.Identity to guarantee 1:1 cursor alignment without jumping or desync.
- * Caches transformed text to eliminate repetitive regex execution during cursor moves and idle recompositions.
+ * High-performance, live Markdown visual transformation for Jetpack Compose.
+ * Hides raw Markdown delimiter tokens (**, *, _, ~~, `, #) in the live editor,
+ * styling content directly with bold, italic, strikethrough, headings, and code formatting.
+ * Computes exact, monotonic OffsetMapping between raw and transformed text.
  */
 class MarkdownVisualTransformation(
     private val syntaxColor: Color = Color(0x66888888),
@@ -38,129 +39,211 @@ class MarkdownVisualTransformation(
             return lastTransformed!!
         }
 
-        val builder = AnnotatedString.Builder(raw)
-        val len = raw.length
+        val builder = AnnotatedString.Builder()
+        val N = raw.length
+        val origToTrans = IntArray(N + 1)
+        val transToOrig = ArrayList<Int>(N + 1)
 
-        fun addSpan(style: SpanStyle, start: Int, end: Int) {
-            if (start in 0 until len && end in (start + 1)..len) {
-                builder.addStyle(style, start, end)
+        var currentTransformedIndex = 0
+
+        fun appendChar(origIdx: Int, ch: Char) {
+            origToTrans[origIdx] = currentTransformedIndex
+            transToOrig.add(origIdx)
+            builder.append(ch)
+            currentTransformedIndex++
+        }
+
+        fun skipChar(origIdx: Int) {
+            origToTrans[origIdx] = currentTransformedIndex
+        }
+
+        fun processInlineSegment(segment: String, segOffsetInRaw: Int) {
+            var segIdx = 0
+            for (match in MarkdownFormatter.InlineMarkdownRegex.findAll(segment)) {
+                // Plain text before match
+                for (i in segIdx until match.range.first) {
+                    appendChar(segOffsetInRaw + i, segment[i])
+                }
+
+                val boldContent = match.groups[2]
+                val italic1Content = match.groups[4]
+                val italic2Content = match.groups[5]
+                val strikeContent = match.groups[7]
+                val codeContent = match.groups[9]
+                val tagContent = match.groups[10]
+
+                val matchedContent = boldContent ?: italic1Content ?: italic2Content ?: strikeContent ?: codeContent
+                val matchedStyle = when {
+                    boldContent != null -> SpanStyle(fontWeight = FontWeight.Bold)
+                    italic1Content != null || italic2Content != null -> SpanStyle(fontStyle = FontStyle.Italic)
+                    strikeContent != null -> SpanStyle(textDecoration = TextDecoration.LineThrough)
+                    codeContent != null -> SpanStyle(fontFamily = FontFamily.Monospace, background = codeBackground)
+                    else -> null
+                }
+
+                if (matchedContent != null && matchedStyle != null) {
+                    // Skip opening delimiters
+                    for (i in match.range.first until matchedContent.range.first) {
+                        skipChar(segOffsetInRaw + i)
+                    }
+
+                    // Append inner content with style
+                    val styleStart = currentTransformedIndex
+                    for (i in matchedContent.range) {
+                        appendChar(segOffsetInRaw + i, segment[i])
+                    }
+                    builder.addStyle(matchedStyle, styleStart, currentTransformedIndex)
+
+                    // Skip closing delimiters
+                    for (i in (matchedContent.range.last + 1)..match.range.last) {
+                        skipChar(segOffsetInRaw + i)
+                    }
+                } else if (tagContent != null) {
+                    val styleStart = currentTransformedIndex
+                    for (i in match.range) {
+                        appendChar(segOffsetInRaw + i, segment[i])
+                    }
+                    builder.addStyle(
+                        SpanStyle(color = tagColor, fontWeight = FontWeight.SemiBold),
+                        styleStart,
+                        currentTransformedIndex
+                    )
+                } else {
+                    for (i in match.range) {
+                        appendChar(segOffsetInRaw + i, segment[i])
+                    }
+                }
+
+                segIdx = match.range.last + 1
+            }
+
+            // Plain text after all matches in this segment
+            for (i in segIdx until segment.length) {
+                appendChar(segOffsetInRaw + i, segment[i])
             }
         }
 
-        // 1. Headings (# Heading or ## Heading or ### Heading)
-        for (match in HeadingRegex.findAll(raw)) {
-            val hashGroup = match.groups[1] ?: continue
-            val textGroup = match.groups[2] ?: continue
-            addSpan(SpanStyle(color = syntaxColor), hashGroup.range.first, hashGroup.range.last + 1)
-            val size = when (hashGroup.value.length) {
-                1 -> 24.sp
-                2 -> 20.sp
-                else -> 18.sp
+        var lineStart = 0
+        while (lineStart < N) {
+            val lineEnd = raw.indexOf('\n', lineStart).let { if (it == -1) N else it }
+            val line = raw.substring(lineStart, lineEnd)
+
+            val headingMatch = HeadingRegex.find(line)
+            val completedMatch = CompletedCheckRegex.find(line)
+            val pendingMatch = PendingCheckRegex.find(line)
+
+            when {
+                headingMatch != null -> {
+                    val hashGroup = headingMatch.groups[1]!!
+                    val textGroup = headingMatch.groups[2]!!
+                    val prefixEnd = lineStart + hashGroup.value.length + (line.length - hashGroup.value.length - textGroup.value.length)
+
+                    // Skip the "# " prefix
+                    for (i in lineStart until prefixEnd) {
+                        skipChar(i)
+                    }
+
+                    val headingStartInTrans = currentTransformedIndex
+                    processInlineSegment(textGroup.value, prefixEnd)
+                    val headingEndInTrans = currentTransformedIndex
+
+                    val size = when (hashGroup.value.length) {
+                        1 -> 24.sp
+                        2 -> 20.sp
+                        else -> 18.sp
+                    }
+                    if (headingEndInTrans > headingStartInTrans) {
+                        builder.addStyle(
+                            SpanStyle(fontWeight = FontWeight.Bold, fontSize = size),
+                            headingStartInTrans,
+                            headingEndInTrans
+                        )
+                    }
+                }
+                completedMatch != null -> {
+                    val prefix = completedMatch.groups[1]!!
+                    val textGroup = completedMatch.groups[2]!!
+
+                    val prefixStart = currentTransformedIndex
+                    for (i in prefix.range) {
+                        appendChar(lineStart + i, line[i])
+                    }
+                    builder.addStyle(SpanStyle(color = checkedBoxColor), prefixStart, currentTransformedIndex)
+
+                    val textStart = currentTransformedIndex
+                    processInlineSegment(textGroup.value, lineStart + prefix.value.length)
+                    val textEnd = currentTransformedIndex
+
+                    if (textEnd > textStart) {
+                        builder.addStyle(
+                            SpanStyle(textDecoration = TextDecoration.LineThrough, color = checkedBoxColor),
+                            textStart,
+                            textEnd
+                        )
+                    }
+                }
+                pendingMatch != null -> {
+                    val prefix = pendingMatch.groups[1]!!
+                    val prefixStart = currentTransformedIndex
+                    for (i in prefix.range) {
+                        appendChar(lineStart + i, line[i])
+                    }
+                    builder.addStyle(SpanStyle(color = syntaxColor, fontWeight = FontWeight.Bold), prefixStart, currentTransformedIndex)
+
+                    val remainder = line.substring(prefix.value.length)
+                    processInlineSegment(remainder, lineStart + prefix.value.length)
+                }
+                else -> {
+                    processInlineSegment(line, lineStart)
+                }
             }
-            addSpan(
-                SpanStyle(fontWeight = FontWeight.Bold, fontSize = size),
-                textGroup.range.first,
-                textGroup.range.last + 1
-            )
-        }
 
-        // 2. Bold (**text**)
-        for (match in BoldRegex.findAll(raw)) {
-            val startToken = match.groups[1] ?: continue
-            val content = match.groups[2] ?: continue
-            val endToken = match.groups[3] ?: continue
-
-            addSpan(SpanStyle(color = syntaxColor), startToken.range.first, startToken.range.last + 1)
-            addSpan(SpanStyle(fontWeight = FontWeight.Bold), content.range.first, content.range.last + 1)
-            addSpan(SpanStyle(color = syntaxColor), endToken.range.first, endToken.range.last + 1)
-        }
-
-        // 3. Italic (*text* or _text_) - excluding **
-        for (match in ItalicRegex.findAll(raw)) {
-            val range = match.range
-            if (range.last > range.first + 1) {
-                addSpan(SpanStyle(color = syntaxColor), range.first, range.first + 1)
-                addSpan(SpanStyle(fontStyle = FontStyle.Italic), range.first + 1, range.last)
-                addSpan(SpanStyle(color = syntaxColor), range.last, range.last + 1)
+            if (lineEnd < N) {
+                // Preserved newline character
+                appendChar(lineEnd, '\n')
             }
+
+            lineStart = lineEnd + 1
         }
 
-        // 4. Strikethrough (~~text~~)
-        for (match in StrikeRegex.findAll(raw)) {
-            val startToken = match.groups[1] ?: continue
-            val content = match.groups[2] ?: continue
-            val endToken = match.groups[3] ?: continue
+        origToTrans[N] = currentTransformedIndex
+        transToOrig.add(N)
 
-            addSpan(SpanStyle(color = syntaxColor), startToken.range.first, startToken.range.last + 1)
-            addSpan(SpanStyle(textDecoration = TextDecoration.LineThrough), content.range.first, content.range.last + 1)
-            addSpan(SpanStyle(color = syntaxColor), endToken.range.first, endToken.range.last + 1)
-        }
+        val mapping = MarkdownOffsetMapping(
+            origToTrans = origToTrans,
+            transToOrig = transToOrig.toIntArray(),
+            originalLength = N,
+            transformedLength = currentTransformedIndex
+        )
 
-        // 5. Inline Code (`code`)
-        for (match in CodeRegex.findAll(raw)) {
-            val startToken = match.groups[1] ?: continue
-            val content = match.groups[2] ?: continue
-            val endToken = match.groups[3] ?: continue
-
-            addSpan(SpanStyle(color = syntaxColor), startToken.range.first, startToken.range.last + 1)
-            addSpan(
-                SpanStyle(fontFamily = FontFamily.Monospace, background = codeBackground),
-                content.range.first,
-                content.range.last + 1
-            )
-            addSpan(SpanStyle(color = syntaxColor), endToken.range.first, endToken.range.last + 1)
-        }
-
-        // 6. Checkboxes: - [x] or [x] completed items
-        for (match in CompletedCheckRegex.findAll(raw)) {
-            val prefix = match.groups[1] ?: continue
-            val textGroup = match.groups[2] ?: continue
-            addSpan(SpanStyle(color = checkedBoxColor), prefix.range.first, prefix.range.last + 1)
-            addSpan(
-                SpanStyle(textDecoration = TextDecoration.LineThrough, color = checkedBoxColor),
-                textGroup.range.first,
-                textGroup.range.last + 1
-            )
-        }
-
-        // Checkboxes: - [ ] or [ ] uncompleted items
-        for (match in PendingCheckRegex.findAll(raw)) {
-            val prefix = match.groups[1] ?: continue
-            addSpan(SpanStyle(color = syntaxColor, fontWeight = FontWeight.Bold), prefix.range.first, prefix.range.last + 1)
-        }
-
-        // 7. Bullet list prefixes (• or - )
-        for (match in BulletRegex.findAll(raw)) {
-            val prefix = match.groups[1] ?: continue
-            addSpan(SpanStyle(color = syntaxColor, fontWeight = FontWeight.Bold), prefix.range.first, prefix.range.last + 1)
-        }
-
-        // 8. Hashtags (#tag or #বাংলা)
-        for (match in HashtagRegex.findAll(raw)) {
-            addSpan(
-                SpanStyle(color = tagColor, fontWeight = FontWeight.Medium),
-                match.range.first,
-                match.range.last + 1
-            )
-        }
-
-        val result = TransformedText(builder.toAnnotatedString(), OffsetMapping.Identity)
+        val result = TransformedText(builder.toAnnotatedString(), mapping)
         lastRaw = raw
         lastTransformed = result
         return result
     }
 }
 
+private class MarkdownOffsetMapping(
+    private val origToTrans: IntArray,
+    private val transToOrig: IntArray,
+    private val originalLength: Int,
+    private val transformedLength: Int
+) : OffsetMapping {
+    override fun originalToTransformed(offset: Int): Int {
+        val clamped = offset.coerceIn(0, originalLength)
+        return origToTrans[clamped].coerceIn(0, transformedLength)
+    }
+
+    override fun transformedToOriginal(offset: Int): Int {
+        val clamped = offset.coerceIn(0, transformedLength)
+        return transToOrig[clamped].coerceIn(0, originalLength)
+    }
+}
+
 // Pre-compiled regex patterns to eliminate repeated compilation during real-time typing
-private val HeadingRegex = Regex("""^(#{1,3})\s+(.*)$""", RegexOption.MULTILINE)
-private val BoldRegex = Regex("""(\*\*)([^\*\n]+)(\*\*)""")
-private val ItalicRegex = Regex("""(?<!\*)\*([^\*\n]+)\*(?!\*)|(?<!_)_([^_\n]+)_(?!_)""")
-private val StrikeRegex = Regex("""(~~)([^~\n]+)(~~)""")
-private val CodeRegex = Regex("""(`)([^`\n]+)(`)""")
-private val CompletedCheckRegex = Regex("""^(\s*(?:-\s+)?\[x\]\s+)(.*)$""", RegexOption.MULTILINE)
-private val PendingCheckRegex = Regex("""^(\s*(?:-\s+)?\[\s\]\s+)""", RegexOption.MULTILINE)
-private val BulletRegex = Regex("""^(\s*(?:[•\-*])\s+)""", RegexOption.MULTILINE)
-private val HashtagRegex = Regex("""(?<=^|\s)(#[\p{L}\p{N}_]+)""")
+private val HeadingRegex = Regex("""^(#{1,3})\s+(.+)$""")
+private val CompletedCheckRegex = Regex("""^(\s*(?:-\s+)?\[x\]\s+)(.*)$""")
+private val PendingCheckRegex = Regex("""^(\s*(?:-\s+)?\[\s\]\s+)""")
 
 @Composable
 fun rememberMarkdownVisualTransformation(): MarkdownVisualTransformation {

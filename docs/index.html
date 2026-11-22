@@ -4,53 +4,74 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AloNote — 100% Offline, Uncompromising Privacy Notes | Alokpath</title>
-  <meta name="description" content="AloNote by Alokpath — A premium, 100% offline, tracker-free Android notes app built with modern Jetpack Compose. Zero internet permissions. Your private thoughts stay on your device.">
-  <meta name="theme-color" content="#090a0f">
+  <meta name="description" content="AloNote by Alokpath — A premium, 100% offline, tracker-free native Android notebook built with modern Jetpack Compose. Zero internet permissions. Your private thoughts stay strictly on your device.">
+  <meta name="keywords" content="AloNote, Alokpath, offline notes, private notebook, android notes app, markdown notes, voice memo, jetpack compose, open source">
+  <meta name="author" content="Alokpath (Zihan)">
+  <meta name="theme-color" content="#08090d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="apple-touch-icon" href="./alonote_icon.png">
+
+  <!-- Open Graph / Meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alonote.zihan.xyz/">
+  <meta property="og:title" content="AloNote — 100% Offline, Sovereign Android Notes | Alokpath">
+  <meta property="og:description" content="Zero cloud servers, zero trackers, zero ads. Your mind, completely unmonitored. Download AloNote v2.2.0.1 APK.">
+  <meta property="og:image" content="./assets/og-image.png">
   
   <!-- Google Fonts: Plus Jakarta Sans & Hind Siliguri for Bangla -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #090a0f;
-      --bg-surface: #10121a;
-      --bg-surface-elevated: #161924;
-      --bg-glass: rgba(16, 18, 26, 0.85);
+      --bg: #08090d;
+      --bg-surface: #0f1118;
+      --bg-surface-elevated: #171a26;
+      --bg-glass: rgba(15, 17, 24, 0.82);
       --border: rgba(255, 255, 255, 0.08);
-      --border-focus: rgba(255, 159, 10, 0.4);
-      --text: #f4f5f8;
-      --text-muted: #9ba1b0;
-      --text-dim: #656c7d;
-      --alok-gold: #ffb800;
-      --alok-orange: #ff6b00;
-      --alok-glow: rgba(255, 159, 10, 0.25);
-      --accent-gradient: linear-gradient(135deg, #ffb800 0%, #ff5500 50%, #d40078 100%);
-      --accent-cyan: #00e5ff;
-      --accent-green: #00e676;
-      --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      --border-subtle: rgba(255, 255, 255, 0.04);
+      --border-glow: rgba(245, 158, 11, 0.35);
+      --border-focus: rgba(245, 158, 11, 0.6);
+      --text: #f4f6fb;
+      --text-muted: #9da4b4;
+      --text-dim: #646c7f;
+      --alok-gold: #f59e0b;
+      --alok-orange: #ff6a00;
+      --alok-glow: rgba(245, 158, 11, 0.28);
+      --accent-gradient: linear-gradient(135deg, #f59e0b 0%, #ff5722 52%, #e11d48 100%);
+      --accent-gradient-glow: linear-gradient(135deg, rgba(245, 158, 11, 0.4) 0%, rgba(255, 87, 34, 0.4) 52%, rgba(225, 29, 72, 0.4) 100%);
+      --accent-emerald: #10b981;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --card-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
       --font-main: 'Plus Jakarta Sans', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
     }
 
     [data-theme="light"] {
-      --bg: #f8f9fc;
+      --bg: #f8fafc;
       --bg-surface: #ffffff;
-      --bg-surface-elevated: #f0f2f7;
-      --bg-glass: rgba(255, 255, 255, 0.9);
-      --border: rgba(0, 0, 0, 0.08);
-      --border-focus: rgba(255, 107, 0, 0.4);
-      --text: #11141c;
-      --text-muted: #525968;
-      --text-dim: #8b92a2;
-      --alok-gold: #e67700;
-      --alok-orange: #d9480f;
-      --alok-glow: rgba(230, 119, 0, 0.15);
-      --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+      --bg-surface-elevated: #f1f5f9;
+      --bg-glass: rgba(255, 255, 255, 0.90);
+      --border: rgba(15, 23, 42, 0.08);
+      --border-subtle: rgba(15, 23, 42, 0.04);
+      --border-glow: rgba(217, 119, 6, 0.35);
+      --border-focus: rgba(217, 119, 6, 0.6);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --alok-gold: #d97706;
+      --alok-orange: #ea580c;
+      --alok-glow: rgba(217, 119, 6, 0.16);
+      --accent-gradient: linear-gradient(135deg, #d97706 0%, #ea580c 52%, #be123c 100%);
+      --accent-gradient-glow: linear-gradient(135deg, rgba(217, 119, 6, 0.25) 0%, rgba(234, 88, 12, 0.25) 52%, rgba(190, 18, 60, 0.25) 100%);
+      --accent-emerald: #059669;
+      --accent-cyan: #0891b2;
+      --accent-purple: #7c3aed;
+      --card-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
     }
 
     * {
@@ -59,6 +80,10 @@
       padding: 0;
       -webkit-font-smoothing: antialiased;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     html, body {
@@ -73,45 +98,78 @@
       font-family: var(--font-main);
       line-height: 1.6;
       transition: background-color 0.3s ease, color 0.3s ease;
-      padding-bottom: 70px; /* Space for mobile sticky CTA */
+      padding-bottom: 75px;
     }
 
-    /* Ambient Glow Background Spheres */
+    /* Ambient Background Mesh & Glow */
+    .bg-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1400px;
+      background-image: 
+        radial-gradient(rgba(245, 158, 11, 0.08) 1px, transparent 1px),
+        radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px, 20px 20px;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    }
+
+    [data-theme="light"] .bg-grid {
+      background-image: 
+        radial-gradient(rgba(217, 119, 6, 0.06) 1px, transparent 1px),
+        radial-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    }
+
     .ambient-glow {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 1000px;
+      height: 1200px;
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
     }
     .glow-sphere-1 {
       position: absolute;
-      top: -120px;
-      left: 10%;
-      width: clamp(300px, 50vw, 600px);
-      height: clamp(300px, 50vw, 600px);
-      background: radial-gradient(circle, rgba(255, 120, 0, 0.12) 0%, rgba(255, 85, 0, 0) 70%);
-      filter: blur(80px);
+      top: -160px;
+      left: 15%;
+      width: clamp(350px, 55vw, 700px);
+      height: clamp(350px, 55vw, 700px);
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, rgba(255, 106, 0, 0.08) 45%, rgba(0,0,0,0) 70%);
+      filter: blur(100px);
       border-radius: 50%;
+      animation: floatSlow 18s ease-in-out infinite alternate;
     }
     .glow-sphere-2 {
       position: absolute;
-      top: 200px;
-      right: 5%;
-      width: clamp(250px, 40vw, 500px);
-      height: clamp(250px, 40vw, 500px);
-      background: radial-gradient(circle, rgba(212, 0, 120, 0.10) 0%, rgba(212, 0, 120, 0) 70%);
-      filter: blur(80px);
+      top: 260px;
+      right: 10%;
+      width: clamp(300px, 45vw, 600px);
+      height: clamp(300px, 45vw, 600px);
+      background: radial-gradient(circle, rgba(225, 29, 72, 0.13) 0%, rgba(139, 92, 246, 0.06) 50%, rgba(0,0,0,0) 70%);
+      filter: blur(100px);
       border-radius: 50%;
+      animation: floatSlow2 22s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatSlow {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, 40px) scale(1.08); }
+    }
+    @keyframes floatSlow2 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-30px, -35px) scale(1.05); }
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 0 clamp(16px, 4vw, 32px);
+      padding: 0 clamp(16px, 4vw, 36px);
       position: relative;
       z-index: 1;
     }
@@ -121,20 +179,20 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       background-color: var(--bg-glass);
       border-bottom: 1px solid var(--border);
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, border-color 0.3s;
     }
     .navbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 68px;
-      max-width: 1200px;
+      height: 72px;
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 0 clamp(16px, 4vw, 32px);
+      padding: 0 clamp(16px, 4vw, 36px);
     }
     .brand {
       display: flex;
@@ -142,12 +200,27 @@
       gap: 12px;
       text-decoration: none;
       color: var(--text);
+      transition: transform 0.2s;
     }
-    .brand-logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    .brand:hover {
+      transform: translateY(-1px);
+    }
+    .brand-logo-frame {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .brand-text {
       display: flex;
@@ -155,14 +228,14 @@
     }
     .brand-title {
       font-weight: 800;
-      font-size: 1.15rem;
-      letter-spacing: -0.3px;
-      line-height: 1.2;
+      font-size: 1.18rem;
+      letter-spacing: -0.4px;
+      line-height: 1.15;
     }
     .brand-sub {
       font-size: 0.72rem;
       color: var(--text-muted);
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       display: flex;
       align-items: center;
       gap: 4px;
@@ -182,11 +255,27 @@
       text-decoration: none;
       font-size: 0.92rem;
       font-weight: 600;
-      transition: color 0.2s;
+      transition: color 0.2s, transform 0.2s;
+      position: relative;
     }
     .nav-link:hover {
       color: var(--text);
     }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--alok-gold);
+      border-radius: 2px;
+      transition: width 0.25s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
     .nav-actions {
       display: flex;
       align-items: center;
@@ -196,38 +285,39 @@
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border);
       color: var(--text);
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 7px 12px;
+      padding: 8px 14px;
       border-radius: 999px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       transition: all 0.2s;
       flex-shrink: 0;
     }
     .lang-btn:hover {
       border-color: var(--alok-gold);
       color: var(--alok-gold);
-      transform: scale(1.04);
+      transform: translateY(-1px);
     }
     .theme-btn {
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border);
       color: var(--text);
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.2s, background-color 0.2s;
+      transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
       flex-shrink: 0;
     }
     .theme-btn:hover {
-      transform: scale(1.06);
+      transform: scale(1.08) rotate(10deg);
+      border-color: var(--alok-gold);
     }
     .btn-nav-download {
       background: var(--accent-gradient);
@@ -240,60 +330,65 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 4px 15px var(--alok-glow);
+      box-shadow: 0 4px 18px var(--alok-glow);
       transition: transform 0.2s, box-shadow 0.2s;
       white-space: nowrap;
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
     .btn-nav-download:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(255, 107, 0, 0.4);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.45);
     }
 
     /* Hero Section */
     .hero {
-      padding: 48px 0 64px;
+      padding: 56px 0 68px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: relative;
     }
     .alok-top-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
+      gap: 10px;
+      padding: 7px 16px;
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border);
       border-radius: 999px;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       font-weight: 600;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 100%;
-      text-align: left;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .alok-top-pill:hover {
+      border-color: var(--alok-gold);
+      transform: translateY(-1px);
     }
     .pulse-dot {
       width: 8px;
       height: 8px;
-      background-color: #00e676;
+      background-color: var(--accent-emerald);
       border-radius: 50%;
-      box-shadow: 0 0 10px #00e676;
+      box-shadow: 0 0 10px var(--accent-emerald);
       animation: pulse 2s infinite;
       flex-shrink: 0;
     }
     @keyframes pulse {
       0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.25); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 1; }
       100% { transform: scale(0.95); opacity: 0.8; }
     }
 
     .hero-title {
-      font-size: clamp(1.85rem, 6.5vw, 4.4rem);
+      font-size: clamp(2.2rem, 7vw, 4.6rem);
       font-weight: 800;
-      letter-spacing: -1.2px;
-      line-height: 1.2;
-      max-width: 960px;
-      margin-bottom: 18px;
+      letter-spacing: -1.6px;
+      line-height: 1.15;
+      max-width: 980px;
+      margin-bottom: 22px;
       word-break: normal;
       overflow-wrap: break-word;
     }
@@ -304,159 +399,239 @@
       display: inline-block;
     }
     .hero-sub {
-      font-size: clamp(0.98rem, 2.5vw, 1.25rem);
+      font-size: clamp(1.02rem, 2.6vw, 1.28rem);
       color: var(--text-muted);
-      max-width: 760px;
-      margin-bottom: 36px;
-      line-height: 1.6;
-      padding: 0 8px;
+      max-width: 780px;
+      margin-bottom: 38px;
+      line-height: 1.65;
+      padding: 0 10px;
     }
 
+    /* CTA Group */
     .hero-cta-group {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
       width: 100%;
     }
     .hero-btn-row {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 14px;
+      gap: 16px;
       width: 100%;
-      max-width: 580px;
+      max-width: 640px;
     }
     .btn-primary-large {
       background: var(--accent-gradient);
       color: #ffffff;
-      padding: 16px 32px;
+      padding: 16px 34px;
       font-size: 1.05rem;
       font-weight: 700;
-      border-radius: 16px;
+      border-radius: 18px;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 12px;
-      box-shadow: 0 12px 30px var(--alok-glow);
-      transition: all 0.25s ease;
+      gap: 14px;
+      box-shadow: 0 14px 34px var(--alok-glow);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      flex: 1 1 260px;
+      flex: 1 1 280px;
       justify-content: center;
       text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary-large::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .btn-primary-large:hover::before {
+      opacity: 1;
     }
     .btn-primary-large:hover {
       transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(255, 107, 0, 0.5);
+      box-shadow: 0 20px 45px rgba(245, 158, 11, 0.55);
     }
+    .btn-primary-large:active {
+      transform: translateY(-1px) scale(0.99);
+    }
+
     .btn-secondary-large {
       background: var(--bg-surface-elevated);
       color: var(--text);
-      padding: 16px 24px;
+      padding: 16px 28px;
       font-size: 1rem;
-      font-weight: 600;
-      border-radius: 16px;
+      font-weight: 700;
+      border-radius: 18px;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 10px;
       border: 1px solid var(--border);
-      transition: all 0.2s ease;
-      flex: 1 1 200px;
+      transition: all 0.25s ease;
+      flex: 1 1 220px;
       justify-content: center;
     }
     .btn-secondary-large:hover {
-      background: var(--bg-surface);
-      border-color: var(--text-muted);
+      background: var(--border);
+      border-color: var(--alok-gold);
       transform: translateY(-2px);
+      color: var(--alok-gold);
     }
 
-    .hero-meta-badge {
+    /* Download Help & Checksum Pill */
+    .download-verify-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      margin-top: 8px;
-      font-size: 0.85rem;
+      gap: 12px;
+      font-size: 0.78rem;
       color: var(--text-dim);
+      margin-top: 4px;
+    }
+    .verify-pill {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .verify-pill:hover {
+      border-color: var(--alok-gold);
+      color: var(--alok-gold);
+    }
+    .mirror-link {
+      color: var(--alok-gold);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .mirror-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Trust Meta Row */
+    .hero-meta-badge {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(14px, 3vw, 24px);
+      margin-top: 10px;
+      padding: 12px 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
     .meta-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
     }
 
-    /* Key Metrics Bar */
+    /* Metrics Bar */
     .metrics-bar {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
-      margin: 48px 0 72px;
-      padding: 24px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      box-shadow: var(--card-shadow);
+      margin: 48px 0 80px;
     }
     .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px 22px;
       text-align: center;
-      padding: 10px;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: transparent;
+      transition: background 0.3s;
+    }
+    .metric-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-glow);
+    }
+    .metric-card:hover::before {
+      background: var(--accent-gradient);
     }
     .metric-val {
-      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      font-size: 2.35rem;
       font-weight: 800;
       letter-spacing: -1px;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      line-height: 1.15;
+      margin-bottom: 8px;
     }
     .metric-label {
-      font-size: 0.82rem;
+      font-size: 0.86rem;
       color: var(--text-muted);
       font-weight: 500;
-      line-height: 1.35;
     }
 
-    /* Interactive Showcase (Phone Frame) */
+    /* Interactive Phone Showcase */
     .showcase-section {
-      padding: 30px 0 60px;
+      padding: 40px 0 90px;
     }
     .section-header {
       text-align: center;
-      margin-bottom: 36px;
+      max-width: 760px;
+      margin: 0 auto 46px;
     }
     .section-tag {
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
       color: var(--alok-gold);
-      margin-bottom: 8px;
-      display: inline-block;
+      margin-bottom: 12px;
     }
     .section-title {
-      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-size: clamp(1.8rem, 4.5vw, 2.8rem);
       font-weight: 800;
       letter-spacing: -0.8px;
-      margin-bottom: 12px;
-      line-height: 1.25;
+      line-height: 1.2;
+      margin-bottom: 16px;
     }
     .section-sub {
-      font-size: clamp(0.92rem, 2vw, 1.05rem);
+      font-size: 1.05rem;
       color: var(--text-muted);
-      max-width: 640px;
-      margin: 0 auto;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
+    /* Showcase Tabs */
     .phone-showcase-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 28px;
+      gap: 32px;
     }
     .showcase-tabs {
       display: flex;
@@ -467,107 +642,171 @@
       padding: 6px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      max-width: 100%;
+      max-width: 900px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
     }
     .tab-btn {
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 8px 18px;
-      font-size: 0.88rem;
-      font-weight: 600;
+      padding: 9px 18px;
+      font-size: 0.86rem;
+      font-weight: 700;
       border-radius: 999px;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
+      gap: 7px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: inherit;
     }
     .tab-btn:hover {
       color: var(--text);
     }
     .tab-btn.active {
-      background: var(--bg-surface-elevated);
-      color: var(--alok-gold);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-      border: 1px solid var(--border);
+      background: var(--accent-gradient);
+      color: #ffffff;
+      box-shadow: 0 4px 15px var(--alok-glow);
+    }
+    .tab-badge {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.25);
+      color: #fff;
+      font-weight: 800;
     }
 
+    /* Realistic Phone Frame */
     .phone-mockup-wrapper {
       position: relative;
-      display: flex;
-      justify-content: center;
       width: 100%;
-      max-width: 380px;
+      max-width: 375px;
+      margin: 0 auto;
+      perspective: 1000px;
     }
     .phone-mockup {
       width: 100%;
-      aspect-ratio: 9 / 19.5;
       background: #000000;
+      border: 11px solid #1c1f28;
       border-radius: 46px;
-      padding: 12px;
-      box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7), inset 0 0 0 2px rgba(255, 255, 255, 0.15);
+      box-shadow: 
+        0 30px 80px -20px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        inset 0 0 0 2px rgba(255, 255, 255, 0.08);
       position: relative;
       overflow: hidden;
-    }
-    .phone-notch {
-      position: absolute;
-      top: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 24px;
-      background: #000000;
-      border-radius: 14px;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .camera-lens {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #111;
-      border: 1px solid #222;
-    }
-    .phone-screen {
-      width: 100%;
-      height: 100%;
-      background: var(--bg);
-      border-radius: 36px;
-      overflow: hidden;
+      aspect-ratio: 9 / 18.5;
       display: flex;
       flex-direction: column;
-      padding: 38px 14px 18px;
-      box-sizing: border-box;
-      position: relative;
+    }
+    [data-theme="light"] .phone-mockup {
+      border-color: #2b2f3a;
+      box-shadow: 
+        0 25px 60px -15px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(0, 0, 0, 0.2);
     }
 
-    /* Screen UI elements */
-    .app-top-bar {
+    /* Dynamic Island Notch */
+    .phone-notch {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 105px;
+      height: 24px;
+      background: #000000;
+      border-radius: 16px;
+      z-index: 50;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      padding: 0 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .camera-lens {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #0d1424;
+      border: 1px solid #1f2a40;
+    }
+    .notch-sensor {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #090a0f;
+    }
+
+    /* Phone Screen Inner */
+    .phone-screen {
+      flex: 1;
+      background-color: var(--bg-surface);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 38px 14px 16px;
+      font-size: 0.85rem;
+      position: relative;
+    }
+    .phone-screen::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Status Bar */
+    .phone-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0 6px 12px;
+      color: var(--text);
+    }
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+    }
+    .offline-tag-mini {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* Mock App Top Bar */
+    .app-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
     }
     .app-brand-pill {
-      font-size: 0.85rem;
       font-weight: 800;
+      font-size: 1.05rem;
       display: flex;
       align-items: center;
       gap: 6px;
     }
     .app-search-box {
-      background: var(--bg-surface);
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 8px 12px;
-      font-size: 0.78rem;
-      color: var(--text-dim);
       display: flex;
       align-items: center;
       gap: 8px;
+      color: var(--text-dim);
+      font-size: 0.76rem;
       margin-bottom: 12px;
     }
     .app-tags-scroll {
@@ -575,43 +814,47 @@
       gap: 6px;
       overflow-x: auto;
       padding-bottom: 8px;
-      scrollbar-width: none;
+      margin-bottom: 12px;
     }
-    .app-tags-scroll::-webkit-scrollbar { display: none; }
+    .app-tags-scroll::-webkit-scrollbar {
+      display: none;
+    }
     .tag-chip {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 999px;
       font-size: 0.72rem;
       font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 8px;
-      background: var(--bg-surface);
-      color: var(--text-muted);
       white-space: nowrap;
-      border: 1px solid var(--border);
+      cursor: pointer;
     }
     .tag-chip.active {
-      background: rgba(255, 184, 0, 0.12);
-      color: var(--alok-gold);
-      border-color: rgba(255, 184, 0, 0.3);
+      background: var(--alok-gold);
+      color: #000;
+      border-color: var(--alok-gold);
+      font-weight: 700;
     }
 
+    /* Mock Cards Inside Phone */
     .mock-card {
-      background: var(--bg-surface);
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px;
       margin-bottom: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      transition: transform 0.2s;
     }
     .mock-title {
-      font-size: 0.86rem;
       font-weight: 700;
+      font-size: 0.88rem;
       margin-bottom: 4px;
       color: var(--text);
     }
     .mock-snippet {
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.45;
       margin-bottom: 8px;
     }
     .mock-footer {
@@ -622,38 +865,94 @@
       color: var(--text-dim);
     }
     .mock-audio-pill {
-      background: rgba(255, 107, 0, 0.12);
-      border: 1px solid rgba(255, 107, 0, 0.25);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.25);
       border-radius: 8px;
       padding: 6px 10px;
       display: flex;
       align-items: center;
       gap: 8px;
+      color: var(--alok-gold);
+      font-size: 0.74rem;
       margin-bottom: 8px;
-      font-size: 0.72rem;
-      color: var(--alok-orange);
-      font-weight: 600;
     }
     .mock-waveform {
       display: flex;
       align-items: center;
       gap: 2px;
-      height: 12px;
+      height: 14px;
     }
     .wave-bar {
       width: 2px;
-      background: currentColor;
+      height: 100%;
+      background: var(--alok-gold);
       border-radius: 1px;
+      animation: wave 1.2s ease-in-out infinite alternate;
     }
-    .wave-bar:nth-child(1) { height: 4px; }
-    .wave-bar:nth-child(2) { height: 10px; }
-    .wave-bar:nth-child(3) { height: 7px; }
-    .wave-bar:nth-child(4) { height: 12px; }
-    .wave-bar:nth-child(5) { height: 5px; }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; height: 60%; }
+    .wave-bar:nth-child(3) { animation-delay: 0.4s; height: 90%; }
+    .wave-bar:nth-child(4) { animation-delay: 0.1s; height: 40%; }
+    .wave-bar:nth-child(5) { animation-delay: 0.5s; height: 75%; }
+    @keyframes wave {
+      0% { transform: scaleY(0.3); }
+      100% { transform: scaleY(1); }
+    }
 
-    /* Bento Grid Feature Section */
+    /* Markdown Reader Showcase Mock Card */
+    .markdown-preview-box {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .md-h1 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+    }
+    .md-bold {
+      font-weight: 700;
+      color: var(--alok-gold);
+    }
+    .md-italic {
+      font-style: italic;
+      color: var(--text);
+    }
+    .md-quote {
+      border-left: 3px solid var(--alok-gold);
+      padding-left: 10px;
+      margin: 8px 0;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .md-check-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 4px 0;
+      font-size: 0.75rem;
+    }
+    .md-check-box {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+      background: var(--accent-emerald);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    /* Bento Grid Features Section */
     .bento-section {
-      padding: 60px 0;
+      padding: 80px 0;
     }
     .bento-grid {
       display: grid;
@@ -663,38 +962,37 @@
     .bento-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 32px 28px;
-      position: relative;
-      overflow: hidden;
+      border-radius: 24px;
+      padding: clamp(24px, 4vw, 36px);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      position: relative;
+      overflow: hidden;
       box-shadow: var(--card-shadow);
-      transition: transform 0.25s, border-color 0.25s;
+      transition: all 0.28s ease;
     }
     .bento-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--border-focus);
+      transform: translateY(-5px);
+      border-color: var(--border-glow);
+      box-shadow: 0 28px 60px -15px rgba(0, 0, 0, 0.6);
     }
-    .bento-card.col-8 { grid-column: span 8; }
-    .bento-card.col-4 { grid-column: span 4; }
-    .bento-card.col-6 { grid-column: span 6; }
-    .bento-card.col-12 { grid-column: span 12; }
+    .col-8 { grid-column: span 8; }
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
 
     .bento-badge {
       display: inline-flex;
       align-items: center;
-      font-size: 0.72rem;
+      gap: 6px;
+      font-size: 0.74rem;
       font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 999px;
-      background: rgba(255, 184, 0, 0.12);
+      background: rgba(245, 158, 11, 0.12);
       color: var(--alok-gold);
-      border: 1px solid rgba(255, 184, 0, 0.2);
       margin-bottom: 16px;
+      border: 1px solid rgba(245, 158, 11, 0.2);
     }
     .bento-icon-wrapper {
       width: 52px;
@@ -705,117 +1003,254 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
       color: var(--alok-gold);
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
     }
     .bento-title {
-      font-size: 1.35rem;
+      font-size: 1.32rem;
       font-weight: 800;
       letter-spacing: -0.4px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       line-height: 1.3;
     }
     .bento-desc {
-      font-size: 0.94rem;
       color: var(--text-muted);
+      font-size: 0.94rem;
       line-height: 1.6;
+    }
+    .bento-code-block {
+      background: #000000;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: var(--font-code);
+      font-size: 0.82rem;
+      color: var(--accent-emerald);
+      margin-top: 18px;
+      overflow-x: auto;
+    }
+
+    /* Live Markdown Interactive Sandbox */
+    .sandbox-section {
+      padding: 60px 0 90px;
+    }
+    .sandbox-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: clamp(24px, 4vw, 44px);
+      box-shadow: var(--card-shadow);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: stretch;
+    }
+    .sandbox-editor-side {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .sandbox-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px;
+      background: var(--bg-surface-elevated);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .sandbox-tool-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sandbox-tool-btn:hover {
+      border-color: var(--alok-gold);
+      color: var(--alok-gold);
+    }
+    .sandbox-textarea {
+      width: 100%;
+      height: 220px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--text);
+      font-family: var(--font-code);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .sandbox-textarea:focus {
+      border-color: var(--border-focus);
+    }
+    .sandbox-preview-side {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 320px;
+    }
+    .sandbox-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
     }
 
     /* Manifesto Section */
     .manifesto-section {
-      padding: 60px 0;
-      text-align: center;
+      padding: 60px 0 90px;
     }
     .manifesto-box {
-      background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
-      border: 1px solid var(--border);
-      border-radius: 36px;
-      padding: 64px 32px;
+      background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.08) 0%, rgba(15, 17, 24, 0.95) 70%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 32px;
+      padding: clamp(32px, 6vw, 64px);
+      text-align: center;
       position: relative;
-      overflow: hidden;
-      box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.4);
-    }
-    .manifesto-quote {
-      font-size: clamp(1.4rem, 3.5vw, 2.3rem);
-      font-weight: 800;
-      letter-spacing: -0.6px;
-      line-height: 1.35;
-      max-width: 820px;
-      margin: 0 auto 20px;
-      color: var(--text);
-    }
-    .manifesto-sub {
-      font-size: clamp(0.95rem, 2vw, 1.15rem);
-      color: var(--text-muted);
-      max-width: 680px;
-      margin: 0 auto 36px;
-      line-height: 1.7;
+      box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 158, 11, 0.08);
     }
     .alok-author {
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--alok-gold);
       margin-bottom: 14px;
     }
+    .manifesto-quote {
+      font-size: clamp(1.4rem, 3.8vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      line-height: 1.35;
+      max-width: 860px;
+      margin: 0 auto 24px;
+      color: var(--text);
+    }
+    .manifesto-sub {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
 
-    /* Comparison Table */
+    /* Comparison Table Section */
     .compare-section {
-      padding: 60px 0;
+      padding: 60px 0 90px;
     }
     .table-scroll-hint {
       display: none;
-      text-align: center;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: var(--text-dim);
+      text-align: center;
       margin-bottom: 12px;
-      font-weight: 500;
     }
     .compare-table-wrapper {
-      width: 100%;
-      overflow-x: auto;
-      border-radius: 24px;
-      border: 1px solid var(--border);
       background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow-x: auto;
       box-shadow: var(--card-shadow);
-      -webkit-overflow-scrolling: touch;
     }
     .compare-table {
       width: 100%;
-      min-width: 600px;
       border-collapse: collapse;
       text-align: left;
-    }
-    .compare-table th, .compare-table td {
-      padding: 18px 22px;
-      border-bottom: 1px solid var(--border);
       font-size: 0.94rem;
+      min-width: 650px;
+    }
+    .compare-table th, 
+    .compare-table td {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
     }
     .compare-table th {
       background: var(--bg-surface-elevated);
-      color: var(--text-muted);
-      font-weight: 700;
+      font-weight: 800;
+      color: var(--text);
       font-size: 0.85rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
     }
     .compare-table tbody tr:last-child td {
       border-bottom: none;
     }
     .compare-table .highlight-col {
-      background: rgba(255, 184, 0, 0.04);
+      background: rgba(245, 158, 11, 0.05);
       font-weight: 700;
       color: var(--text);
-      border-left: 1px solid rgba(255, 184, 0, 0.15);
-      border-right: 1px solid rgba(255, 184, 0, 0.15);
+      border-left: 1px solid rgba(245, 158, 11, 0.2);
+      border-right: 1px solid rgba(245, 158, 11, 0.2);
     }
     .check-yes {
-      color: var(--accent-green);
+      color: var(--accent-emerald);
       font-weight: 700;
     }
     .cross-no {
-      color: #ff5252;
+      color: #ef4444;
+    }
+
+    /* Installation Steps Section */
+    .install-section {
+      padding: 60px 0 90px;
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 36px;
+    }
+    .step-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      position: relative;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .step-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--alok-gold);
+    }
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-gradient);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .step-title {
+      font-weight: 700;
+      font-size: 1.12rem;
+      margin-bottom: 8px;
+    }
+    .step-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.55;
     }
 
     /* FAQ Section */
@@ -826,14 +1261,14 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 14px;
-      max-width: 820px;
+      max-width: 840px;
       margin: 0 auto;
     }
     .faq-item {
       background: var(--bg-surface);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 22px 24px;
+      border-radius: 20px;
+      padding: 22px 26px;
       cursor: pointer;
       transition: background-color 0.2s, border-color 0.2s;
     }
@@ -847,52 +1282,68 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
     .faq-a {
-      margin-top: 12px;
+      margin-top: 14px;
       color: var(--text-muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
+      font-size: 0.94rem;
+      line-height: 1.65;
       display: none;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
     }
     .faq-icon {
       font-size: 1.4rem;
       color: var(--alok-gold);
       font-weight: 400;
       flex-shrink: 0;
+      transition: transform 0.2s;
     }
 
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
-      padding: 48px 0;
+      padding: 56px 0 36px;
       background: var(--bg-surface);
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
     .footer-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 24px;
+      gap: 32px;
     }
     .footer-brand {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+    }
+    .footer-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-link:hover {
+      color: var(--alok-gold);
     }
     .footer-bottom {
-      margin-top: 36px;
+      margin-top: 40px;
       padding-top: 24px;
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 14px;
       color: var(--text-dim);
-      font-size: 0.8rem;
+      font-size: 0.82rem;
     }
 
     /* Mobile Sticky Floating Download Bar */
@@ -904,30 +1355,31 @@
       right: 0;
       z-index: 99;
       background: var(--bg-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       border-top: 1px solid var(--border);
-      padding: 10px 16px max(10px, env(safe-area-inset-bottom));
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
+      padding: 12px 18px max(12px, env(safe-area-inset-bottom));
+      box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.4);
     }
     .mobile-bottom-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      max-width: 480px;
+      gap: 14px;
+      max-width: 500px;
       margin: 0 auto;
     }
     .bottom-app-info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
     .bottom-app-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
       flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
     .bottom-app-text {
       display: flex;
@@ -935,233 +1387,93 @@
     }
     .bottom-app-name {
       font-weight: 800;
-      font-size: 0.92rem;
+      font-size: 0.96rem;
       line-height: 1.2;
     }
     .bottom-app-sub {
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       color: var(--text-muted);
     }
     .bottom-download-btn {
       background: var(--accent-gradient);
       color: #fff;
       font-weight: 700;
-      font-size: 0.84rem;
-      padding: 9px 18px;
+      font-size: 0.88rem;
+      padding: 10px 20px;
       border-radius: 999px;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 12px var(--alok-glow);
+      box-shadow: 0 4px 15px var(--alok-glow);
       white-space: nowrap;
-      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     /* Toast Notification */
     .toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
+      bottom: 85px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
       background: var(--bg-surface-elevated);
-      border: 1px solid var(--border);
+      border: 1px solid var(--alok-gold);
       color: var(--text);
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      padding: 12px 24px;
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--alok-glow);
       z-index: 1000;
       opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s ease;
       pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 0.88rem;
     }
     .toast.show {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateX(-50%) translateY(0);
       pointer-events: auto;
     }
 
-    /* Responsive Media Queries */
+    /* Responsive Breakpoints */
     @media (max-width: 992px) {
-      .bento-card.col-8, .bento-card.col-4, .bento-card.col-6 {
+      .col-8, .col-6, .col-4 {
         grid-column: span 12;
       }
-      .metrics-bar {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin: 36px 0 48px;
-        padding: 18px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .navbar {
-        height: 60px;
+      .sandbox-card {
+        grid-template-columns: 1fr;
       }
       .nav-links {
         display: none;
       }
-      .hero {
-        padding: 32px 0 40px;
-      }
-      .alok-top-pill {
-        font-size: 0.74rem;
-        padding: 5px 12px;
-      }
-      .hero-title {
-        letter-spacing: -0.6px;
-        line-height: 1.25;
-      }
-      .hero-sub {
-        margin-bottom: 24px;
-      }
-      .hero-btn-row {
-        flex-direction: column;
-        width: 100%;
-        max-width: 360px;
-      }
-      .btn-primary-large, .btn-secondary-large {
-        width: 100%;
-        flex: 1 1 auto;
-        padding: 14px 20px;
-        font-size: 0.95rem;
-      }
-      .hero-meta-badge {
-        font-size: 0.78rem;
-        gap: 10px;
-      }
+    }
 
-      /* Phone Mockup Mobile */
-      .phone-mockup-wrapper {
-        max-width: 320px;
+    @media (max-width: 768px) {
+      body {
+        padding-bottom: 95px;
       }
-      .phone-mockup {
-        border-radius: 40px;
-        padding: 10px;
-      }
-      .phone-notch {
-        width: 80px;
-        height: 18px;
-        top: 8px;
-      }
-      .phone-screen {
-        padding: 30px 12px 16px;
-      }
-      .showcase-tabs {
-        width: 100%;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        scrollbar-width: none;
-        padding: 4px;
-      }
-      .showcase-tabs::-webkit-scrollbar {
-        display: none;
-      }
-      .tab-btn {
-        padding: 7px 14px;
-        font-size: 0.8rem;
-        flex-shrink: 0;
-      }
-
-      /* Bento Cards Mobile */
-      .bento-section {
-        padding: 40px 0;
-      }
-      .bento-card {
-        padding: 24px 18px;
-        border-radius: 20px;
-      }
-      .bento-title {
-        font-size: 1.2rem;
-      }
-      .bento-desc {
-        font-size: 0.88rem;
-      }
-      .bento-icon-wrapper {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        margin-bottom: 16px;
-      }
-
-      /* Manifesto Mobile */
-      .manifesto-section {
-        padding: 40px 0;
-      }
-      .manifesto-box {
-        padding: 32px 18px;
-        border-radius: 24px;
-      }
-      .manifesto-quote {
-        font-size: 1.25rem;
-      }
-      .manifesto-sub {
-        font-size: 0.88rem;
-      }
-
-      /* Table Scroll Hint */
-      .table-scroll-hint {
-        display: block;
-      }
-      .compare-section {
-        padding: 40px 0;
-      }
-
-      /* FAQ Mobile */
-      .faq-section {
-        padding: 36px 0 60px;
-      }
-      .faq-item {
-        padding: 16px;
-        border-radius: 14px;
-      }
-      .faq-q {
-        font-size: 0.94rem;
-      }
-      .faq-a {
-        font-size: 0.84rem;
-      }
-
-      /* Footer Mobile */
-      .footer-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-      }
-      .footer-bottom {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
-
-      /* Show Sticky Floating Download Bar */
       .mobile-bottom-bar {
         display: block;
       }
-      .toast {
-        bottom: 84px;
+      .hero {
+        padding: 40px 0 54px;
       }
-    }
-
-    /* Extra Small Screen (< 360px) */
-    @media (max-width: 360px) {
-      .hero-title {
-        font-size: 1.55rem;
+      .table-scroll-hint {
+        display: block;
       }
-      .metrics-bar {
-        grid-template-columns: 1fr;
+      .btn-nav-download {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Light Glow Elements -->
+  <!-- Ambient Mesh Background -->
+  <div class="bg-grid"></div>
   <div class="ambient-glow">
     <div class="glow-sphere-1"></div>
     <div class="glow-sphere-2"></div>
@@ -1171,25 +1483,28 @@
   <div class="navbar-wrapper">
     <nav class="navbar">
       <a href="#" class="brand">
-        <img src="./alonote_icon.png" alt="AloNote Icon" class="brand-logo" onerror="this.src='./logo.svg'">
+        <div class="brand-logo-frame">
+          <img src="./alonote_icon.png" alt="AloNote Logo" class="brand-logo-img" onerror="this.src='./logo.svg'">
+        </div>
         <div class="brand-text">
-          <div class="brand-title">AloNote</div>
-          <div class="brand-sub"><span class="alok-badge-mini">Alokpath</span> Ecosystem</div>
+          <span class="brand-title">AloNote</span>
+          <span class="brand-sub">by <span class="alok-badge-mini">Alokpath</span></span>
         </div>
       </a>
 
       <div class="nav-links">
         <a href="#features" class="nav-link" data-i18n="nav_features">Features</a>
         <a href="#showcase" class="nav-link" data-i18n="nav_showcase">Showcase</a>
+        <a href="#sandbox" class="nav-link" data-i18n="nav_sandbox">Markdown Sandbox</a>
         <a href="#manifesto" class="nav-link" data-i18n="nav_manifesto">Manifesto</a>
         <a href="#comparison" class="nav-link" data-i18n="nav_comparison">Comparison</a>
         <a href="#faq" class="nav-link" data-i18n="nav_faq">FAQ</a>
       </div>
 
       <div class="nav-actions">
-        <!-- Language Switcher Button (Defaults to English; toggles to Bengali) -->
+        <!-- Language Switcher Button -->
         <button class="lang-btn" id="langToggleBtn" onclick="toggleLanguage()" aria-label="Switch Language">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           <span id="langBtnLabel">বাং</span>
         </button>
 
@@ -1200,7 +1515,7 @@
         </button>
 
         <!-- Download Nav Button -->
-        <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" class="btn-nav-download" download aria-label="Download APK">
+        <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" class="btn-nav-download" download="AloNote-v2.2.0.1-Alokpath.apk" onclick="handleDownloadClick(event, this)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           <span data-i18n="nav_download">Download APK</span>
         </a>
@@ -1213,7 +1528,7 @@
     <section class="hero">
       <div class="alok-top-pill">
         <span class="pulse-dot"></span>
-        <span data-i18n="hero_pill">Official Alokpath Release • Version 2.2.0.1</span>
+        <span data-i18n="hero_pill">Official Alokpath Release • Version 2.2.0.1 (Latest)</span>
       </div>
 
       <h1 class="hero-title" data-i18n="hero_title">
@@ -1228,32 +1543,46 @@
 
       <div class="hero-cta-group">
         <div class="hero-btn-row">
-          <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" class="btn-primary-large" download>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" class="btn-primary-large" download="AloNote-v2.2.0.1-Alokpath.apk" onclick="handleDownloadClick(event, this)">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             <div>
-              <div style="font-size: 1.05rem; line-height: 1.2;" data-i18n="hero_download_btn">Direct Download APK</div>
-              <div style="font-size: 0.74rem; font-weight: 500; opacity: 0.85;">v2.2.0.1 • 13 MB • Android 8.0+</div>
+              <div style="font-size: 1.08rem; line-height: 1.2;" data-i18n="hero_download_btn">Direct Download APK</div>
+              <div style="font-size: 0.75rem; font-weight: 500; opacity: 0.88;">v2.2.0.1 • 13 MB • Android 8.0+ • Free</div>
             </div>
           </a>
 
           <a href="https://gitlab.com/zihanfakir/alonote" target="_blank" rel="noopener noreferrer" class="btn-secondary-large">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 5.1 2a.43.43 0 0 1 .4.24l2.58 7.9h7.83l2.58-7.9a.43.43 0 0 1 .4-.24.42.42 0 0 1 .39.19l2.44 7.51 1.22 3.78a.84.84 0 0 1-.29.91z"/></svg>
-            <span data-i18n="hero_repo_btn">GitLab Repository</span>
+            <span data-i18n="hero_repo_btn">GitLab Source Code</span>
           </a>
+        </div>
+
+        <!-- Download Fallbacks & Verification -->
+        <div class="download-verify-bar">
+          <span data-i18n="download_trouble">Trouble downloading?</span>
+          <a href="https://gitlab.com/zihanfakir/alonote/-/raw/main/docs/downloads/AloNote-v2.2.0.1-Alokpath.apk?inline=false" class="mirror-link" target="_blank" rel="noopener noreferrer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span data-i18n="mirror_link">Direct GitLab Mirror</span>
+          </a>
+          <span>•</span>
+          <div class="verify-pill" onclick="copyChecksum()" title="Click to copy SHA-256 Checksum">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span>SHA-256: 7E6671...C5ADE</span>
+          </div>
         </div>
 
         <div class="hero-meta-badge">
           <div class="meta-item">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             <span data-i18n="meta_permission">Zero Internet Permission</span>
           </div>
           <div class="meta-item">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-i18n="meta_refresh">120Hz Native Performance</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="meta_refresh">120Hz Fluid Native Compose</span>
           </div>
           <div class="meta-item">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-i18n="meta_license">Open-Source (MIT)</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="meta_license">100% Free & Open Source</span>
           </div>
         </div>
       </div>
@@ -1263,26 +1592,26 @@
     <div class="metrics-bar">
       <div class="metric-card">
         <div class="metric-val gradient-text">100%</div>
-        <div class="metric-label" data-i18n="metric_1">Offline Privacy (Zero Cloud)</div>
+        <div class="metric-label" data-i18n="metric_1">Offline Sovereignty (Zero Cloud)</div>
       </div>
       <div class="metric-card">
-        <div class="metric-val" style="color: var(--accent-green);">0 KB</div>
+        <div class="metric-val" style="color: var(--accent-emerald);">0 KB</div>
         <div class="metric-label" data-i18n="metric_2">Data Sent to Remote Servers</div>
       </div>
       <div class="metric-card">
-        <div class="metric-val" style="color: var(--accent-cyan);">120 FPS</div>
-        <div class="metric-label" data-i18n="metric_3">Smooth, Cool Performance</div>
+        <div class="metric-val" style="color: var(--alok-gold);">85%</div>
+        <div class="metric-label" data-i18n="metric_3">Memory Cut & Zero Device Heating</div>
       </div>
       <div class="metric-card">
-        <div class="metric-val" style="color: var(--alok-gold);">1-Click</div>
-        <div class="metric-label" data-i18n="metric_4">Markdown & JSON Offline Backup</div>
+        <div class="metric-val" style="color: var(--accent-cyan);">1-Click</div>
+        <div class="metric-label" data-i18n="metric_4">Markdown & JSON Lossless Backup</div>
       </div>
     </div>
 
-    <!-- Phone Showcase Section -->
+    <!-- Interactive Phone Showcase -->
     <section class="showcase-section" id="showcase">
       <div class="section-header">
-        <span class="section-tag" data-i18n="showcase_tag">Interactive Preview</span>
+        <span class="section-tag" data-i18n="showcase_tag">Interactive Device Showcase</span>
         <h2 class="section-title" data-i18n="showcase_title">Simple, Refined & Distraction-Free</h2>
         <p class="section-sub" data-i18n="showcase_sub">No clutter or corporate surveillance. Open the app and capture your thoughts freely.</p>
       </div>
@@ -1294,9 +1623,10 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span data-i18n="tab_notes">Notes List</span>
           </button>
-          <button class="tab-btn" onclick="switchMockTab('splash', this)">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            <span data-i18n="tab_splash">Startup Splash (Meta Style)</span>
+          <button class="tab-btn" onclick="switchMockTab('reader', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span data-i18n="tab_reader">Clean Markdown</span>
+            <span class="tab-badge">v2.2.0.1</span>
           </button>
           <button class="tab-btn" onclick="switchMockTab('audio', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
@@ -1304,32 +1634,51 @@
           </button>
           <button class="tab-btn" onclick="switchMockTab('security', this)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span data-i18n="tab_security">Biometric Security</span>
+            <span data-i18n="tab_security">Biometric Lock</span>
+          </button>
+          <button class="tab-btn" onclick="switchMockTab('splash', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            <span data-i18n="tab_splash">Brand Splash</span>
           </button>
         </div>
 
         <!-- Phone Mockup Display -->
         <div class="phone-mockup-wrapper">
           <div class="phone-mockup">
+            <!-- Dynamic Island Notch -->
             <div class="phone-notch">
               <div class="camera-lens"></div>
+              <div class="notch-sensor"></div>
             </div>
 
             <div class="phone-screen" id="mockScreen">
-              <!-- Screen Header -->
+              <!-- Status bar -->
+              <div class="phone-status-bar">
+                <span id="mockClock">09:41</span>
+                <div class="status-icons">
+                  <span class="offline-tag-mini">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/></svg>
+                    OFFLINE
+                  </span>
+                  <span>100%</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="16" height="10" rx="2" ry="2"/><line x1="22" y1="11" x2="22" y2="13"/></svg>
+                </div>
+              </div>
+
+              <!-- Top Bar -->
               <div class="app-top-bar">
                 <div class="app-brand-pill">
                   <span style="color: var(--alok-gold);">✦</span> AloNote
                 </div>
-                <div style="display: flex; gap: 8px;">
-                  <span style="font-size: 0.74rem; padding: 3px 8px; background: var(--bg-surface-elevated); border-radius: 6px; border: 1px solid var(--border);">v2.2.0.1</span>
+                <div style="display: flex; gap: 6px;">
+                  <span style="font-size: 0.72rem; padding: 2px 7px; background: var(--bg-surface-elevated); border-radius: 6px; border: 1px solid var(--border);">v2.2.0.1</span>
                 </div>
               </div>
 
               <!-- Search box -->
               <div class="app-search-box">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <span data-i18n="mock_search_ph">Search notes... (ideas, books, journals)</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span data-i18n="mock_search_ph">Search notes... (ideas, journals, books)</span>
               </div>
 
               <!-- Tags -->
@@ -1369,7 +1718,7 @@
                   <div class="mock-snippet">Offline algorithm & local caching architecture voice memo.</div>
                   <div class="mock-footer">
                     <span>Yesterday, 5:40 PM</span>
-                    <span>Audio File</span>
+                    <span>Audio Memo</span>
                   </div>
                 </div>
 
@@ -1396,7 +1745,7 @@
     <!-- Bento Grid Features Section -->
     <section class="bento-section" id="features">
       <div class="section-header">
-        <span class="section-tag" data-i18n="bento_tag">Technical Excellence</span>
+        <span class="section-tag" data-i18n="bento_tag">Engineered For Excellence</span>
         <h2 class="section-title" data-i18n="bento_title">Why AloNote Stands Apart</h2>
         <p class="section-sub" data-i18n="bento_sub">Engineered to the highest standards for personal security, responsiveness, and peace of mind.</p>
       </div>
@@ -1412,14 +1761,21 @@
             <h3 class="bento-title" data-i18n="bento_1_title">True Network Sovereignty (Zero Cloud)</h3>
             <p class="bento-desc" data-i18n="bento_1_desc">
               AloNote has zero <code>INTERNET</code> permission in its source code and <code>AndroidManifest.xml</code>. 
-              Even if the app wanted to, it cannot physically transmit any data across the network.
+              Even if the app wanted to, it cannot physically transmit any byte of data across the network.
             </p>
+            <div class="bento-code-block">
+              &lt;!-- Verified AndroidManifest.xml: Zero Internet Permission --&gt;<br>
+              &lt;manifest xmlns:android="http://schemas.android.com/apk/res/android"&gt;<br>
+              &nbsp;&nbsp;&lt;!-- NO android.permission.INTERNET --&gt;<br>
+              &nbsp;&nbsp;&lt;!-- NO analytics, NO telemetry, NO trackers --&gt;
+            </div>
           </div>
         </div>
 
         <!-- 2. Integrated Audio Studio -->
         <div class="bento-card col-4">
           <div>
+            <span class="bento-badge" style="color: var(--alok-orange); border-color: rgba(255,106,0,0.3);">Local Audio Recording</span>
             <div class="bento-icon-wrapper" style="color: var(--alok-orange);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             </div>
@@ -1433,10 +1789,11 @@
         <!-- 3. Thermal & Battery Fix -->
         <div class="bento-card col-4">
           <div>
-            <div class="bento-icon-wrapper" style="color: var(--accent-green);">
+            <span class="bento-badge" style="color: var(--accent-emerald); border-color: rgba(16,185,129,0.3);">Thermal Architecture</span>
+            <div class="bento-icon-wrapper" style="color: var(--accent-emerald);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             </div>
-            <h3 class="bento-title" data-i18n="bento_3_title">Battery & Thermal Efficiency</h3>
+            <h3 class="bento-title" data-i18n="bento_3_title">Cool & Battery-Efficient</h3>
             <p class="bento-desc" data-i18n="bento_3_desc">
               Memory footprint reduced by 85% in v2.2.0.1. Write and brainstorm for hours without heating up your device or draining your battery.
             </p>
@@ -1446,12 +1803,13 @@
         <!-- 4. Markdown & Visual Styling -->
         <div class="bento-card col-4">
           <div>
+            <span class="bento-badge" style="color: var(--accent-cyan); border-color: rgba(6,182,212,0.3);">New in v2.2.0.1</span>
             <div class="bento-icon-wrapper" style="color: var(--accent-cyan);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </div>
-            <h3 class="bento-title" data-i18n="bento_4_title">Live Visual Markdown</h3>
+            <h3 class="bento-title" data-i18n="bento_4_title">Clean Live Markdown</h3>
             <p class="bento-desc" data-i18n="bento_4_desc">
-              Format headings, bold, italics, checklists, code blocks, and hashtags in real-time with zero typing latency and 1:1 cursor sync.
+              Headings, bold, italics, checklists, and code blocks render clean without cluttering your screen with raw `**` or `##` markers. Zero typing latency and 1:1 cursor sync.
             </p>
           </div>
         </div>
@@ -1459,6 +1817,7 @@
         <!-- 5. 1-Click Offline Exports -->
         <div class="bento-card col-4">
           <div>
+            <span class="bento-badge" style="color: var(--alok-gold); border-color: rgba(245,158,11,0.3);">Data Sovereignty</span>
             <div class="bento-icon-wrapper" style="color: var(--alok-gold);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             </div>
@@ -1467,6 +1826,45 @@
               Export individual notes to standard .md or multi-page PDF, and backup your complete Room database into portable JSON with one tap.
             </p>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Markdown Live Sandbox -->
+    <section class="sandbox-section" id="sandbox">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="sandbox_tag">Live Interactive Sandbox</span>
+        <h2 class="section-title" data-i18n="sandbox_title">Experience the Clean Markdown Engine</h2>
+        <p class="section-sub" data-i18n="sandbox_sub">Test how AloNote parses formatting without distracting raw delimiters.</p>
+      </div>
+
+      <div class="sandbox-card">
+        <div class="sandbox-editor-side">
+          <div class="sandbox-toolbar">
+            <button class="sandbox-tool-btn" onclick="insertMarkdown('# ')"># H1</button>
+            <button class="sandbox-tool-btn" onclick="insertMarkdown('## ')">## H2</button>
+            <button class="sandbox-tool-btn" onclick="insertMarkdown('**bold**')">**Bold**</button>
+            <button class="sandbox-tool-btn" onclick="insertMarkdown('*italic*')">*Italic*</button>
+            <button class="sandbox-tool-btn" onclick="insertMarkdown('- [ ] ')">☑ Checklist</button>
+            <button class="sandbox-tool-btn" onclick="insertMarkdown('> ')">" Quote</button>
+          </div>
+          <textarea class="sandbox-textarea" id="sandboxInput" oninput="renderSandboxPreview()" placeholder="Type markdown here..."># The Philosophy of Alokpath
+
+**True intellectual sovereignty** requires tools that respect human dignity. 
+
+- [x] 100% offline local SQLite storage
+- [x] Zero background telemetry or tracking
+- [ ] Write without raw delimiter distractions
+
+> "Technology should be an instrument of intellectual freedom."</textarea>
+        </div>
+
+        <div class="sandbox-preview-side">
+          <div class="sandbox-preview-header">
+            <span style="font-weight: 800; font-size: 0.82rem; color: var(--alok-gold);">✦ AloNote Live Preview (v2.2.0.1)</span>
+            <span style="font-size: 0.72rem; color: var(--accent-emerald); font-weight: 700;">Clean Rendering</span>
+          </div>
+          <div id="sandboxOutput" style="font-size: 0.92rem; line-height: 1.6;"></div>
         </div>
       </div>
     </section>
@@ -1484,7 +1882,7 @@
           <strong>Alokpath</strong> believes your inner thoughts, creative writing, and privacy are sacred. That conviction inspired 
           <strong>AloNote</strong>—honest, local, and truly sovereign software.
         </p>
-        <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" class="btn-primary-large" download style="margin: 0 auto; display: inline-flex; max-width: 320px;">
+        <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" class="btn-primary-large" download="AloNote-v2.2.0.1-Alokpath.apk" style="margin: 0 auto; display: inline-flex; max-width: 320px;" onclick="handleDownloadClick(event, this)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
           <span data-i18n="manifesto_cta">Install AloNote (v2.2.0.1)</span>
         </a>
@@ -1553,6 +1951,33 @@
       </div>
     </section>
 
+    <!-- Installation Steps Section -->
+    <section class="install-section" id="installation">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="install_tag">Quick Setup</span>
+        <h2 class="section-title" data-i18n="install_title">Install in 3 Simple Steps</h2>
+        <p class="section-sub" data-i18n="install_sub">AloNote is delivered directly as a verified, signed Android APK with zero middlemen.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3 class="step-title" data-i18n="step_1_title">Download the APK</h3>
+          <p class="step-desc" data-i18n="step_1_desc">Tap the download button above. If Chrome or your browser asks "File might be harmful", tap <strong>"Download anyway"</strong>.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3 class="step-title" data-i18n="step_2_title">Open & Install</h3>
+          <p class="step-desc" data-i18n="step_2_desc">Open the downloaded file from your notification bar or Downloads folder, and tap <strong>Install</strong>.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3 class="step-title" data-i18n="step_3_title">Enjoy Pure Privacy</h3>
+          <p class="step-desc" data-i18n="step_3_desc">Open AloNote! No sign-in, no permissions, no delays. Begin writing your private notes immediately.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- FAQ Section -->
     <section class="faq-section" id="faq">
       <div class="section-header">
@@ -1590,6 +2015,16 @@
             Yes. AloNote is an independent initiative by Alokpath. It is and will always remain free, open-source under the MIT license, and completely tracker-free.
           </div>
         </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span data-i18n="faq_4_q">Why does Android say "File might be harmful"?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a" data-i18n="faq_4_a">
+            Android displays this standard warning for any APK downloaded outside the Google Play Store. AloNote is 100% open-source and has zero internet permission, meaning it cannot physically harm your device or steal data. You can verify our full source code on GitLab.
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -1604,7 +2039,7 @@
           <div class="bottom-app-sub">v2.2.0.1 • 100% Offline • 13 MB</div>
         </div>
       </div>
-      <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" class="bottom-download-btn" download>
+      <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" class="bottom-download-btn" download="AloNote-v2.2.0.1-Alokpath.apk" onclick="handleDownloadClick(event, this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span data-i18n="btn_download">Download</span>
       </a>
@@ -1617,18 +2052,19 @@
       <div class="footer-content">
         <div class="footer-brand">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <img id="footerLogo" src="./alokpath_logo_dark.png" alt="Alokpath" style="height: 28px; width: auto; object-fit: contain;">
-            <div style="font-weight: 800; font-size: 1.15rem;">Alokpath (আলোকপথ)</div>
+            <img id="footerLogo" src="./alokpath_logo_dark.png" alt="Alokpath" style="height: 30px; width: auto; object-fit: contain;">
+            <div style="font-weight: 800; font-size: 1.18rem;">Alokpath (আলোকপথ)</div>
           </div>
           <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 440px;" data-i18n="footer_desc">
             A pioneering movement for digital sovereignty, human values, and genuine sovereign software.
           </p>
         </div>
 
-        <div style="display: flex; flex-wrap: wrap; gap: 24px; font-size: 0.88rem;">
-          <a href="https://gitlab.com/zihanfakir/alonote" target="_blank" rel="noopener noreferrer" style="color: var(--text-muted); text-decoration: none;" data-i18n="footer_repo">GitLab Repo</a>
-          <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" download style="color: var(--alok-gold); font-weight: 600; text-decoration: none;" data-i18n="footer_apk">APK Download</a>
-          <a href="https://zihan.xyz" target="_blank" rel="noopener noreferrer" style="color: var(--text-muted); text-decoration: none;">zihan.xyz</a>
+        <div class="footer-links">
+          <a href="https://gitlab.com/zihanfakir/alonote" target="_blank" rel="noopener noreferrer" class="footer-link" data-i18n="footer_repo">GitLab Repository</a>
+          <a href="./downloads/AloNote-v2.2.0.1-Alokpath.apk" download="AloNote-v2.2.0.1-Alokpath.apk" class="footer-link" style="color: var(--alok-gold); font-weight: 700;" data-i18n="footer_apk" onclick="handleDownloadClick(event, this)">Direct APK (v2.2.0.1)</a>
+          <a href="./downloads/AloNote-v2.2.0-Alokpath.apk" download="AloNote-v2.2.0-Alokpath.apk" class="footer-link" style="color: var(--text-dim);">Legacy v2.2.0</a>
+          <a href="https://zihan.xyz" target="_blank" rel="noopener noreferrer" class="footer-link">zihan.xyz</a>
         </div>
       </div>
 
@@ -1641,8 +2077,8 @@
 
   <!-- Toast Element -->
   <div class="toast" id="toast">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-    <span id="toastMsg">Copied!</span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMsg">Notification</span>
   </div>
 
   <script>
@@ -1651,45 +2087,52 @@
       en: {
         nav_features: "Features",
         nav_showcase: "Showcase",
+        nav_sandbox: "Markdown Sandbox",
         nav_manifesto: "Manifesto",
         nav_comparison: "Comparison",
         nav_faq: "FAQ",
         nav_download: "Download APK",
-        hero_pill: "Official Alokpath Release • Version 2.2.0.1",
+        hero_pill: "Official Alokpath Release • Version 2.2.0.1 (Latest)",
         hero_title: "Your Private Thoughts, Exclusively Yours.<br><span class=\"gradient-text\">Pure Writing • 100% Offline.</span>",
         hero_sub: "No cloud servers, no behavioral tracking, zero advertising. <strong>AloNote</strong> is an uncompromisingly private, offline-first native Android notebook engineered with Jetpack Compose. Your thoughts stay strictly on your phone.",
         hero_download_btn: "Direct Download APK",
-        hero_repo_btn: "GitLab Repository",
+        hero_repo_btn: "GitLab Source Code",
+        download_trouble: "Trouble downloading?",
+        mirror_link: "Direct GitLab Mirror",
         meta_permission: "Zero Internet Permission",
-        meta_refresh: "120Hz Native Performance",
-        meta_license: "Open-Source (MIT)",
-        metric_1: "Offline Privacy (Zero Cloud)",
+        meta_refresh: "120Hz Fluid Native Compose",
+        meta_license: "100% Free & Open Source",
+        metric_1: "Offline Sovereignty (Zero Cloud)",
         metric_2: "Data Sent to Remote Servers",
-        metric_3: "Smooth, Cool Performance",
-        metric_4: "Markdown & JSON Offline Backup",
-        showcase_tag: "Interactive Preview",
+        metric_3: "Memory Cut & Zero Device Heating",
+        metric_4: "Markdown & JSON Lossless Backup",
+        showcase_tag: "Interactive Device Showcase",
         showcase_title: "Simple, Refined & Distraction-Free",
         showcase_sub: "No clutter or corporate surveillance. Open the app and capture your thoughts freely.",
         tab_notes: "Notes List",
-        tab_splash: "Startup Splash (Meta Style)",
+        tab_reader: "Clean Markdown",
         tab_audio: "Voice Memos",
-        tab_security: "Biometric Security",
-        mock_search_ph: "Search notes... (ideas, books, journals)",
+        tab_security: "Biometric Lock",
+        tab_splash: "Brand Splash",
+        mock_search_ph: "Search notes... (ideas, journals, books)",
         mock_tag_all: "All Notes (12)",
-        bento_tag: "Technical Excellence",
+        bento_tag: "Engineered For Excellence",
         bento_title: "Why AloNote Stands Apart",
         bento_sub: "Engineered to the highest standards for personal security, responsiveness, and peace of mind.",
         bento_1_badge: "100% Offline by Design",
         bento_1_title: "True Network Sovereignty (Zero Cloud)",
-        bento_1_desc: "AloNote has zero <code>INTERNET</code> permission in its source code and <code>AndroidManifest.xml</code>. Even if the app wanted to, it cannot physically transmit any data across the network.",
+        bento_1_desc: "AloNote has zero <code>INTERNET</code> permission in its source code and <code>AndroidManifest.xml</code>. Even if the app wanted to, it cannot physically transmit any byte of data across the network.",
         bento_2_title: "Studio Voice Memos",
         bento_2_desc: "Record compressed audio memos directly inside your notes. Keep class lectures or fleeting ideas preserved with background replay and seek control.",
-        bento_3_title: "Battery & Thermal Efficiency",
+        bento_3_title: "Cool & Battery-Efficient",
         bento_3_desc: "Memory footprint reduced by 85% in v2.2.0.1. Write and brainstorm for hours without heating up your device or draining your battery.",
-        bento_4_title: "Live Visual Markdown",
-        bento_4_desc: "Format headings, bold, italics, checklists, code blocks, and hashtags in real-time with zero typing latency and 1:1 cursor sync.",
+        bento_4_title: "Clean Live Markdown",
+        bento_4_desc: "Headings, bold, italics, checklists, and code blocks render clean without cluttering your screen with raw `**` or `##` markers. Zero typing latency and 1:1 cursor sync.",
         bento_5_title: "1-Click Offline Backups",
         bento_5_desc: "Export individual notes to standard .md or multi-page PDF, and backup your complete Room database into portable JSON with one tap.",
+        sandbox_tag: "Live Interactive Sandbox",
+        sandbox_title: "Experience the Clean Markdown Engine",
+        sandbox_sub: "Test how AloNote parses formatting without distracting raw delimiters.",
         manifesto_author: "Alokpath Philosophy & Declaration",
         manifesto_quote: "\"Technology should be an instrument of intellectual freedom and human empowerment—not a commercial trap for attention.\"",
         manifesto_sub: "The modern internet treats users as advertising products and captive telemetry. <strong>Alokpath</strong> believes your inner thoughts, creative writing, and privacy are sacred. That conviction inspired <strong>AloNote</strong>—honest, local, and truly sovereign software.",
@@ -1722,6 +2165,15 @@
         tr_speed_alonote: "✓ 120Hz Native Jetpack Compose",
         tr_speed_keep: "Standard",
         tr_speed_notion: "✗ Heavy WebView Lag",
+        install_tag: "Quick Setup",
+        install_title: "Install in 3 Simple Steps",
+        install_sub: "AloNote is delivered directly as a verified, signed Android APK with zero middlemen.",
+        step_1_title: "Download the APK",
+        step_1_desc: "Tap the download button above. If Chrome or your browser asks \"File might be harmful\", tap <strong>\"Download anyway\"</strong>.",
+        step_2_title: "Open & Install",
+        step_2_desc: "Open the downloaded file from your notification bar or Downloads folder, and tap <strong>Install</strong>.",
+        step_3_title: "Enjoy Pure Privacy",
+        step_3_desc: "Open AloNote! No sign-in, no permissions, no delays. Begin writing your private notes immediately.",
         faq_tag: "FAQ",
         faq_title: "Frequently Asked Questions",
         faq_1_q: "Where are my notes stored?",
@@ -1730,39 +2182,45 @@
         faq_2_a: "From Settings > Backup & Restore, tap \"Export Backup\" to generate a complete JSON file, or export individual notes to PDF or Markdown (.md). You can save it to a USB drive, computer, or personal storage.",
         faq_3_q: "Is AloNote truly free and ad-free?",
         faq_3_a: "Yes. AloNote is an independent initiative by Alokpath. It is and will always remain free, open-source under the MIT license, and completely tracker-free.",
+        faq_4_q: "Why does Android say \"File might be harmful\"?",
+        faq_4_a: "Android displays this standard warning for any APK downloaded outside the Google Play Store. AloNote is 100% open-source and has zero internet permission, meaning it cannot physically harm your device or steal data. You can verify our full source code on GitLab.",
         btn_download: "Download",
         footer_desc: "A pioneering movement for digital sovereignty, human values, and genuine sovereign software.",
-        footer_repo: "GitLab Repo",
-        footer_apk: "APK Download",
+        footer_repo: "GitLab Repository",
+        footer_apk: "Direct APK (v2.2.0.1)",
         footer_copyright: "© 2026 Alokpath • All rights reserved.",
         footer_license: "Open Source Software • MIT License"
       },
       bn: {
         nav_features: "বৈশিষ্ট্যসমূহ",
         nav_showcase: "অ্যাপ ডিসপ্লে",
+        nav_sandbox: "মার্কডাউন পরীক্ষা",
         nav_manifesto: "আলোকপথ দর্শন",
         nav_comparison: "তুলনা",
         nav_faq: "প্রশ্নোত্তর",
         nav_download: "ডাউনলোড APK",
-        hero_pill: "আলোকপথ (Alokpath) এর অফিশিয়াল প্রকাশনা • সংস্করণ ২.২.০.১",
+        hero_pill: "আলোকপথ (Alokpath) এর অফিশিয়াল প্রকাশনা • সংস্করণ ২.২.০.১ (সর্বশেষ)",
         hero_title: "আপনার চিন্তা, শুধুই আপনার কাছে।<br><span class=\"gradient-text\">নিখাদ লেখনী • ১০০% অফলাইন।</span>",
         hero_sub: "কোনো ক্লাউড সার্ভার নেই, কোনো ট্র্যাকিং বা নজরদারি নেই, কোনো বিজ্ঞাপন নেই। <strong>আলোনোট</strong>—সম্পূর্ণ স্থানীয় স্টোরেজে সুরক্ষিত একটি প্রিমিয়াম দেশীয় নোটবুক।",
         hero_download_btn: "সরাসরি APK ডাউনলোড করুন",
-        hero_repo_btn: "GitLab রিপোজিটরি",
+        hero_repo_btn: "GitLab সোর্স কোড",
+        download_trouble: "ডাউনলোডে সমস্যা?",
+        mirror_link: "বিকল্প GitLab মিরর লিংক",
         meta_permission: "জিরো ইন্টারনেট পারমিশন",
-        meta_refresh: "120Hz নেটিভ পারফরম্যান্স",
-        meta_license: "ওপেন-সোর্স (MIT)",
-        metric_1: "অফলাইন প্রাইভেসি (Zero Cloud)",
+        meta_refresh: "120Hz ফ্লুইড নেটিভ কম্পোজ",
+        meta_license: "১০০% ফ্রি ও ওপেন-সোর্স",
+        metric_1: "অফলাইন সার্বভৌমত্ব (Zero Cloud)",
         metric_2: "সার্ভারে ডাটা ট্রান্সফার",
-        metric_3: "মসৃণ ও ঠান্ডা পারফরম্যান্স",
+        metric_3: "মেমোরি হ্রাস ও ফোন হিটিং শূন্য",
         metric_4: "Markdown ও JSON ব্যাকআপ",
         showcase_tag: "ইন্টারেক্টিভ প্রিভিউ",
         showcase_title: "সিম্পল, মার্জিত এবং শক্তিশালী ইন্টারফেস",
         showcase_sub: "কোনো জটিলতা নেই। কেবল অ্যাপ ওপেন করুন এবং মনের ভাবনাগুলোকে নিঃসংকোচে সাজিয়ে তুলুন।",
         tab_notes: "নোট তালিকা",
-        tab_splash: "স্টার্টআপ স্প্ল্যাশ (Meta Style)",
+        tab_reader: "পরিচ্ছন্ন মার্কডাউন",
         tab_audio: "ভয়েস নোট",
-        tab_security: "বায়োমেট্রিক নিরাপত্তা",
+        tab_security: "বায়োমেট্রিক লক",
+        tab_splash: "ব্র্যান্ড স্প্ল্যাশ",
         mock_search_ph: "নোট খুঁজুন... (কোরআন, কোড, ডায়েরি)",
         mock_tag_all: "সব নোট (১২)",
         bento_tag: "প্রযুক্তিগত অনন্যতা",
@@ -1775,10 +2233,13 @@
         bento_2_desc: "নোটের সাথে সরাসরি ভয়েস রেকর্ড করুন। ক্লাসের লেকচার বা তাত্ক্ষণিক চিন্তা সেভ রাখুন ব্যাকগ্রাউন্ড রিপ্লে সহ।",
         bento_3_title: "ব্যাটারি ও থার্মাল কুলিং",
         bento_3_desc: "v2.2.0.1 আপডেটে মেমোরি ৮৫% কমানো হয়েছে। দীর্ঘক্ষণ লিখলেও ফোন একটুও গরম হবে না, ব্যাটারি দীর্ঘস্থায়ী হবে।",
-        bento_4_title: "মার্কডাউন ও ড্রয়িং আর্ট",
-        bento_4_desc: "হেডার, বোল্ড, ইটালিক, চেকলিস্ট, কোড ব্লক দিয়ে সাজিয়ে তুলুন প্রতিটি নোট শূন্য টাইপিং ল্যাগে।",
+        bento_4_title: "পরিচ্ছন্ন লাইভ মার্কডাউন",
+        bento_4_desc: "হেডার, বোল্ড, ইটালিক, চেকলিস্টগুলো পরিষ্কার ফন্টে প্রদর্শিত হয়—অযথা `**` বা `##` সংকেতের জঞ্জাল ছাড়া। শূন্য টাইপিং ল্যাগ।",
         bento_5_title: "১-ক্লিক .md ও JSON এক্সপোর্ট",
         bento_5_desc: "যেকোনো নোট মুহূর্তেই স্ট্যান্ডার্ড <code>.md</code> বা PDF ফাইলে রূপান্তর করুন এবং পুরো ডাটাবেজ অফলাইনে ব্যাকআপ রাখুন।",
+        sandbox_tag: "লাইভ ইন্টারঅ্যাক্টিভ স্যান্ডবক্স",
+        sandbox_title: "আলোনোটের ক্লীন মার্কডাউন ইঞ্জিন পরখ করুন",
+        sandbox_sub: "দেখুন কীভাবে আলোনোট অপ্রয়োজনীয় সংকেত ছাড়াই তাৎক্ষণিকভাবে লেখা ফরম্যাট করে।",
         manifesto_author: "আলোকপথ (Alokpath) দর্শন ও ইস্তেহার",
         manifesto_quote: "\"প্রযুক্তি হওয়া উচিত মানুষের মেধার মুক্তি ও সার্বভৌমত্বের হাতিয়ার—ব্যবসায়িক অ্যালগরিদমের ফাঁদ নয়।\"",
         manifesto_sub: "বর্তমান ইন্টারনেট ব্যবস্থা মানুষকে বিজ্ঞাপনের পণ্য এবং তথ্যের বন্দীতে পরিণত করেছে। <strong>আলোকপথ</strong> বিশ্বাস করে আপনার চিন্তা, সৃষ্টি এবং গোপনীয়তা পবিত্র। সেই বিশ্বাস থেকেই জন্ম আলোনোটের।",
@@ -1811,6 +2272,15 @@
         tr_speed_alonote: "✓ 120Hz নেটিভ জেটপ্যাক কম্পোজ",
         tr_speed_keep: "সাধারণ",
         tr_speed_notion: "✗ ভারী ওয়েবভিউ ল্যাগ",
+        install_tag: "সহজ ৩ ধাপ",
+        install_title: "সহজ ৩ ধাপে আলোনোট ইনস্টল করুন",
+        install_sub: "কোনো মধ্যস্বত্বভোগী ছাড়া সরাসরি বিশ্বস্ত অফিশিয়াল APK ইনস্টল করুন।",
+        step_1_title: "APK ডাউনলোড করুন",
+        step_1_desc: "উপরের ডাউনলোড বাটনে ক্লিক করুন। ব্রাউজারে \"File might be harmful\" দেখালে <strong>\"Download anyway\"</strong> বেছে নিন।",
+        step_2_title: "ওপেন ও ইনস্টল করুন",
+        step_2_desc: "নোটিফিকেশন বার অথবা Downloads ফোল্ডার থেকে ফাইলটি খুলুন এবং <strong>Install</strong> চাপুন।",
+        step_3_title: "নিরাপদ লেখনী উপভোগ করুন",
+        step_3_desc: "আলোনোট খুলুন! কোনো লগইন বা পারমিশন ছাড়াই তাৎক্ষণিকভাবে আপনার চিন্তাগুলো লিখে রাখুন।",
         faq_tag: "প্রশ্নোত্তর",
         faq_title: "সাধারণ কিছু জিজ্ঞাসা",
         faq_1_q: "আমার নোটগুলো কোথায় সংরক্ষিত থাকে?",
@@ -1819,10 +2289,12 @@
         faq_2_a: "অ্যাপের সেটিংস থেকে ১-ক্লিকে \"JSON Backup\" অথবা যেকোনো নোট থেকে সরাসরি Markdown (.md) ফাইলে এক্সপোর্ট করে রেখে দিতে পারেন। নতুন ফোনে গিয়ে Restore Backup চাপলেই সব ফেরত আসবে।",
         faq_3_q: "এটি কি সত্যি সম্পূর্ণ বিনামূল্যে ও বিজ্ঞাপনহীন?",
         faq_3_a: "হ্যাঁ, সম্পূর্ণ সত্য। আলোকপথ (Alokpath) একটি স্বাধীন উদ্যোগ। আলোনোট চিরকাল বিজ্ঞাপনহীন, ট্র্যাকারহীন এবং ওপেন-সোর্স থাকবে।",
+        faq_4_q: "\"File might be harmful\" কেন দেখায়?",
+        faq_4_a: "গুগল প্লে স্টোরের বাইরে যেকোনো APK ডাউনলোড করার সময় অ্যান্ড্রয়েড এই সতর্কবার্তাটি প্রদর্শন করে। আলোনোটে কোনো ইন্টারনেট পারমিশনই নেই, তাই এটি কোনোভাবেই আপনার ফোনের ক্ষতি করতে পারে না। আমাদের পূর্ণ সোর্স কোড গিটল্যাবে উন্মুক্ত রয়েছে।",
         btn_download: "ডাউনলোড",
         footer_desc: "ডিজিটাল সার্বভৌমত্ব, মানবিক মূল্যবোধ ও খাঁটি প্রযুক্তি নির্মাণের একটি অগ্রগামী দেশীয় আন্দোলন।",
-        footer_repo: "গিটল্যাব রিপো",
-        footer_apk: "APK ডাউনলোড",
+        footer_repo: "GitLab রিপোজিটরি",
+        footer_apk: "সরাসরি APK (v2.2.0.1)",
         footer_copyright: "© ২০২৬ Alokpath (আলোকপথ) • সর্বস্বত্ব সংরক্ষিত।",
         footer_license: "ওপেন সোর্স সফটওয়্যার • MIT লাইসেন্স"
       }
@@ -1842,13 +2314,14 @@
           el.innerHTML = translations[lang][key];
         }
       });
+      renderSandboxPreview();
     }
 
     function toggleLanguage() {
       setLanguage(currentLang === 'en' ? 'bn' : 'en');
     }
 
-    // Set English as default on load
+    // Set default on load
     setLanguage(currentLang);
 
     // Theme Toggle Functionality
@@ -1884,6 +2357,18 @@
       setTheme(current === 'dark' ? 'light' : 'dark');
     });
 
+    // Real-time Phone Mockup Clock
+    function updateMockClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      if (minutes < 10) minutes = '0' + minutes;
+      const el = document.getElementById('mockClock');
+      if (el) el.innerText = `${hours}:${minutes}`;
+    }
+    updateMockClock();
+    setInterval(updateMockClock, 30000);
+
     // Mock Tabs Switcher
     function switchMockTab(tab, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1894,8 +2379,9 @@
       }
 
       const content = document.getElementById('mockDynamicContent');
+      const isBn = currentLang === 'bn';
+
       if (tab === 'notes') {
-        const isBn = currentLang === 'bn';
         content.innerHTML = `
           <div class="mock-card">
             <div class="mock-title">${isBn ? "আলোকপথের ডিজিটাল ম্যানিফেস্টো" : "The Alokpath Digital Manifesto"}</div>
@@ -1913,7 +2399,7 @@
               <span>${isBn ? "রেকর্ডিং ০১:৪৫ মিনিট" : "Recording 01:45 min"}</span>
             </div>
             <div class="mock-snippet">${isBn ? "অফলাইন অ্যালগরিদম ও মেমোরি ক্যাশিং সংক্রান্ত চিন্তার অডিও নোট।" : "Offline algorithm & local caching architecture voice memo."}</div>
-            <div class="mock-footer"><span>${isBn ? "গতকাল" : "Yesterday"}</span><span>${isBn ? "অডিও ফাইল" : "Audio File"}</span></div>
+            <div class="mock-footer"><span>${isBn ? "গতকাল" : "Yesterday"}</span><span>${isBn ? "অডিও ফাইল" : "Audio Memo"}</span></div>
           </div>
           <div class="mock-card">
             <div class="mock-title">${isBn ? "বই পড়ার সাপ্তাহিক তালিকা" : "Weekly Reading Checklist"}</div>
@@ -1921,26 +2407,56 @@
             <div class="mock-footer"><span>Oct 26</span><span>Checklist</span></div>
           </div>
         `;
+      } else if (tab === 'reader') {
+        content.innerHTML = `
+          <div class="markdown-preview-box">
+            <div style="font-size: 0.68rem; color: var(--accent-emerald); font-weight: 800; margin-bottom: 6px; letter-spacing: 0.5px;">
+              ✦ CLEAN READER MODE (v2.2.0.1)
+            </div>
+            <div class="md-h1">${isBn ? "সার্বভৌম চিন্তা ও সৃজনশীলতা" : "The Sovereign Mind"}</div>
+            <div style="font-size: 0.78rem; line-height: 1.5; color: var(--text); margin-bottom: 8px;">
+              ${isBn ? "প্রযুক্তি যখন স্বত্বাধিকারী হয়, তখন মানুষের মেধা মুক্তি পায়। <span class=\"md-bold\">আলোকপথ (Alokpath)</span> বিশ্বাস করে ব্যক্তিগত চিন্তা সম্পূর্ণ সুরক্ষিত থাকা উচিত।" : "True sovereignty begins when your tools respect human autonomy. <span class=\"md-bold\">AloNote</span> strips away all raw formatting noise to give you pure typographic serenity."}
+            </div>
+            <div class="md-quote">
+              "${isBn ? "প্রযুক্তি হওয়া উচিত মানুষের মেধার মুক্তি—নজরদারির ফাঁদ নয়।" : "Technology should empower human intellect, not harvest cognitive attention."}"
+            </div>
+            <div style="margin-top: 10px;">
+              <div class="md-check-row">
+                <span class="md-check-box">✓</span>
+                <span>${isBn ? "জিরো ইন্টারনেট পারমিশন নিশ্চিত" : "Zero internet permissions verified"}</span>
+              </div>
+              <div class="md-check-row">
+                <span class="md-check-box">✓</span>
+                <span>${isBn ? "কোনো র মার্কডাউন সংকেতের ঝামেলা নেই" : "No raw markdown delimiter clutter"}</span>
+              </div>
+              <div class="md-check-row">
+                <span class="md-check-box">✓</span>
+                <span>${isBn ? "১২০ হার্টজ মসৃণ নেটিভ রিফ্রেশ" : "120Hz buttery smooth rendering"}</span>
+              </div>
+            </div>
+          </div>
+        `;
       } else if (tab === 'splash') {
         const isLight = document.documentElement.getAttribute('data-theme') === 'light';
         const alokLogo = isLight ? './alokpath_logo_light.png' : './alokpath_logo_dark.png';
         content.innerHTML = `
-          <div style="height: 380px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 36px 0 20px;">
+          <div style="height: 380px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 0 20px;">
             <div style="height: 10px;"></div>
             <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-              <img src="./alonote_icon.png" style="width: 76px; height: 76px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12);" alt="AloNote">
+              <img src="./alonote_icon.png" style="width: 80px; height: 80px; border-radius: 22px; box-shadow: 0 12px 32px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.15);" alt="AloNote">
+              <div style="font-weight: 800; font-size: 1.25rem; margin-top: 14px;">AloNote</div>
+              <div style="font-size: 0.74rem; color: var(--alok-gold); font-weight: 700; margin-top: 2px;">Version 2.2.0.1</div>
             </div>
             <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;">
               <span style="font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.5px;">from</span>
-              <img id="mockSplashLogo" src="${alokLogo}" style="height: 22px; width: auto; object-fit: contain;" alt="Alokpath">
+              <img id="mockSplashLogo" src="${alokLogo}" style="height: 24px; width: auto; object-fit: contain;" alt="Alokpath">
             </div>
           </div>
         `;
       } else if (tab === 'audio') {
-        const isBn = currentLang === 'bn';
         content.innerHTML = `
           <div class="mock-card" style="text-align: center; padding: 24px 14px;">
-            <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(255,107,0,0.15); color: var(--alok-orange); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
+            <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255,106,0,0.15); color: var(--alok-orange); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
             </div>
             <div class="mock-title" style="font-size: 1rem;">${isBn ? "ভয়েস নোট স্টুডিও" : "Voice Memo Studio"}</div>
@@ -1948,25 +2464,86 @@
             <div class="mock-audio-pill" style="justify-content: center; padding: 8px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
               <div class="mock-waveform"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>
-              <span>${isBn ? "প্লেব্যাক চলছে • ০৩:২৪" : "Playing • 03:24"}</span>
+              <span>${isBn ? "প্লেব্যাক চলছে • ০১:৪৫ / ০৩:২০" : "Playing • 01:45 / 03:20"}</span>
             </div>
           </div>
         `;
       } else if (tab === 'security') {
-        const isBn = currentLang === 'bn';
         content.innerHTML = `
           <div class="mock-card" style="text-align: center; padding: 24px 14px;">
-            <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(0,230,118,0.15); color: var(--accent-green); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(16,185,129,0.15); color: var(--accent-emerald); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
-            <div class="mock-title" style="font-size: 1rem;">${isBn ? "ফিঙ্গারপ্রিন্ট ও বায়োমেট্রিক লক" : "Biometric & Fingerprint Lock"}</div>
-            <div class="mock-snippet">${isBn ? "আপনার সংবেদনশীল ডায়রি ও ব্যক্তিগত হিসাব-নিকাশ সুরক্ষিত রাখতে বায়োমেট্রিক লক চালু রাখুন।" : "Keep your personal journal and sensitive thoughts secure with hardware-backed biometric authentication."}</div>
-            <div style="display: inline-block; padding: 5px 14px; background: rgba(0,230,118,0.15); color: var(--accent-green); border-radius: 999px; font-size: 0.74rem; font-weight: 700;">
-              ✓ ${isBn ? "বায়োমেট্রিক সক্রিয়" : "Biometrics Active"}
+            <div class="mock-title" style="font-size: 1rem;">${isBn ? "ফিঙ্গারপ্রিন্ট ও বায়োমেট্রিক লক" : "Biometric Hardware Vault"}</div>
+            <div class="mock-snippet" style="margin-bottom: 14px;">${isBn ? "আপনার সংবেদনশীল ডায়রি ও ব্যক্তিগত ভাবনাগুলো সুরক্ষিত রাখতে হার্ডওয়্যার-সমর্থিত বায়োমেট্রিক লক চালু রাখুন।" : "Keep your personal journal and sensitive thoughts secure with hardware-backed biometric authentication."}</div>
+            <div style="display: inline-block; padding: 6px 14px; background: rgba(16,185,129,0.15); color: var(--accent-emerald); border-radius: 999px; font-size: 0.76rem; font-weight: 700;">
+              ✓ ${isBn ? "বায়োমেট্রিক সিন্দুক সক্রিয়" : "Biometric Vault Active"}
             </div>
           </div>
         `;
       }
+    }
+
+    // Interactive Markdown Sandbox Parser
+    function renderSandboxPreview() {
+      const input = document.getElementById('sandboxInput').value;
+      const output = document.getElementById('sandboxOutput');
+      
+      let html = input
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Headings
+      html = html.replace(/^### (.*$)/gim, '<h3 style="font-size: 1.05rem; font-weight:700; margin: 10px 0 6px;">$1</h3>');
+      html = html.replace(/^## (.*$)/gim, '<h2 style="font-size: 1.18rem; font-weight:700; margin: 12px 0 6px; color: var(--alok-gold);">$1</h2>');
+      html = html.replace(/^# (.*$)/gim, '<h1 style="font-size: 1.35rem; font-weight:800; margin: 14px 0 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">$1</h1>');
+
+      // Checkboxes
+      html = html.replace(/^- \[x\] (.*$)/gim, '<div style="display:flex; align-items:center; gap:8px; margin:4px 0;"><span style="width:14px; height:14px; background:var(--accent-emerald); border-radius:3px; display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size:10px; font-weight:bold;">✓</span> <span style="text-decoration:line-through; opacity:0.7;">$1</span></div>');
+      html = html.replace(/^- \[ \] (.*$)/gim, '<div style="display:flex; align-items:center; gap:8px; margin:4px 0;"><span style="width:14px; height:14px; border:1px solid var(--border); border-radius:3px; display:inline-block;"></span> <span>$1</span></div>');
+
+      // Bold & Italic (renders clean without raw markers)
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--alok-gold); font-weight:700;">$1</strong>');
+      html = html.replace(/\*(.*?)\*/g, '<em style="font-style:italic;">$1</em>');
+
+      // Blockquotes
+      html = html.replace(/^&gt; (.*$)/gim, '<blockquote style="border-left: 3px solid var(--alok-gold); padding-left: 12px; margin: 10px 0; color: var(--text-muted); font-style: italic;">$1</blockquote>');
+
+      // Line breaks
+      html = html.replace(/\n/g, '<br>');
+
+      output.innerHTML = html;
+    }
+
+    function insertMarkdown(syntax) {
+      const ta = document.getElementById('sandboxInput');
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const text = ta.value;
+      ta.value = text.substring(0, start) + syntax + text.substring(end);
+      ta.focus();
+      ta.selectionStart = ta.selectionEnd = start + syntax.length;
+      renderSandboxPreview();
+    }
+    renderSandboxPreview();
+
+    // Copy Checksum
+    function copyChecksum() {
+      const hash = "7E66716602C15DC0F04D95B758894B7117C36F992ABB051E8AF0BB137D2C5ADE";
+      navigator.clipboard.writeText(hash).then(() => {
+        showToast(currentLang === 'bn' ? "SHA-256 চেকসাম কপি করা হয়েছে!" : "SHA-256 Checksum copied to clipboard!");
+      }).catch(() => {
+        showToast(hash);
+      });
+    }
+
+    // Direct Download Click Handler with instant feedback
+    function handleDownloadClick(e, link) {
+      const msg = currentLang === 'bn' 
+        ? "আলোনোট v2.2.0.1 ডাউনলোড শুরু হচ্ছে..." 
+        : "Downloading AloNote v2.2.0.1 (13 MB)...";
+      showToast(msg);
     }
 
     // Toast helper
@@ -1976,7 +2553,7 @@
       toast.classList.add('show');
       setTimeout(() => {
         toast.classList.remove('show');
-      }, 3000);
+      }, 3500);
     }
 
     // Toggle FAQ

@@ -8,7 +8,7 @@
 
 > **AloNote (আলোনোট)** is an extremely simple, lightweight, 100% offline note-taking native Android application by **Alokpath (আলোকপথ)**, inspired by Apple Notes and Google Keep. Built with Jetpack Compose, Material 3, and Room Database.
 
-🌐 **Website & Live Demo:** [alonote.zihan.xyz](https://alonote.zihan.xyz) (or [alonote.zihan.uk](https://alonote.zihan.uk))  
+🌐 **Website & Live Demo:** [alonote.zihan.xyz](https://alonote.zihan.xyz)  
 📦 **Direct APK Download:** [Download AloNote v2.2.0.1 (Alokpath Edition)](https://alonote.zihan.xyz/downloads/AloNote-v2.2.0.1-Alokpath.apk)  
 🏢 **Ecosystem:** An [Alokpath (আলোকপথ)](https://alokpoth.zihan.xyz) Sovereign Privacy Application
 
@@ -112,8 +112,8 @@ com.noto.app
 
 - **100% Offline & No Permissions:** Omission of `android.permission.INTERNET` guarantees zero data leakage or telemetry.
 - **Developer Signed:** Official release APKs are signed with a custom 2048-bit RSA key:
-  - **Developer:** Zihan Fakir (`@zihanfakir`)
-  - **Organization:** Zihan Fakir (github.com/zihanfakir)
+  - **Developer:** Zihan Fakir ([@alokpoth](https://github.com/alokpoth) / [@zihanfakir])
+  - **Organization:** Alokpath ([github.com/alokpoth](https://github.com/alokpoth))
   - **Validity:** 2026–2054 (10,000+ days)
 - **Play Protect Trusted:** Eliminates untrusted developer warnings during sideloading.
 
@@ -150,4 +150,4 @@ Runs the complete 26-test suite verifying CRUD operations, debounced autosave, e
 
 ## 8. License
 Open-source under the [MIT License](LICENSE).  
-Authored by [Zihan Fakir](https://zihan.xyz) ([@zihanfakir](https://github.com/zihanfakir)).
+Authored by [Zihan Fakir](https://zihan.uk) ([@alokpoth](https://github.com/alokpoth) / [@zihanfakir]).

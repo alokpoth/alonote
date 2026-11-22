@@ -132,7 +132,7 @@ com.noto.app
 ./gradlew assembleRelease
 ```
 The compiled, signed APK will be located at:
-`docs/downloads/Noto-v2.1.0-Alokpath.apk`
+`docs/downloads/AloNote-v2.2.0.1-Alokpath.apk`
 
 ### Run Unit Tests
 ```bash

@@ -18,3 +18,13 @@ local.properties
 /*.apk
 .netlify/
 
+# Security & Secrets Prevention (GitHub Push Protection)
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.pfx
+id_rsa
+*.log
+

@@ -5,6 +5,7 @@
 [![UI](https://img.shields.io/badge/UI-Jetpack%20Compose%20%2F%20Material%203-black?style=flat-square)](https://developer.android.com/jetpack/compose)
 [![Storage](https://img.shields.io/badge/Storage-Room%20SQLite%20(100%25%20Offline)-black?style=flat-square)](https://developer.android.com/training/data-storage/room)
 [![Website](https://img.shields.io/badge/Website-alonote.zihan.xyz-black?style=flat-square)](https://alonote.zihan.xyz)
+[![License](https://img.shields.io/badge/License-Alokpath%20Sovereign%20(Personal%20Use)-gold?style=flat-square)](LICENSE)
 
 > **AloNote (আলোনোট)** is an extremely simple, lightweight, 100% offline note-taking native Android application by **Alokpath (আলোকপথ)**, inspired by Apple Notes and Google Keep. Built with Jetpack Compose, Material 3, and Room Database.
 
@@ -149,5 +150,5 @@ Runs the complete 26-test suite verifying CRUD operations, debounced autosave, e
 ---
 
 ## 8. License
-Open-source under the [MIT License](LICENSE).  
+Licensed under the [Alokpath Sovereign Software License (ASSL v1.0)](LICENSE) — Strictly for Personal, Non-Commercial Use Only. Public redistribution, commercial exploitation, and public derivative works are strictly prohibited.  
 Authored by [Zihan Fakir](https://zihan.uk) ([@alokpoth](https://github.com/alokpoth) / [@zihanfakir]).

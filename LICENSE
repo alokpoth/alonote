@@ -1,21 +1,85 @@
-MIT License
+Alokpath Sovereign Software License (ASSL)
+Version 1.0 — Personal Use & Strictly Non-Commercial
 
 Copyright (c) 2026 Zihan Fakir (https://zihan.uk)
+Ecosystem: Alokpath (আলোকপথ) (https://alokpoth.zihan.xyz)
+All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+================================================================================
+PREAMBLE
+================================================================================
+This software ("AloNote", "Software") and its associated source code, 
+documentation, digital assets, build scripts, and binaries are made publicly 
+available in the spirit of transparency, intellectual freedom, security 
+auditability, and digital sovereignty. 
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+However, public access to the source code DOES NOT constitute an unrestricted, 
+permissive, or traditional open-source license. This is a source-available, 
+restrictive personal license.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+By viewing, accessing, cloning, downloading, building, compiling, executing, 
+or running this Software or any part of its source code, you agree to be 
+strictly bound by the terms and conditions set forth below.
+
+================================================================================
+TERMS AND CONDITIONS
+================================================================================
+
+1. PERMITTED PERSONAL USE
+Subject to the strict conditions in Section 2, the Copyright Holder (Zihan Fakir) 
+grants you a personal, non-exclusive, non-transferable, revocable, royalty-free 
+license solely to:
+   a. Inspect, read, audit, and analyze the source code for personal educational 
+      and privacy verification purposes.
+   b. Compile, install, and execute the Software strictly for your own private, 
+      individual, non-commercial personal use on your own personal devices.
+
+2. STRICT PROHIBITIONS & RESTRICTIONS
+You are expressly and strictly PROHIBITED from any of the following activities:
+
+   a. COMMERCIAL USE IS STRICTLY FORBIDDEN:
+      You may NOT use, deploy, integrate, exploit, or run the Software or any 
+      portion of its source code, architecture, or assets for ANY commercial 
+      purpose, business activity, organizational operation, or revenue-generating 
+      pursuit. This includes, without limitation: selling, renting, leasing, 
+      charging fees for access, incorporating into a commercial product or service, 
+      embedding ads, offering as Software-as-a-Service (SaaS), paid enterprise 
+      solutions, paid consulting, or commercial bundling.
+
+   b. NO DERIVATIVE WORKS OR MODIFICATIONS FOR PUBLIC USE:
+      You may NOT modify, alter, adapt, translate, re-skin, or create derivative 
+      works of this Software or its source code for any public release, sharing, 
+      or distribution. Any personal modifications you make must remain entirely 
+      private on your own local device and may NEVER be published, distributed, 
+      or made accessible to third parties.
+
+   c. NO PUBLIC REDISTRIBUTION OR RE-HOSTING:
+      You may NOT publish, republish, redistribute, mirror, re-upload, syndicate, 
+      host, or sublicense the Software, its source code, modified versions, or 
+      compiled binaries (including APK, AAB, JAR) on any public platform, app store 
+      (such as Google Play, F-Droid, Amazon Appstore, APKPure, APKMirror, etc.), 
+      website, forum, or repository without prior explicit written permission 
+      from Zihan Fakir / Alokpath.
+
+   d. NO SUBLICENSING OR ASSIGNMENT:
+      You may NOT sublicense, transfer, assign, or convey any rights under this 
+      License to any other individual or entity.
+
+   e. TRADEMARK AND BRANDING RESERVATION:
+      This License does not grant any right or permission to use the trade names, 
+      trademarks, service marks, or logos of "AloNote", "Alokpath", "আলোকপথ", 
+      or "Zihan Fakir".
+
+3. SOVEREIGN TERMINATION
+Any breach, circumvention, or violation of any term in this License immediately 
+and automatically terminates your rights under this License without notice. Upon 
+termination, you must immediately cease all use and destroy all copies of the 
+Software and source code in your possession.
+
+4. DISCLAIMER OF WARRANTIES & LIMITATION OF LIABILITY
+THE SOFTWARE AND SOURCE CODE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+COPYRIGHT HOLDER, AUTHOR, OR ALOKPATH BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER 
+LIABILITY ARISING FROM OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+DEALINGS IN THE SOFTWARE.
